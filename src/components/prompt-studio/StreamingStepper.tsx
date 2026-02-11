@@ -45,11 +45,24 @@ export function StreamingStepper({
   onSelectConcept,
 }: StreamingStepperProps) {
   const [manualOpen, setManualOpen] = useState<Record<string, boolean>>({});
+  const prevActiveRef = useRef<StageName | null>(null);
 
-  // Auto-open the active stage card
+  // Auto-open the active stage and auto-close the previous one
   useEffect(() => {
     if (activeStage) {
-      setManualOpen((prev) => ({ ...prev, [activeStage]: true }));
+      setManualOpen((prev) => {
+        const next = { ...prev, [activeStage]: true };
+        if (prevActiveRef.current && prevActiveRef.current !== activeStage) {
+          next[prevActiveRef.current] = false;
+        }
+        return next;
+      });
+      prevActiveRef.current = activeStage;
+    } else if (prevActiveRef.current) {
+      // Pipeline finished — collapse the last active stage
+      const last = prevActiveRef.current;
+      setManualOpen((prev) => ({ ...prev, [last]: false }));
+      prevActiveRef.current = null;
     }
   }, [activeStage]);
 

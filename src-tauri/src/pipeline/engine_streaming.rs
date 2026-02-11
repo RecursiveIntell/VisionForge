@@ -98,7 +98,9 @@ pub async fn run_pipeline_streaming(
                 duration_ms: ideator_output.duration_ms,
             },
         );
-        let concepts = ideator_output.output.clone();
+        let mut concepts = ideator_output.output.clone();
+        // Truncate to requested count — LLMs often generate more than asked
+        concepts.truncate(input.num_concepts as usize);
         result_stages.ideator = Some(ideator_output);
         concepts
     } else {
@@ -156,8 +158,8 @@ pub async fn run_pipeline_streaming(
         (concepts.clone(), Vec::new())
     };
 
-    // Stage 3: Judge — rank composed descriptions
-    let (top_description, selected_index) = if stages_enabled[2] {
+    // Stage 3: Judge — rank composed descriptions (skip if only 1 concept)
+    let (top_description, selected_index) = if stages_enabled[2] && composed.len() > 1 {
         let _ = app_handle.emit(
             "pipeline:stage_start",
             PipelineStageStartEvent {

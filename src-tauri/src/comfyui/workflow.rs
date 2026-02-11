@@ -1,3 +1,4 @@
+use rand::Rng;
 use serde_json::{json, Value};
 
 use crate::types::generation::GenerationRequest;
@@ -5,6 +6,13 @@ use crate::types::generation::GenerationRequest;
 /// Build a txt2img workflow for ComfyUI from generation settings.
 /// Returns the workflow JSON (the value for the "prompt" field in the /prompt request).
 pub fn build_txt2img(request: &GenerationRequest) -> Value {
+    // ComfyUI requires seed >= 0; -1 means "random"
+    let seed = if request.seed < 0 {
+        rand::rng().random_range(0..i64::MAX)
+    } else {
+        request.seed
+    };
+
     json!({
         "1": {
             "class_type": "CheckpointLoaderSimple",
@@ -37,7 +45,7 @@ pub fn build_txt2img(request: &GenerationRequest) -> Value {
         "5": {
             "class_type": "KSampler",
             "inputs": {
-                "seed": request.seed,
+                "seed": seed,
                 "steps": request.steps,
                 "cfg": request.cfg_scale,
                 "sampler_name": request.sampler,

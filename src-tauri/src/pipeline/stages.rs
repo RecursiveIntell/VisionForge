@@ -265,9 +265,30 @@ pub(super) fn parse_numbered_list(text: &str) -> Vec<String> {
 
 pub(super) fn parse_judge_rankings(text: &str) -> Result<Vec<JudgeRanking>> {
     let json = extract_json_from_text(text)?;
-    let arr = json
-        .as_array()
-        .context("Judge output is not a JSON array")?;
+
+    // Handle bare arrays, objects wrapping an array, or a single ranking object
+    let arr = if let Some(a) = json.as_array() {
+        a.clone()
+    } else if let Some(obj) = json.as_object() {
+        // Check if this IS a single ranking object (has rank/score at top level)
+        if obj.contains_key("rank") || obj.contains_key("score") {
+            vec![json.clone()]
+        } else {
+            // Models often wrap the array in an object like {"ranked_concepts": [...]}
+            obj.values()
+                .find_map(|v| {
+                    v.as_array().filter(|a| {
+                        a.first()
+                            .map(|item| item.get("rank").is_some() || item.get("score").is_some())
+                            .unwrap_or(false)
+                    })
+                })
+                .cloned()
+                .context("Judge output is a JSON object but contains no ranking array")?
+        }
+    } else {
+        anyhow::bail!("Judge output is neither a JSON array nor an object");
+    };
 
     let mut rankings = Vec::new();
     for item in arr {
@@ -366,25 +387,92 @@ pub(super) fn extract_json_from_text(text: &str) -> Result<Value> {
         return Ok(json);
     }
 
-    // Try to find JSON array or object in the text
-    let trimmed = text.trim();
+    // Strip <think>...</think> blocks (deepseek-r1, qwen3, etc.)
+    let cleaned = strip_think_tags(text);
+    let cleaned = cleaned.trim();
+
+    // Try parsing the cleaned text directly
+    if let Ok(json) = serde_json::from_str::<Value>(cleaned) {
+        return Ok(json);
+    }
+
+    // Try extracting from markdown code blocks (```json ... ``` or ``` ... ```)
+    if let Some(json) = extract_from_code_block(cleaned) {
+        return Ok(json);
+    }
+
+    // Try to find JSON array or object by matching brackets
     for (start_char, end_char) in [('[', ']'), ('{', '}')] {
-        if let Some(start) = trimmed.find(start_char) {
-            if let Some(end) = trimmed.rfind(end_char) {
-                if end > start {
-                    let candidate = &trimmed[start..=end];
-                    if let Ok(json) = serde_json::from_str::<Value>(candidate) {
-                        return Ok(json);
-                    }
-                }
-            }
+        // Try from the LAST occurrence of the start char to handle cases where
+        // earlier text contains stray brackets
+        if let Some(json) = find_balanced_json(cleaned, start_char, end_char) {
+            return Ok(json);
         }
     }
 
     anyhow::bail!(
         "Could not extract valid JSON from LLM response: {}",
-        &text[..text.len().min(200)]
+        &cleaned[..cleaned.len().min(300)]
     )
+}
+
+/// Strip `<think>...</think>` blocks that reasoning models emit
+fn strip_think_tags(text: &str) -> String {
+    let mut result = text.to_string();
+    // Handle both <think>...</think> and incomplete <think>... without closing tag
+    while let Some(start) = result.find("<think>") {
+        if let Some(end) = result[start..].find("</think>") {
+            result = format!("{}{}", &result[..start], &result[start + end + 8..]);
+        } else {
+            // No closing tag — strip from <think> to end of text
+            result = result[..start].to_string();
+            break;
+        }
+    }
+    result
+}
+
+/// Extract JSON from markdown code blocks: ```json\n...\n``` or ```\n...\n```
+fn extract_from_code_block(text: &str) -> Option<Value> {
+    // Try ```json first, then plain ```
+    for marker in ["```json", "```"] {
+        let mut search_from = 0;
+        while let Some(start) = text[search_from..].find(marker) {
+            let abs_start = search_from + start + marker.len();
+            // Skip to next line
+            let content_start = text[abs_start..].find('\n').map(|p| abs_start + p + 1)?;
+            if let Some(end) = text[content_start..].find("```") {
+                let candidate = text[content_start..content_start + end].trim();
+                if let Ok(json) = serde_json::from_str::<Value>(candidate) {
+                    return Some(json);
+                }
+            }
+            search_from = abs_start;
+        }
+    }
+    None
+}
+
+/// Find valid JSON by trying all occurrences of start_char, paired with
+/// each occurrence of end_char after it (preferring the tightest match)
+fn find_balanced_json(text: &str, start_char: char, end_char: char) -> Option<Value> {
+    let starts: Vec<usize> = text.match_indices(start_char).map(|(i, _)| i).collect();
+    let ends: Vec<usize> = text.match_indices(end_char).map(|(i, _)| i).collect();
+
+    // Try each start position, preferring later ones (more likely to be the actual JSON
+    // rather than stray brackets in prose/thinking)
+    for &start in starts.iter().rev() {
+        for &end in ends.iter().rev() {
+            if end <= start {
+                continue;
+            }
+            let candidate = &text[start..=end];
+            if let Ok(json) = serde_json::from_str::<Value>(candidate) {
+                return Some(json);
+            }
+        }
+    }
+    None
 }
 
 #[cfg(test)]

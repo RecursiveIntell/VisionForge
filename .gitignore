@@ -12,6 +12,10 @@ dist
 dist-ssr
 *.local
 
+# Accidental copies / archives
+sr/
+Archive.tar.gz
+
 # Rust build artifacts
 src-tauri/target
 

@@ -14,11 +14,25 @@ interface JobEvent {
   jobId: string;
 }
 
+interface JobProgressEvent {
+  jobId: string;
+  currentStep: number;
+  totalSteps: number;
+  progress: number;
+}
+
+export interface JobProgress {
+  currentStep: number;
+  totalSteps: number;
+  progress: number;
+}
+
 export function useQueue() {
   const [jobs, setJobs] = useState<QueueJob[]>([]);
   const [paused, setPaused] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [progressMap, setProgressMap] = useState<Record<string, JobProgress>>({});
 
   const refresh = useCallback(async () => {
     setLoading(true);
@@ -46,10 +60,42 @@ export function useQueue() {
     const unlisteners: (() => void)[] = [];
 
     const setup = async () => {
-      const u1 = await listen<JobEvent>("queue:job-started", () => refresh());
-      const u2 = await listen<JobEvent>("queue:job-completed", () => refresh());
-      const u3 = await listen<JobEvent>("queue:job-failed", () => refresh());
-      unlisteners.push(u1, u2, u3);
+      const u1 = await listen<JobEvent>("queue:job_started", () => refresh());
+      const u2 = await listen<JobEvent>("queue:job_completed", (e) => {
+        setProgressMap((prev) => {
+          const next = { ...prev };
+          delete next[e.payload.jobId];
+          return next;
+        });
+        refresh();
+      });
+      const u3 = await listen<JobEvent>("queue:job_failed", (e) => {
+        setProgressMap((prev) => {
+          const next = { ...prev };
+          delete next[e.payload.jobId];
+          return next;
+        });
+        refresh();
+      });
+      const u5 = await listen<JobEvent>("queue:job_cancelled", (e) => {
+        setProgressMap((prev) => {
+          const next = { ...prev };
+          delete next[e.payload.jobId];
+          return next;
+        });
+        refresh();
+      });
+      const u4 = await listen<JobProgressEvent>("queue:job_progress", (e) => {
+        setProgressMap((prev) => ({
+          ...prev,
+          [e.payload.jobId]: {
+            currentStep: e.payload.currentStep,
+            totalSteps: e.payload.totalSteps,
+            progress: e.payload.progress,
+          },
+        }));
+      });
+      unlisteners.push(u1, u2, u3, u4, u5);
     };
 
     setup();
@@ -93,5 +139,5 @@ export function useQueue() {
     [refresh],
   );
 
-  return { jobs, paused, loading, error, refresh, togglePause, cancel, reorder };
+  return { jobs, paused, loading, error, refresh, togglePause, cancel, reorder, progressMap };
 }

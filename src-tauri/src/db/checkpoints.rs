@@ -6,8 +6,14 @@ use crate::types::checkpoints::{
 };
 
 pub fn upsert_checkpoint(conn: &Connection, profile: &CheckpointProfile) -> Result<i64> {
-    let strengths_json = profile.strengths.as_ref().map(|s| serde_json::to_string(s).unwrap_or_default());
-    let weaknesses_json = profile.weaknesses.as_ref().map(|w| serde_json::to_string(w).unwrap_or_default());
+    let strengths_json = profile
+        .strengths
+        .as_ref()
+        .map(|s| serde_json::to_string(s).unwrap_or_default());
+    let weaknesses_json = profile
+        .weaknesses
+        .as_ref()
+        .map(|w| serde_json::to_string(w).unwrap_or_default());
 
     conn.execute(
         "INSERT INTO checkpoints (
@@ -159,7 +165,10 @@ pub fn add_observation(conn: &Connection, obs: &CheckpointObservation) -> Result
     Ok(conn.last_insert_rowid())
 }
 
-pub fn get_observations(conn: &Connection, checkpoint_id: i64) -> Result<Vec<CheckpointObservation>> {
+pub fn get_observations(
+    conn: &Connection,
+    checkpoint_id: i64,
+) -> Result<Vec<CheckpointObservation>> {
     let mut stmt = conn
         .prepare(
             "SELECT id, checkpoint_id, observation, source, comparison_id, created_at
@@ -217,7 +226,12 @@ pub fn get_checkpoint_context(conn: &Connection, filename: &str) -> Result<Strin
     if !terms.is_empty() {
         context.push_str("Known terms:\n");
         for t in &terms {
-            context.push_str(&format!("- {} ({}): {}\n", t.term, t.strength.as_str(), t.effect));
+            context.push_str(&format!(
+                "- {} ({}): {}\n",
+                t.term,
+                t.strength.as_str(),
+                t.effect
+            ));
         }
     }
     Ok(context)
@@ -253,7 +267,9 @@ mod tests {
     use super::*;
     use crate::db;
 
-    fn setup() -> Connection { db::open_memory_database().unwrap() }
+    fn setup() -> Connection {
+        db::open_memory_database().unwrap()
+    }
 
     fn make_profile() -> CheckpointProfile {
         CheckpointProfile {
@@ -262,7 +278,10 @@ mod tests {
             display_name: Some("DreamShaper v8".to_string()),
             base_model: Some("SD 1.5".to_string()),
             created_at: None,
-            strengths: Some(vec!["photorealism".to_string(), "cinematic lighting".to_string()]),
+            strengths: Some(vec![
+                "photorealism".to_string(),
+                "cinematic lighting".to_string(),
+            ]),
             weaknesses: Some(vec!["text rendering".to_string()]),
             preferred_cfg: Some(7.5),
             cfg_range_low: Some(6.0),
@@ -280,7 +299,9 @@ mod tests {
         let id = upsert_checkpoint(&conn, &make_profile()).unwrap();
         assert!(id > 0);
 
-        let profile = get_checkpoint(&conn, "dreamshaper_8.safetensors").unwrap().unwrap();
+        let profile = get_checkpoint(&conn, "dreamshaper_8.safetensors")
+            .unwrap()
+            .unwrap();
         assert_eq!(profile.display_name.unwrap(), "DreamShaper v8");
         assert_eq!(profile.strengths.unwrap().len(), 2);
     }
@@ -306,13 +327,19 @@ mod tests {
         let conn = setup();
         let cp_id = upsert_checkpoint(&conn, &make_profile()).unwrap();
 
-        add_prompt_term(&conn, &PromptTerm {
-            id: None, checkpoint_id: cp_id,
-            term: "cinematic lighting".to_string(),
-            effect: "Strong volumetric light".to_string(),
-            strength: TermStrength::Strong,
-            example_image_id: None, created_at: None,
-        }).unwrap();
+        add_prompt_term(
+            &conn,
+            &PromptTerm {
+                id: None,
+                checkpoint_id: cp_id,
+                term: "cinematic lighting".to_string(),
+                effect: "Strong volumetric light".to_string(),
+                strength: TermStrength::Strong,
+                example_image_id: None,
+                created_at: None,
+            },
+        )
+        .unwrap();
 
         let terms = get_prompt_terms(&conn, cp_id).unwrap();
         assert_eq!(terms.len(), 1);
@@ -324,12 +351,18 @@ mod tests {
         let conn = setup();
         let cp_id = upsert_checkpoint(&conn, &make_profile()).unwrap();
 
-        add_observation(&conn, &CheckpointObservation {
-            id: None, checkpoint_id: cp_id,
-            observation: "Great for portraits".to_string(),
-            source: ObservationSource::User,
-            comparison_id: None, created_at: None,
-        }).unwrap();
+        add_observation(
+            &conn,
+            &CheckpointObservation {
+                id: None,
+                checkpoint_id: cp_id,
+                observation: "Great for portraits".to_string(),
+                source: ObservationSource::User,
+                comparison_id: None,
+                created_at: None,
+            },
+        )
+        .unwrap();
 
         let obs = get_observations(&conn, cp_id).unwrap();
         assert_eq!(obs.len(), 1);
@@ -340,13 +373,19 @@ mod tests {
     fn test_checkpoint_context_string() {
         let conn = setup();
         let cp_id = upsert_checkpoint(&conn, &make_profile()).unwrap();
-        add_prompt_term(&conn, &PromptTerm {
-            id: None, checkpoint_id: cp_id,
-            term: "cinematic lighting".to_string(),
-            effect: "Produces volumetric rays".to_string(),
-            strength: TermStrength::Strong,
-            example_image_id: None, created_at: None,
-        }).unwrap();
+        add_prompt_term(
+            &conn,
+            &PromptTerm {
+                id: None,
+                checkpoint_id: cp_id,
+                term: "cinematic lighting".to_string(),
+                effect: "Produces volumetric rays".to_string(),
+                strength: TermStrength::Strong,
+                example_image_id: None,
+                created_at: None,
+            },
+        )
+        .unwrap();
 
         let ctx = get_checkpoint_context(&conn, "dreamshaper_8.safetensors").unwrap();
         assert!(ctx.contains("DreamShaper v8"));

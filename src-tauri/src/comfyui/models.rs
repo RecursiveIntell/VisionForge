@@ -147,7 +147,8 @@ mod tests {
 
     #[test]
     fn test_parse_sampler_object_info() {
-        let json: Value = serde_json::from_str(r#"{
+        let json: Value = serde_json::from_str(
+            r#"{
             "KSampler": {
                 "input": {
                     "required": {
@@ -156,12 +157,18 @@ mod tests {
                     }
                 }
             }
-        }"#).unwrap();
+        }"#,
+        )
+        .unwrap();
 
         let samplers = json
             .pointer("/KSampler/input/required/sampler_name/0")
             .and_then(|v| v.as_array())
-            .map(|arr| arr.iter().filter_map(|v| v.as_str().map(String::from)).collect::<Vec<_>>())
+            .map(|arr| {
+                arr.iter()
+                    .filter_map(|v| v.as_str().map(String::from))
+                    .collect::<Vec<_>>()
+            })
             .unwrap_or_default();
 
         assert_eq!(samplers.len(), 4);
@@ -170,7 +177,11 @@ mod tests {
         let schedulers = json
             .pointer("/KSampler/input/required/scheduler/0")
             .and_then(|v| v.as_array())
-            .map(|arr| arr.iter().filter_map(|v| v.as_str().map(String::from)).collect::<Vec<_>>())
+            .map(|arr| {
+                arr.iter()
+                    .filter_map(|v| v.as_str().map(String::from))
+                    .collect::<Vec<_>>()
+            })
             .unwrap_or_default();
 
         assert_eq!(schedulers.len(), 3);
@@ -184,7 +195,11 @@ mod tests {
         let checkpoints = json
             .pointer("/CheckpointLoaderSimple/input/required/ckpt_name/0")
             .and_then(|v| v.as_array())
-            .map(|arr| arr.iter().filter_map(|v| v.as_str().map(String::from)).collect::<Vec<_>>())
+            .map(|arr| {
+                arr.iter()
+                    .filter_map(|v| v.as_str().map(String::from))
+                    .collect::<Vec<_>>()
+            })
             .unwrap_or_default();
 
         assert!(checkpoints.is_empty());

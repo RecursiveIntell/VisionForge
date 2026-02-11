@@ -92,7 +92,10 @@ fn test_list_with_search() {
     insert_image(&conn, &img1).unwrap();
     insert_image(&conn, &img2).unwrap();
 
-    let filter = GalleryFilter { search: Some("sunset".to_string()), ..Default::default() };
+    let filter = GalleryFilter {
+        search: Some("sunset".to_string()),
+        ..Default::default()
+    };
     let images = list_images(&conn, &filter).unwrap();
     assert_eq!(images.len(), 1);
     assert_eq!(images[0].id, "img-001");
@@ -105,10 +108,25 @@ fn test_pagination() {
         insert_image(&conn, &make_test_image(&format!("img-{:03}", i))).unwrap();
     }
 
-    let page1 = list_images(&conn, &GalleryFilter { limit: Some(3), ..Default::default() }).unwrap();
+    let page1 = list_images(
+        &conn,
+        &GalleryFilter {
+            limit: Some(3),
+            ..Default::default()
+        },
+    )
+    .unwrap();
     assert_eq!(page1.len(), 3);
 
-    let page2 = list_images(&conn, &GalleryFilter { limit: Some(3), offset: Some(3), ..Default::default() }).unwrap();
+    let page2 = list_images(
+        &conn,
+        &GalleryFilter {
+            limit: Some(3),
+            offset: Some(3),
+            ..Default::default()
+        },
+    )
+    .unwrap();
     assert_eq!(page2.len(), 3);
     assert_ne!(page1[0].id, page2[0].id);
 }
@@ -119,13 +137,26 @@ fn test_soft_delete_and_restore() {
     insert_image(&conn, &make_test_image("img-001")).unwrap();
 
     soft_delete_image(&conn, "img-001").unwrap();
-    assert_eq!(list_images(&conn, &GalleryFilter::default()).unwrap().len(), 0);
+    assert_eq!(
+        list_images(&conn, &GalleryFilter::default()).unwrap().len(),
+        0
+    );
 
-    let deleted = list_images(&conn, &GalleryFilter { show_deleted: Some(true), ..Default::default() }).unwrap();
+    let deleted = list_images(
+        &conn,
+        &GalleryFilter {
+            show_deleted: Some(true),
+            ..Default::default()
+        },
+    )
+    .unwrap();
     assert_eq!(deleted.len(), 1);
 
     restore_image(&conn, "img-001").unwrap();
-    assert_eq!(list_images(&conn, &GalleryFilter::default()).unwrap().len(), 1);
+    assert_eq!(
+        list_images(&conn, &GalleryFilter::default()).unwrap().len(),
+        1
+    );
 }
 
 #[test]
@@ -139,9 +170,23 @@ fn test_update_rating_and_favorite() {
     assert_eq!(img.rating, Some(5));
     assert!(img.favorite);
 
-    let found = list_images(&conn, &GalleryFilter { min_rating: Some(4), ..Default::default() }).unwrap();
+    let found = list_images(
+        &conn,
+        &GalleryFilter {
+            min_rating: Some(4),
+            ..Default::default()
+        },
+    )
+    .unwrap();
     assert_eq!(found.len(), 1);
-    let empty = list_images(&conn, &GalleryFilter { min_rating: Some(6), ..Default::default() }).unwrap();
+    let empty = list_images(
+        &conn,
+        &GalleryFilter {
+            min_rating: Some(6),
+            ..Default::default()
+        },
+    )
+    .unwrap();
     assert_eq!(empty.len(), 0);
 }
 
@@ -163,7 +208,14 @@ fn test_favorite_only_filter() {
     insert_image(&conn, &make_test_image("img-002")).unwrap();
     update_image_favorite(&conn, "img-001", true).unwrap();
 
-    let results = list_images(&conn, &GalleryFilter { favorite_only: Some(true), ..Default::default() }).unwrap();
+    let results = list_images(
+        &conn,
+        &GalleryFilter {
+            favorite_only: Some(true),
+            ..Default::default()
+        },
+    )
+    .unwrap();
     assert_eq!(results.len(), 1);
     assert_eq!(results[0].id, "img-001");
 }

@@ -1,9 +1,9 @@
 import { useState, useCallback, useRef, useEffect } from "react";
 import { listen, type UnlistenFn } from "@tauri-apps/api/event";
-import { runFullPipeline, type RunPipelineInput } from "../api/pipeline";
+import { runFullPipeline, cancelPipeline, type RunPipelineInput } from "../api/pipeline";
 import type { PipelineResult } from "../types";
 
-export type PipelinePhase = "idle" | "running" | "completed" | "error";
+export type PipelinePhase = "idle" | "running" | "completed" | "error" | "cancelled";
 export type StageName =
   | "ideator"
   | "composer"
@@ -46,6 +46,7 @@ export function usePipelineStream() {
   const tokenBufferRef = useRef<Record<string, string>>({});
   const flushTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const unlistenersRef = useRef<UnlistenFn[]>([]);
+  const cancelledRef = useRef(false);
 
   const startFlushing = useCallback(() => {
     if (flushTimerRef.current) return;
@@ -121,6 +122,7 @@ export function usePipelineStream() {
 
   const run = useCallback(
     async (input: RunPipelineInput) => {
+      cancelledRef.current = false;
       setPhase("running");
       setError(null);
       setResult(null);
@@ -188,8 +190,13 @@ export function usePipelineStream() {
       } catch (e) {
         stopFlushing();
         const msg = e instanceof Error ? e.message : String(e);
-        setError(msg);
-        setPhase("error");
+        if (cancelledRef.current || msg.includes("cancelled")) {
+          setPhase("cancelled");
+          setError("Pipeline cancelled");
+        } else {
+          setError(msg);
+          setPhase("error");
+        }
         setActiveStage(null);
       } finally {
         await cleanup();
@@ -198,6 +205,15 @@ export function usePipelineStream() {
     [cleanup, startFlushing, stopFlushing],
   );
 
+  const cancel = useCallback(async () => {
+    cancelledRef.current = true;
+    try {
+      await cancelPipeline();
+    } catch {
+      // Best-effort — pipeline may have already finished
+    }
+  }, []);
+
   const reset = useCallback(() => {
     setResult(null);
     setPhase("idle");
@@ -205,7 +221,8 @@ export function usePipelineStream() {
     setStreams(createInitialStreams());
     setActiveStage(null);
     tokenBufferRef.current = {};
+    cancelledRef.current = false;
   }, []);
 
-  return { result, phase, error, streams, activeStage, run, reset };
+  return { result, phase, error, streams, activeStage, run, cancel, reset };
 }

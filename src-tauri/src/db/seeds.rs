@@ -86,7 +86,9 @@ pub fn list_seeds(conn: &Connection, filter: &SeedFilter) -> Result<Vec<SeedEntr
     let params_ref: Vec<&dyn rusqlite::types::ToSql> =
         param_values.iter().map(|p| p.as_ref()).collect();
 
-    let mut stmt = conn.prepare(&sql).context("Failed to prepare list_seeds query")?;
+    let mut stmt = conn
+        .prepare(&sql)
+        .context("Failed to prepare list_seeds query")?;
     let rows = stmt
         .query_map(params_ref.as_slice(), row_to_seed)
         .context("Failed to execute list_seeds query")?;
@@ -145,10 +147,7 @@ pub fn add_checkpoint_note(conn: &Connection, note: &SeedCheckpointNote) -> Resu
     Ok(())
 }
 
-pub fn get_checkpoint_notes(
-    conn: &Connection,
-    seed_id: i64,
-) -> Result<Vec<SeedCheckpointNote>> {
+pub fn get_checkpoint_notes(conn: &Connection, seed_id: i64) -> Result<Vec<SeedCheckpointNote>> {
     let mut stmt = conn
         .prepare(
             "SELECT seed_id, checkpoint, note, sample_image_id
@@ -218,21 +217,21 @@ mod tests {
         let retrieved = get_seed(&conn, id).unwrap().unwrap();
         assert_eq!(retrieved.seed_value, 12345);
         assert_eq!(retrieved.comment, "Strong center composition");
-        assert_eq!(
-            retrieved.checkpoint.unwrap(),
-            "dreamshaper_8.safetensors"
-        );
+        assert_eq!(retrieved.checkpoint.unwrap(), "dreamshaper_8.safetensors");
     }
 
     #[test]
     fn test_list_seeds_no_filter() {
         let conn = setup();
         insert_seed(&conn, &make_test_seed()).unwrap();
-        insert_seed(&conn, &SeedEntry {
-            seed_value: 99999,
-            comment: "Chaotic multi-element".to_string(),
-            ..make_test_seed()
-        })
+        insert_seed(
+            &conn,
+            &SeedEntry {
+                seed_value: 99999,
+                comment: "Chaotic multi-element".to_string(),
+                ..make_test_seed()
+            },
+        )
         .unwrap();
 
         let seeds = list_seeds(&conn, &SeedFilter::default()).unwrap();
@@ -243,10 +242,13 @@ mod tests {
     fn test_list_seeds_with_checkpoint_filter() {
         let conn = setup();
         insert_seed(&conn, &make_test_seed()).unwrap();
-        insert_seed(&conn, &SeedEntry {
-            checkpoint: Some("deliberate.safetensors".to_string()),
-            ..make_test_seed()
-        })
+        insert_seed(
+            &conn,
+            &SeedEntry {
+                checkpoint: Some("deliberate.safetensors".to_string()),
+                ..make_test_seed()
+            },
+        )
         .unwrap();
 
         let filter = SeedFilter {
@@ -261,10 +263,13 @@ mod tests {
     fn test_list_seeds_with_search() {
         let conn = setup();
         insert_seed(&conn, &make_test_seed()).unwrap();
-        insert_seed(&conn, &SeedEntry {
-            comment: "Portrait framing".to_string(),
-            ..make_test_seed()
-        })
+        insert_seed(
+            &conn,
+            &SeedEntry {
+                comment: "Portrait framing".to_string(),
+                ..make_test_seed()
+            },
+        )
         .unwrap();
 
         let filter = SeedFilter {

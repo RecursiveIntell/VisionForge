@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import { listen } from "@tauri-apps/api/event";
 import { getGalleryImages } from "../api/gallery";
 import type { ImageEntry, GalleryFilter } from "../types";
 
@@ -29,6 +30,15 @@ export function useGallery(initialFilter?: Partial<GalleryFilter>) {
 
   useEffect(() => {
     refresh();
+  }, [refresh]);
+
+  // Auto-refresh when a new image is generated
+  useEffect(() => {
+    let unlisten: (() => void) | undefined;
+    listen("queue:job_completed", () => refresh()).then((u) => {
+      unlisten = u;
+    });
+    return () => unlisten?.();
   }, [refresh]);
 
   const updateFilter = useCallback((updates: Partial<GalleryFilter>) => {

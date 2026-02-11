@@ -32,6 +32,10 @@ export async function getAvailableModels(): Promise<string[]> {
   return invoke("get_available_models");
 }
 
+export async function cancelPipeline(): Promise<void> {
+  return invoke("cancel_pipeline");
+}
+
 export async function checkOllamaHealth(): Promise<boolean> {
   return invoke("check_ollama_health");
 }

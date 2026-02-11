@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Heart, Star, Trash2 } from "lucide-react";
+import { Heart, Star, Trash2, Maximize2 } from "lucide-react";
 import { getThumbnailFilePath } from "../../api/gallery";
 import { convertFileSrc } from "@tauri-apps/api/core";
 import type { ImageEntry } from "../../types";
@@ -9,6 +9,7 @@ interface ImageCardProps {
   selected?: boolean;
   compareSelected?: boolean;
   onClick: () => void;
+  onEnlarge?: () => void;
   onFavoriteToggle?: () => void;
 }
 
@@ -17,6 +18,7 @@ export function ImageCard({
   selected,
   compareSelected,
   onClick,
+  onEnlarge,
   onFavoriteToggle,
 }: ImageCardProps) {
   const [thumbnailSrc, setThumbnailSrc] = useState<string | null>(null);
@@ -54,6 +56,20 @@ export function ImageCard({
 
       {/* Overlay on hover */}
       <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
+        {/* Top-left: enlarge button */}
+        {onEnlarge && (
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onEnlarge();
+            }}
+            className="absolute top-1.5 left-1.5 p-1.5 rounded bg-black/50 text-zinc-300 hover:text-white hover:bg-black/70"
+            title="View full size"
+          >
+            <Maximize2 size={14} />
+          </button>
+        )}
+
         <div className="absolute bottom-0 left-0 right-0 p-2 flex items-center justify-between">
           <div className="flex items-center gap-1">
             {image.rating !== undefined && image.rating !== null && image.rating > 0 && (

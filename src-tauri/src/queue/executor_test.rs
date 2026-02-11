@@ -72,7 +72,9 @@ fn test_build_generation_request_invalid_json() {
 
 #[test]
 fn test_event_structs_serialize() {
-    let started = JobStartedEvent { job_id: "j1".to_string() };
+    let started = JobStartedEvent {
+        job_id: "j1".to_string(),
+    };
     let json = serde_json::to_string(&started).unwrap();
     assert!(json.contains("jobId"));
 

@@ -1,3 +1,5 @@
+use std::sync::atomic::Ordering;
+
 use crate::db;
 use crate::pipeline::engine::{self, PipelineInput};
 use crate::pipeline::engine_streaming;
@@ -15,6 +17,9 @@ pub async fn run_full_pipeline(
     auto_approve: bool,
     checkpoint: Option<String>,
 ) -> Result<PipelineResult, String> {
+    // Reset cancellation flag at start
+    state.pipeline_cancelled.store(false, Ordering::Relaxed);
+
     let config = {
         let cfg = state.config.lock().map_err(|e| e.to_string())?;
         cfg.clone()
@@ -43,9 +48,16 @@ pub async fn run_full_pipeline(
         checkpoint_context,
     };
 
-    engine_streaming::run_pipeline_streaming(&state.http_client, &config, input, app_handle)
-        .await
-        .map_err(|e| format!("{:#}", e))
+    let cancelled = state.pipeline_cancelled.clone();
+    engine_streaming::run_pipeline_streaming(
+        &state.http_client,
+        &config,
+        input,
+        app_handle,
+        cancelled,
+    )
+    .await
+    .map_err(|e| format!("{:#}", e))
 }
 
 #[tauri::command]
@@ -85,9 +97,7 @@ pub async fn get_available_models(
 }
 
 #[tauri::command]
-pub async fn check_ollama_health(
-    state: tauri::State<'_, AppState>,
-) -> Result<bool, String> {
+pub async fn check_ollama_health(state: tauri::State<'_, AppState>) -> Result<bool, String> {
     let endpoint = {
         let config = state.config.lock().map_err(|e| e.to_string())?;
         config.ollama.endpoint.clone()
@@ -96,6 +106,12 @@ pub async fn check_ollama_health(
     ollama::check_health(&state.http_client, &endpoint)
         .await
         .map_err(|e| format!("{:#}", e))
+}
+
+#[tauri::command]
+pub async fn cancel_pipeline(state: tauri::State<'_, AppState>) -> Result<(), String> {
+    state.pipeline_cancelled.store(true, Ordering::Relaxed);
+    Ok(())
 }
 
 fn parse_checkpoint_context_string(context_str: &str, checkpoint: &str) -> CheckpointContext {

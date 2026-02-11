@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { X, Tag, MessageSquare, StickyNote, Sparkles } from "lucide-react";
+import { X, Tag, MessageSquare, StickyNote, Sparkles, Maximize2 } from "lucide-react";
 import { StarRating } from "../shared/StarRating";
 import { TagChips } from "../shared/TagChips";
 import { tagImage, captionImage } from "../../api/ai";
@@ -17,6 +17,7 @@ interface MetadataPanelProps {
   onRemoveTag: (tagId: number) => void;
   onDelete: () => void;
   onRefresh?: () => void;
+  onViewFullSize?: () => void;
 }
 
 export function MetadataPanel({
@@ -30,6 +31,7 @@ export function MetadataPanel({
   onRemoveTag,
   onDelete,
   onRefresh,
+  onViewFullSize,
 }: MetadataPanelProps) {
   const [editingCaption, setEditingCaption] = useState(false);
   const [captionDraft, setCaptionDraft] = useState(image.caption ?? "");
@@ -90,12 +92,23 @@ export function MetadataPanel({
     <div className="w-80 bg-zinc-800 border-l border-zinc-700 overflow-y-auto shrink-0">
       <div className="flex items-center justify-between p-4 border-b border-zinc-700">
         <h3 className="text-sm font-semibold text-zinc-200">Details</h3>
-        <button
-          onClick={onClose}
-          className="p-1 text-zinc-500 hover:text-zinc-300"
-        >
-          <X size={16} />
-        </button>
+        <div className="flex items-center gap-1">
+          {onViewFullSize && (
+            <button
+              onClick={onViewFullSize}
+              className="p-1 text-zinc-500 hover:text-zinc-300"
+              title="View full size"
+            >
+              <Maximize2 size={16} />
+            </button>
+          )}
+          <button
+            onClick={onClose}
+            className="p-1 text-zinc-500 hover:text-zinc-300"
+          >
+            <X size={16} />
+          </button>
+        </div>
       </div>
 
       <div className="p-4 space-y-4">

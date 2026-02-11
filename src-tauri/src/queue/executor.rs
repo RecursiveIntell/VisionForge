@@ -8,11 +8,10 @@ use crate::db;
 use crate::gallery::storage;
 use crate::queue::manager;
 use crate::state::AppState;
-use crate::types::generation::GenerationRequest;
 use crate::types::gallery::ImageEntry;
+use crate::types::generation::GenerationRequest;
 
 const POLL_INTERVAL: Duration = Duration::from_secs(3);
-const COMFYUI_POLL_INTERVAL: Duration = Duration::from_secs(2);
 const COMFYUI_TIMEOUT: Duration = Duration::from_secs(600); // 10 minutes
 
 /// Event payloads emitted to the frontend
@@ -34,6 +33,21 @@ pub struct JobCompletedEvent {
 pub struct JobFailedEvent {
     pub job_id: String,
     pub error: String,
+}
+
+#[derive(Debug, Clone, serde::Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct JobProgressEvent {
+    pub job_id: String,
+    pub current_step: u32,
+    pub total_steps: u32,
+    pub progress: f64,
+}
+
+#[derive(Debug, Clone, serde::Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct JobCancelledEvent {
+    pub job_id: String,
 }
 
 /// Spawn the background queue executor. Call this once during app setup.
@@ -122,18 +136,37 @@ async fn run_loop(app_handle: AppHandle) {
                 }
             }
             Err(e) => {
-                eprintln!("[queue] Job {} failed: {:#}", job.id, e);
-                // Mark failed in DB
-                if let Ok(conn) = state.db.lock() {
-                    let _ = manager::mark_failed(&conn, &job.id);
+                let err_msg = format!("{:#}", e);
+                // Check if this was a cancellation — don't re-mark as failed
+                let was_cancelled = {
+                    if let Ok(conn) = state.db.lock() {
+                        db::queue::is_job_cancelled(&conn, &job.id).unwrap_or(false)
+                    } else {
+                        false
+                    }
+                };
+
+                if was_cancelled {
+                    eprintln!("[queue] Job {} was cancelled", job.id);
+                    let _ = app_handle.emit(
+                        "queue:job_cancelled",
+                        JobCancelledEvent {
+                            job_id: job.id.clone(),
+                        },
+                    );
+                } else {
+                    eprintln!("[queue] Job {} failed: {}", job.id, err_msg);
+                    if let Ok(conn) = state.db.lock() {
+                        let _ = manager::mark_failed(&conn, &job.id);
+                    }
+                    let _ = app_handle.emit(
+                        "queue:job_failed",
+                        JobFailedEvent {
+                            job_id: job.id.clone(),
+                            error: err_msg,
+                        },
+                    );
                 }
-                let _ = app_handle.emit(
-                    "queue:job_failed",
-                    JobFailedEvent {
-                        job_id: job.id.clone(),
-                        error: format!("{:#}", e),
-                    },
-                );
             }
         }
     }
@@ -164,29 +197,67 @@ async fn process_job(
 
     // Build generation request from job data
     let gen_request = build_generation_request(job)?;
-    let workflow_json = workflow::build_txt2img(&gen_request);
+    let (workflow_json, actual_seed) = workflow::build_txt2img(&gen_request);
     let client_id = uuid::Uuid::new_v4().to_string();
 
     // Queue prompt to ComfyUI
-    let prompt_id = client::queue_prompt(
-        &state.http_client,
-        &endpoint,
-        &workflow_json,
-        &client_id,
-    )
-    .await
-    .context("Failed to queue prompt to ComfyUI")?;
+    let prompt_id = client::queue_prompt(&state.http_client, &endpoint, &workflow_json, &client_id)
+        .await
+        .context("Failed to queue prompt to ComfyUI")?;
 
-    // Wait for completion
-    let gen_status = client::wait_for_completion(
+    // Wait for completion with real-time progress via WebSocket,
+    // racing against a cancellation poll loop that checks the DB every 2s.
+    let job_id_for_progress = job.id.clone();
+    let ah_progress = app_handle.clone();
+    let ws_future = client::wait_for_completion_ws(
         &state.http_client,
         &endpoint,
         &prompt_id,
-        COMFYUI_POLL_INTERVAL,
+        &client_id,
         COMFYUI_TIMEOUT,
-    )
-    .await
-    .context("Error waiting for ComfyUI completion")?;
+        move |update| {
+            let progress = if update.total_steps > 0 {
+                update.current_step as f64 / update.total_steps as f64
+            } else {
+                0.0
+            };
+            let _ = ah_progress.emit(
+                "queue:job_progress",
+                JobProgressEvent {
+                    job_id: job_id_for_progress.clone(),
+                    current_step: update.current_step,
+                    total_steps: update.total_steps,
+                    progress,
+                },
+            );
+        },
+    );
+
+    let job_id_cancel = job.id.clone();
+    let cancel_poll = async {
+        loop {
+            tokio::time::sleep(Duration::from_secs(2)).await;
+            let is_cancelled = {
+                if let Ok(conn) = state.db.lock() {
+                    db::queue::is_job_cancelled(&conn, &job_id_cancel).unwrap_or(false)
+                } else {
+                    false
+                }
+            };
+            if is_cancelled {
+                return;
+            }
+        }
+    };
+
+    let gen_status = tokio::select! {
+        result = ws_future => result.context("Error waiting for ComfyUI completion")?,
+        _ = cancel_poll => {
+            // Job was cancelled — interrupt ComfyUI best-effort
+            let _ = client::interrupt(&state.http_client, &endpoint).await;
+            anyhow::bail!("Job cancelled by user");
+        }
+    };
 
     if let Some(ref error) = gen_status.error {
         anyhow::bail!("Generation failed: {}", error);
@@ -215,8 +286,11 @@ async fn process_job(
     .context("Failed to download image from ComfyUI")?;
 
     let local_filename = storage::generate_filename();
-    storage::save_image_from_bytes(&image_bytes, &local_filename)
-        .context("Failed to save image to gallery")?;
+    {
+        let config = state.config.lock().map_err(|e| anyhow::anyhow!("{}", e))?;
+        storage::save_image_from_bytes_with_config(&config, &image_bytes, &local_filename)
+            .context("Failed to save image to gallery")?;
+    }
 
     // Insert into gallery DB
     let image_id = uuid::Uuid::new_v4().to_string();
@@ -235,7 +309,7 @@ async fn process_job(
         cfg_scale: Some(gen_request.cfg_scale),
         sampler: Some(gen_request.sampler.clone()),
         scheduler: Some(gen_request.scheduler.clone()),
-        seed: Some(gen_request.seed),
+        seed: Some(actual_seed),
         pipeline_log: job.pipeline_log.clone(),
         selected_concept: None,
         auto_approved: false,
@@ -266,11 +340,9 @@ async fn process_job(
 }
 
 /// Parse the settings_json stored in a QueueJob into a GenerationRequest.
-fn build_generation_request(
-    job: &crate::types::queue::QueueJob,
-) -> Result<GenerationRequest> {
-    let settings: serde_json::Value = serde_json::from_str(&job.settings_json)
-        .context("Failed to parse job settings_json")?;
+fn build_generation_request(job: &crate::types::queue::QueueJob) -> Result<GenerationRequest> {
+    let settings: serde_json::Value =
+        serde_json::from_str(&job.settings_json).context("Failed to parse job settings_json")?;
 
     Ok(GenerationRequest {
         positive_prompt: job.positive_prompt.clone(),
@@ -288,10 +360,7 @@ fn build_generation_request(
             .get("height")
             .and_then(|v| v.as_u64())
             .unwrap_or(768) as u32,
-        steps: settings
-            .get("steps")
-            .and_then(|v| v.as_u64())
-            .unwrap_or(25) as u32,
+        steps: settings.get("steps").and_then(|v| v.as_u64()).unwrap_or(25) as u32,
         cfg_scale: settings
             .get("cfgScale")
             .or_else(|| settings.get("cfg_scale"))
@@ -307,10 +376,7 @@ fn build_generation_request(
             .and_then(|v| v.as_str())
             .unwrap_or("karras")
             .to_string(),
-        seed: settings
-            .get("seed")
-            .and_then(|v| v.as_i64())
-            .unwrap_or(-1),
+        seed: settings.get("seed").and_then(|v| v.as_i64()).unwrap_or(-1),
         batch_size: settings
             .get("batchSize")
             .or_else(|| settings.get("batch_size"))

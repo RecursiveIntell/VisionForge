@@ -2,6 +2,7 @@ use crate::types::config::AppConfig;
 use reqwest::Client;
 use rusqlite::Connection;
 use std::sync::atomic::AtomicBool;
+use std::sync::Arc;
 use std::sync::Mutex;
 
 pub struct AppState {
@@ -9,6 +10,7 @@ pub struct AppState {
     pub config: Mutex<AppConfig>,
     pub http_client: Client,
     pub queue_paused: AtomicBool,
+    pub pipeline_cancelled: Arc<AtomicBool>,
 }
 
 impl AppState {
@@ -25,6 +27,7 @@ impl AppState {
             config: Mutex::new(config),
             http_client,
             queue_paused: AtomicBool::new(false),
+            pipeline_cancelled: Arc::new(AtomicBool::new(false)),
         }
     }
 }

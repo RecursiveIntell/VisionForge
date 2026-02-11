@@ -32,16 +32,37 @@ pub fn reorder_job(state: &AppState, job_id: &str, new_priority: QueuePriority) 
         .with_context(|| format!("Queue job {} not found", job_id))?;
 
     if job.status != QueueJobStatus::Pending {
-        anyhow::bail!("Can only reorder pending jobs (job {} is {:?})", job_id, job.status);
+        anyhow::bail!(
+            "Can only reorder pending jobs (job {} is {:?})",
+            job_id,
+            job.status
+        );
     }
 
     db::queue::update_job_priority(&conn, job_id, &new_priority)
 }
 
-/// Cancel a pending job. No-op if already generating or terminal.
-pub fn cancel_job(state: &AppState, job_id: &str) -> Result<()> {
-    let conn = state.db.lock().map_err(|e| anyhow::anyhow!("{}", e))?;
-    db::queue::cancel_job(&conn, job_id)
+/// Cancel a pending or generating job. If generating, also interrupt ComfyUI.
+pub async fn cancel_job(state: &AppState, job_id: &str) -> Result<()> {
+    let (prev_status, endpoint) = {
+        let conn = state.db.lock().map_err(|e| anyhow::anyhow!("{}", e))?;
+        let prev = db::queue::cancel_job(&conn, job_id)?;
+        let ep = state
+            .config
+            .lock()
+            .map_err(|e| anyhow::anyhow!("{}", e))?
+            .comfyui
+            .endpoint
+            .clone();
+        (prev, ep)
+    };
+
+    // If job was actively generating, interrupt ComfyUI (best-effort)
+    if prev_status == "generating" {
+        let _ = crate::comfyui::client::interrupt(&state.http_client, &endpoint).await;
+    }
+
+    Ok(())
 }
 
 /// Pause the queue — executor will finish the current job but won't start new ones.
@@ -127,11 +148,11 @@ mod tests {
         assert_eq!(jobs[0].id, id);
     }
 
-    #[test]
-    fn test_cancel_job() {
+    #[tokio::test]
+    async fn test_cancel_job() {
         let state = make_state();
         let id = add_job(&state, make_job("a cat")).unwrap();
-        cancel_job(&state, &id).unwrap();
+        cancel_job(&state, &id).await.unwrap();
 
         let jobs = get_all_jobs(&state).unwrap();
         assert_eq!(jobs[0].status, QueueJobStatus::Cancelled);
@@ -196,7 +217,8 @@ mod tests {
         conn.execute(
             "INSERT INTO images (id, filename) VALUES ('img-1', 'test.png')",
             [],
-        ).unwrap();
+        )
+        .unwrap();
 
         mark_generating(&conn, &job_id).unwrap();
         mark_completed(&conn, &job_id, "img-1").unwrap();

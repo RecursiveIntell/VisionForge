@@ -4,8 +4,9 @@ use serde_json::{json, Value};
 use crate::types::generation::GenerationRequest;
 
 /// Build a txt2img workflow for ComfyUI from generation settings.
-/// Returns the workflow JSON (the value for the "prompt" field in the /prompt request).
-pub fn build_txt2img(request: &GenerationRequest) -> Value {
+/// Returns (workflow_json, actual_seed). When request.seed is -1 (random),
+/// a random seed is generated and returned so it can be stored with the image.
+pub fn build_txt2img(request: &GenerationRequest) -> (Value, i64) {
     // ComfyUI requires seed >= 0; -1 means "random"
     let seed = if request.seed < 0 {
         rand::rng().random_range(0..i64::MAX)
@@ -13,7 +14,7 @@ pub fn build_txt2img(request: &GenerationRequest) -> Value {
         request.seed
     };
 
-    json!({
+    let workflow = json!({
         "1": {
             "class_type": "CheckpointLoaderSimple",
             "inputs": {
@@ -71,7 +72,9 @@ pub fn build_txt2img(request: &GenerationRequest) -> Value {
                 "images": ["6", 0]
             }
         }
-    })
+    });
+
+    (workflow, seed)
 }
 
 #[cfg(test)]
@@ -96,7 +99,7 @@ mod tests {
 
     #[test]
     fn test_build_txt2img_has_all_nodes() {
-        let workflow = build_txt2img(&make_request());
+        let (workflow, _seed) = build_txt2img(&make_request());
         assert!(workflow.get("1").is_some()); // CheckpointLoader
         assert!(workflow.get("2").is_some()); // EmptyLatentImage
         assert!(workflow.get("3").is_some()); // CLIPTextEncode positive
@@ -108,7 +111,7 @@ mod tests {
 
     #[test]
     fn test_checkpoint_loader() {
-        let workflow = build_txt2img(&make_request());
+        let (workflow, _seed) = build_txt2img(&make_request());
         let node = &workflow["1"];
         assert_eq!(node["class_type"], "CheckpointLoaderSimple");
         assert_eq!(node["inputs"]["ckpt_name"], "dreamshaper_8.safetensors");
@@ -116,10 +119,11 @@ mod tests {
 
     #[test]
     fn test_ksampler_settings() {
-        let workflow = build_txt2img(&make_request());
+        let (workflow, seed) = build_txt2img(&make_request());
         let node = &workflow["5"];
         assert_eq!(node["class_type"], "KSampler");
         assert_eq!(node["inputs"]["seed"], 12345);
+        assert_eq!(seed, 12345);
         assert_eq!(node["inputs"]["steps"], 25);
         assert_eq!(node["inputs"]["cfg"], 7.5);
         assert_eq!(node["inputs"]["sampler_name"], "dpmpp_2m");
@@ -128,10 +132,22 @@ mod tests {
     }
 
     #[test]
+    fn test_random_seed_when_negative() {
+        let mut req = make_request();
+        req.seed = -1;
+        let (workflow, actual_seed) = build_txt2img(&req);
+        assert!(actual_seed >= 0, "Random seed should be non-negative");
+        assert_eq!(workflow["5"]["inputs"]["seed"], actual_seed);
+    }
+
+    #[test]
     fn test_clip_text_encode() {
-        let workflow = build_txt2img(&make_request());
+        let (workflow, _seed) = build_txt2img(&make_request());
         let positive = &workflow["3"];
-        assert_eq!(positive["inputs"]["text"], "masterpiece, best quality, a cat");
+        assert_eq!(
+            positive["inputs"]["text"],
+            "masterpiece, best quality, a cat"
+        );
         assert_eq!(positive["inputs"]["clip"], json!(["1", 1]));
 
         let negative = &workflow["4"];
@@ -140,7 +156,7 @@ mod tests {
 
     #[test]
     fn test_empty_latent_image() {
-        let workflow = build_txt2img(&make_request());
+        let (workflow, _seed) = build_txt2img(&make_request());
         let node = &workflow["2"];
         assert_eq!(node["inputs"]["width"], 512);
         assert_eq!(node["inputs"]["height"], 768);
@@ -149,7 +165,7 @@ mod tests {
 
     #[test]
     fn test_node_connections() {
-        let workflow = build_txt2img(&make_request());
+        let (workflow, _seed) = build_txt2img(&make_request());
 
         // KSampler connects to checkpoint model, positive, negative, latent
         assert_eq!(workflow["5"]["inputs"]["model"], json!(["1", 0]));
@@ -167,13 +183,13 @@ mod tests {
 
     #[test]
     fn test_save_image_prefix() {
-        let workflow = build_txt2img(&make_request());
+        let (workflow, _seed) = build_txt2img(&make_request());
         assert_eq!(workflow["7"]["inputs"]["filename_prefix"], "VisionForge");
     }
 
     #[test]
     fn test_workflow_is_valid_json() {
-        let workflow = build_txt2img(&make_request());
+        let (workflow, _seed) = build_txt2img(&make_request());
         let json_str = serde_json::to_string(&workflow).unwrap();
         assert!(json_str.len() > 100);
         // Can re-parse

@@ -1,9 +1,16 @@
 use anyhow::{Context, Result};
+use futures::StreamExt;
 use reqwest::Client;
 use serde_json::Value;
 use std::time::Duration;
 
 use crate::types::generation::{GenerationStatus, GenerationStatusKind};
+
+#[derive(Debug, Clone)]
+pub struct ProgressUpdate {
+    pub current_step: u32,
+    pub total_steps: u32,
+}
 
 pub async fn check_health(client: &Client, endpoint: &str) -> Result<bool> {
     let url = format!("{}/system_stats", endpoint);
@@ -127,14 +134,8 @@ pub async fn get_history(
             if let Some(images) = node_output.get("images").and_then(|i| i.as_array()) {
                 for img in images {
                     if let Some(filename) = img.get("filename").and_then(|f| f.as_str()) {
-                        let subfolder = img
-                            .get("subfolder")
-                            .and_then(|s| s.as_str())
-                            .unwrap_or("");
-                        let img_type = img
-                            .get("type")
-                            .and_then(|t| t.as_str())
-                            .unwrap_or("output");
+                        let subfolder = img.get("subfolder").and_then(|s| s.as_str()).unwrap_or("");
+                        let img_type = img.get("type").and_then(|t| t.as_str()).unwrap_or("output");
                         image_filenames.push(ImageRef {
                             filename: filename.to_string(),
                             subfolder: subfolder.to_string(),
@@ -162,7 +163,11 @@ pub async fn get_image(
 ) -> Result<Vec<u8>> {
     let url = reqwest::Url::parse_with_params(
         &format!("{}/view", endpoint),
-        &[("filename", filename), ("subfolder", subfolder), ("type", img_type)],
+        &[
+            ("filename", filename),
+            ("subfolder", subfolder),
+            ("type", img_type),
+        ],
     )
     .with_context(|| format!("Failed to build URL for image {}", filename))?;
 
@@ -250,7 +255,59 @@ pub async fn interrupt(client: &Client, endpoint: &str) -> Result<()> {
     Ok(())
 }
 
-/// Poll history until the prompt completes or fails
+fn gen_status_failed(prompt_id: &str, error: &str) -> GenerationStatus {
+    GenerationStatus {
+        prompt_id: prompt_id.to_string(),
+        status: GenerationStatusKind::Failed,
+        progress: None,
+        current_step: None,
+        total_steps: None,
+        image_filenames: None,
+        error: Some(error.to_string()),
+    }
+}
+
+async fn fetch_completed_status(
+    client: &Client,
+    endpoint: &str,
+    prompt_id: &str,
+) -> Result<GenerationStatus> {
+    if let Some(history) = get_history(client, endpoint, prompt_id).await? {
+        let filenames: Vec<String> = history
+            .image_filenames
+            .iter()
+            .map(|r| r.filename.clone())
+            .collect();
+        Ok(GenerationStatus {
+            prompt_id: prompt_id.to_string(),
+            status: if history.completed {
+                GenerationStatusKind::Completed
+            } else {
+                GenerationStatusKind::Failed
+            },
+            progress: Some(1.0),
+            current_step: None,
+            total_steps: None,
+            image_filenames: if filenames.is_empty() {
+                None
+            } else {
+                Some(filenames)
+            },
+            error: if !history.completed {
+                Some("Generation failed".to_string())
+            } else {
+                None
+            },
+        })
+    } else {
+        Ok(gen_status_failed(
+            prompt_id,
+            "No history found after generation",
+        ))
+    }
+}
+
+/// Poll history until the prompt completes or fails (fallback when WS unavailable)
 pub async fn wait_for_completion(
     client: &Client,
     endpoint: &str,
@@ -259,52 +316,112 @@ pub async fn wait_for_completion(
     timeout: Duration,
 ) -> Result<GenerationStatus> {
     let start = std::time::Instant::now();
-
     loop {
         if start.elapsed() > timeout {
-            return Ok(GenerationStatus {
-                prompt_id: prompt_id.to_string(),
-                status: GenerationStatusKind::Failed,
-                progress: None,
-                current_step: None,
-                total_steps: None,
-                image_filenames: None,
-                error: Some("Generation timed out".to_string()),
-            });
+            return Ok(gen_status_failed(prompt_id, "Generation timed out"));
         }
-
         if let Some(history) = get_history(client, endpoint, prompt_id).await? {
             if history.completed {
-                let filenames: Vec<String> =
-                    history.image_filenames.iter().map(|r| r.filename.clone()).collect();
-                return Ok(GenerationStatus {
-                    prompt_id: prompt_id.to_string(),
-                    status: GenerationStatusKind::Completed,
-                    progress: Some(1.0),
-                    current_step: None,
-                    total_steps: None,
-                    image_filenames: if filenames.is_empty() {
-                        None
-                    } else {
-                        Some(filenames)
-                    },
-                    error: None,
-                });
+                return fetch_completed_status(client, endpoint, prompt_id).await;
             } else if history.status == "error" {
-                return Ok(GenerationStatus {
-                    prompt_id: prompt_id.to_string(),
-                    status: GenerationStatusKind::Failed,
-                    progress: None,
-                    current_step: None,
-                    total_steps: None,
-                    image_filenames: None,
-                    error: Some("ComfyUI generation failed".to_string()),
-                });
+                return Ok(gen_status_failed(prompt_id, "ComfyUI generation failed"));
             }
         }
-
         tokio::time::sleep(poll_interval).await;
     }
+}
+
+/// Wait for completion using ComfyUI's WebSocket for real-time step progress.
+/// Calls `on_progress` for each sampling step. Falls back to polling on WS failure.
+pub async fn wait_for_completion_ws<F>(
+    client: &Client,
+    endpoint: &str,
+    prompt_id: &str,
+    client_id: &str,
+    timeout: Duration,
+    mut on_progress: F,
+) -> Result<GenerationStatus>
+where
+    F: FnMut(ProgressUpdate),
+{
+    let ws_url = format!(
+        "{}/ws?clientId={}",
+        endpoint
+            .replace("http://", "ws://")
+            .replace("https://", "wss://"),
+        client_id
+    );
+    let (mut ws, _) = match tokio_tungstenite::connect_async(&ws_url).await {
+        Ok(c) => c,
+        Err(e) => {
+            eprintln!("[comfyui] WS failed: {}, falling back to polling", e);
+            return wait_for_completion(
+                client,
+                endpoint,
+                prompt_id,
+                Duration::from_secs(2),
+                timeout,
+            )
+            .await;
+        }
+    };
+
+    let start = std::time::Instant::now();
+    while let Ok(Some(msg)) = tokio::time::timeout(Duration::from_secs(30), ws.next()).await {
+        if start.elapsed() > timeout {
+            return Ok(gen_status_failed(prompt_id, "Generation timed out"));
+        }
+        let text = match msg {
+            Ok(m) if m.is_text() => m.into_text().unwrap_or_default(),
+            Ok(_) => continue,
+            Err(_) => break,
+        };
+        let json: Value = match serde_json::from_str(&text) {
+            Ok(j) => j,
+            Err(_) => continue,
+        };
+        let msg_type = json.get("type").and_then(|v| v.as_str()).unwrap_or("");
+        let data = json.get("data");
+        let pid = data
+            .and_then(|d| d.get("prompt_id"))
+            .and_then(|v| v.as_str());
+        if pid.is_some() && pid != Some(prompt_id) {
+            continue;
+        }
+        match msg_type {
+            "progress" => {
+                if let Some(d) = data {
+                    let val = d.get("value").and_then(|v| v.as_u64()).unwrap_or(0) as u32;
+                    let max = d.get("max").and_then(|v| v.as_u64()).unwrap_or(1) as u32;
+                    on_progress(ProgressUpdate {
+                        current_step: val,
+                        total_steps: max,
+                    });
+                }
+            }
+            "executing"
+                if data
+                    .and_then(|d| d.get("node"))
+                    .map(|v| v.is_null())
+                    .unwrap_or(false) =>
+            {
+                return fetch_completed_status(client, endpoint, prompt_id).await;
+            }
+            "execution_error" => {
+                let err = data
+                    .and_then(|d| d.get("exception_message"))
+                    .and_then(|v| v.as_str())
+                    .unwrap_or("Unknown error");
+                return Ok(gen_status_failed(
+                    prompt_id,
+                    &format!("ComfyUI error: {}", err),
+                ));
+            }
+            _ => {}
+        }
+    }
+    // WS closed unexpectedly — fall back to polling
+    wait_for_completion(client, endpoint, prompt_id, Duration::from_secs(2), timeout).await
 }
 
 #[derive(Debug, Clone)]

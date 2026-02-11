@@ -3,9 +3,7 @@ use crate::state::AppState;
 use crate::types::generation::{GenerationRequest, GenerationStatus, GenerationStatusKind};
 
 #[tauri::command]
-pub async fn check_comfyui_health(
-    state: tauri::State<'_, AppState>,
-) -> Result<bool, String> {
+pub async fn check_comfyui_health(state: tauri::State<'_, AppState>) -> Result<bool, String> {
     let endpoint = {
         let config = state.config.lock().map_err(|e| e.to_string())?;
         config.comfyui.endpoint.clone()
@@ -68,13 +66,12 @@ pub async fn queue_generation(
         config.comfyui.endpoint.clone()
     };
 
-    let workflow_json = workflow::build_txt2img(&request);
+    let (workflow_json, _actual_seed) = workflow::build_txt2img(&request);
     let client_id = uuid::Uuid::new_v4().to_string();
 
-    let prompt_id =
-        client::queue_prompt(&state.http_client, &endpoint, &workflow_json, &client_id)
-            .await
-            .map_err(|e| format!("{:#}", e))?;
+    let prompt_id = client::queue_prompt(&state.http_client, &endpoint, &workflow_json, &client_id)
+        .await
+        .map_err(|e| format!("{:#}", e))?;
 
     Ok(GenerationStatus {
         prompt_id,
@@ -104,8 +101,11 @@ pub async fn get_generation_status(
     match history {
         Some(h) => {
             if h.completed {
-                let filenames: Vec<String> =
-                    h.image_filenames.iter().map(|r| r.filename.clone()).collect();
+                let filenames: Vec<String> = h
+                    .image_filenames
+                    .iter()
+                    .map(|r| r.filename.clone())
+                    .collect();
                 Ok(GenerationStatus {
                     prompt_id,
                     status: GenerationStatusKind::Completed,
@@ -183,9 +183,7 @@ pub async fn free_comfyui_memory(
 }
 
 #[tauri::command]
-pub async fn interrupt_comfyui(
-    state: tauri::State<'_, AppState>,
-) -> Result<(), String> {
+pub async fn interrupt_comfyui(state: tauri::State<'_, AppState>) -> Result<(), String> {
     let endpoint = {
         let config = state.config.lock().map_err(|e| e.to_string())?;
         config.comfyui.endpoint.clone()

@@ -3,6 +3,8 @@ use futures::StreamExt;
 use reqwest::Client;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
+use std::sync::atomic::{AtomicBool, Ordering};
+use std::sync::Arc;
 use std::time::Duration;
 
 #[derive(Debug, Clone, Serialize)]
@@ -17,6 +19,23 @@ pub struct ChatResponse {
     pub total_duration_ns: Option<u64>,
     pub prompt_eval_count: Option<u64>,
     pub eval_count: Option<u64>,
+}
+
+#[derive(Debug, Clone, Default)]
+pub struct OllamaOptions {
+    pub num_predict: Option<u32>,
+    pub repeat_penalty: Option<f64>,
+    pub repeat_last_n: Option<u32>,
+}
+
+/// Default options for pipeline stages: repeat_penalty=1.2, repeat_last_n=128, with
+/// a per-stage num_predict cap to prevent runaway generation.
+pub fn stage_options(num_predict: u32) -> OllamaOptions {
+    OllamaOptions {
+        num_predict: Some(num_predict),
+        repeat_penalty: Some(1.2),
+        repeat_last_n: Some(128),
+    }
 }
 
 #[derive(Debug, Clone, Deserialize)]
@@ -70,11 +89,7 @@ pub async fn list_models(client: &Client, endpoint: &str) -> Result<Vec<OllamaMo
             let name = m.get("name")?.as_str()?.to_string();
             let size = m.get("size").and_then(|s| s.as_u64());
             let digest = m.get("digest").and_then(|d| d.as_str().map(String::from));
-            Some(OllamaModel {
-                name,
-                size,
-                digest,
-            })
+            Some(OllamaModel { name, size, digest })
         })
         .collect();
 
@@ -88,16 +103,33 @@ pub async fn chat(
     messages: &[ChatMessage],
     format_json: bool,
 ) -> Result<ChatResponse> {
+    chat_with_options(client, endpoint, model, messages, format_json, &OllamaOptions::default()).await
+}
+
+pub async fn chat_with_options(
+    client: &Client,
+    endpoint: &str,
+    model: &str,
+    messages: &[ChatMessage],
+    format_json: bool,
+    opts: &OllamaOptions,
+) -> Result<ChatResponse> {
     let url = format!("{}/api/chat", endpoint);
 
     let mut body = serde_json::json!({
         "model": model,
         "messages": messages,
         "stream": false,
+        "keep_alive": "30m",
     });
 
     if format_json {
         body["format"] = serde_json::json!("json");
+    }
+
+    let options = build_options(opts);
+    if !options.is_empty() {
+        body["options"] = serde_json::json!(options);
     }
 
     let resp = client
@@ -155,6 +187,32 @@ pub async fn chat_streaming<F>(
     model: &str,
     messages: &[ChatMessage],
     format_json: bool,
+    on_token: F,
+) -> Result<ChatResponse>
+where
+    F: FnMut(&str),
+{
+    chat_streaming_with_options(
+        client,
+        endpoint,
+        model,
+        messages,
+        format_json,
+        &OllamaOptions::default(),
+        None,
+        on_token,
+    )
+    .await
+}
+
+pub async fn chat_streaming_with_options<F>(
+    client: &Client,
+    endpoint: &str,
+    model: &str,
+    messages: &[ChatMessage],
+    format_json: bool,
+    opts: &OllamaOptions,
+    cancelled: Option<Arc<AtomicBool>>,
     mut on_token: F,
 ) -> Result<ChatResponse>
 where
@@ -166,10 +224,16 @@ where
         "model": model,
         "messages": messages,
         "stream": true,
+        "keep_alive": "30m",
     });
 
     if format_json {
         body["format"] = serde_json::json!("json");
+    }
+
+    let options = build_options(opts);
+    if !options.is_empty() {
+        body["options"] = serde_json::json!(options);
     }
 
     let resp = client
@@ -199,6 +263,11 @@ where
     let mut line_buffer = String::new();
 
     while let Some(chunk) = stream.next().await {
+        if let Some(ref flag) = cancelled {
+            if flag.load(Ordering::Relaxed) {
+                anyhow::bail!("Pipeline cancelled by user");
+            }
+        }
         let chunk = chunk.context("Error reading stream chunk")?;
         let text = String::from_utf8_lossy(&chunk);
         line_buffer.push_str(&text);
@@ -230,8 +299,7 @@ where
 
                 if json.get("done").and_then(|v| v.as_bool()).unwrap_or(false) {
                     total_duration_ns = json.get("total_duration").and_then(|v| v.as_u64());
-                    prompt_eval_count =
-                        json.get("prompt_eval_count").and_then(|v| v.as_u64());
+                    prompt_eval_count = json.get("prompt_eval_count").and_then(|v| v.as_u64());
                     eval_count = json.get("eval_count").and_then(|v| v.as_u64());
                 }
             }
@@ -254,8 +322,7 @@ where
             }
             if json.get("done").and_then(|v| v.as_bool()).unwrap_or(false) {
                 total_duration_ns = json.get("total_duration").and_then(|v| v.as_u64());
-                prompt_eval_count =
-                    json.get("prompt_eval_count").and_then(|v| v.as_u64());
+                prompt_eval_count = json.get("prompt_eval_count").and_then(|v| v.as_u64());
                 eval_count = json.get("eval_count").and_then(|v| v.as_u64());
             }
         }
@@ -267,6 +334,44 @@ where
         prompt_eval_count,
         eval_count,
     })
+}
+
+fn build_options(opts: &OllamaOptions) -> serde_json::Map<String, Value> {
+    let mut map = serde_json::Map::new();
+    if let Some(n) = opts.num_predict {
+        map.insert("num_predict".into(), Value::Number(n.into()));
+    }
+    if let Some(rp) = opts.repeat_penalty {
+        map.insert(
+            "repeat_penalty".into(),
+            serde_json::Number::from_f64(rp)
+                .map(Value::Number)
+                .unwrap_or(Value::Null),
+        );
+    }
+    if let Some(rn) = opts.repeat_last_n {
+        map.insert("repeat_last_n".into(), Value::Number(rn.into()));
+    }
+    map
+}
+
+/// Unload a model from VRAM by setting keep_alive to 0.
+pub async fn unload_model(client: &Client, endpoint: &str, model: &str) -> Result<()> {
+    let url = format!("{}/api/generate", endpoint);
+    let body = serde_json::json!({
+        "model": model,
+        "prompt": "",
+        "keep_alive": 0,
+    });
+
+    let _ = client
+        .post(&url)
+        .timeout(Duration::from_secs(10))
+        .json(&body)
+        .send()
+        .await;
+
+    Ok(())
 }
 
 pub async fn generate(
@@ -282,6 +387,7 @@ pub async fn generate(
         "model": model,
         "prompt": prompt,
         "stream": false,
+        "keep_alive": "30m",
     });
 
     if format_json {

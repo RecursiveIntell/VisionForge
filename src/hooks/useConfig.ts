@@ -26,14 +26,16 @@ export function useConfig() {
   }, [load]);
 
   const save = useCallback(
-    async (updated: AppConfig) => {
+    async (updated: AppConfig): Promise<boolean> => {
       setSaving(true);
       setError(null);
       try {
         await saveConfig(updated);
         setConfig(updated);
+        return true;
       } catch (e) {
         setError(e instanceof Error ? e.message : String(e));
+        return false;
       } finally {
         setSaving(false);
       }

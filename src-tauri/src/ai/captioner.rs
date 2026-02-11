@@ -20,6 +20,11 @@ pub async fn caption_image(
         "prompt": CAPTION_PROMPT,
         "images": [image_b64],
         "stream": false,
+        "options": {
+            "num_predict": 512,
+            "repeat_penalty": 1.2,
+            "repeat_last_n": 128,
+        },
     });
 
     let url = format!("{}/api/generate", endpoint);
@@ -37,19 +42,34 @@ pub async fn caption_image(
         anyhow::bail!("Ollama returned {} for captioning: {}", status, text);
     }
 
-    let json: serde_json::Value = resp.json().await.context("Failed to parse Ollama response")?;
-    let caption = json
-        .get("response")
-        .and_then(|v| v.as_str())
-        .unwrap_or("")
-        .trim()
-        .to_string();
+    let json: serde_json::Value = resp
+        .json()
+        .await
+        .context("Failed to parse Ollama response")?;
+    let raw = json.get("response").and_then(|v| v.as_str()).unwrap_or("");
+
+    // Strip <think>...</think> blocks from reasoning models
+    let caption = strip_think_tags(raw).trim().to_string();
 
     if caption.is_empty() {
         anyhow::bail!("Ollama returned empty caption");
     }
 
     Ok(caption)
+}
+
+/// Strip `<think>...</think>` blocks emitted by reasoning models
+fn strip_think_tags(text: &str) -> String {
+    let mut result = text.to_string();
+    while let Some(start) = result.find("<think>") {
+        if let Some(end) = result[start..].find("</think>") {
+            result = format!("{}{}", &result[..start], &result[start + end + 8..]);
+        } else {
+            result = result[..start].to_string();
+            break;
+        }
+    }
+    result
 }
 
 fn read_image_base64(path: &Path) -> Result<String> {

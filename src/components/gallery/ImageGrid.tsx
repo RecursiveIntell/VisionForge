@@ -6,6 +6,7 @@ interface ImageGridProps {
   selectedId?: string;
   compareSelection?: string[];
   onSelect: (image: ImageEntry) => void;
+  onEnlarge?: (image: ImageEntry) => void;
   onFavoriteToggle: (image: ImageEntry) => void;
 }
 
@@ -14,6 +15,7 @@ export function ImageGrid({
   selectedId,
   compareSelection,
   onSelect,
+  onEnlarge,
   onFavoriteToggle,
 }: ImageGridProps) {
   if (images.length === 0) {
@@ -33,6 +35,7 @@ export function ImageGrid({
           selected={image.id === selectedId}
           compareSelected={compareSelection?.includes(image.id)}
           onClick={() => onSelect(image)}
+          onEnlarge={onEnlarge ? () => onEnlarge(image) : undefined}
           onFavoriteToggle={() => onFavoriteToggle(image)}
         />
       ))}

@@ -14,8 +14,7 @@ pub async fn get_gallery_images(
 
     // Load tags for each image
     for img in &mut images {
-        let tags = db::tags::get_image_tags(&conn, &img.id)
-            .unwrap_or_default();
+        let tags = db::tags::get_image_tags(&conn, &img.id).unwrap_or_default();
         if !tags.is_empty() {
             img.tags = Some(tags);
         }
@@ -30,8 +29,8 @@ pub async fn get_image(
     id: String,
 ) -> Result<Option<ImageEntry>, String> {
     let conn = state.db.lock().map_err(|e| e.to_string())?;
-    let mut image = db::images::get_image(&conn, &id)
-        .map_err(|e| format!("Failed to get image: {:#}", e))?;
+    let mut image =
+        db::images::get_image(&conn, &id).map_err(|e| format!("Failed to get image: {:#}", e))?;
 
     if let Some(ref mut img) = image {
         let tags = db::tags::get_image_tags(&conn, &img.id).unwrap_or_default();
@@ -44,23 +43,16 @@ pub async fn get_image(
 }
 
 #[tauri::command]
-pub async fn delete_image(
-    state: tauri::State<'_, AppState>,
-    id: String,
-) -> Result<(), String> {
+pub async fn delete_image(state: tauri::State<'_, AppState>, id: String) -> Result<(), String> {
     let conn = state.db.lock().map_err(|e| e.to_string())?;
     db::images::soft_delete_image(&conn, &id)
         .map_err(|e| format!("Failed to delete image: {:#}", e))
 }
 
 #[tauri::command]
-pub async fn restore_image(
-    state: tauri::State<'_, AppState>,
-    id: String,
-) -> Result<(), String> {
+pub async fn restore_image(state: tauri::State<'_, AppState>, id: String) -> Result<(), String> {
     let conn = state.db.lock().map_err(|e| e.to_string())?;
-    db::images::restore_image(&conn, &id)
-        .map_err(|e| format!("Failed to restore image: {:#}", e))
+    db::images::restore_image(&conn, &id).map_err(|e| format!("Failed to restore image: {:#}", e))
 }
 
 #[tauri::command]
@@ -71,15 +63,16 @@ pub async fn permanently_delete_image(
     let conn = state.db.lock().map_err(|e| e.to_string())?;
 
     // Get filename before deleting from DB
-    let image = db::images::get_image(&conn, &id)
-        .map_err(|e| format!("Failed to get image: {:#}", e))?;
+    let image =
+        db::images::get_image(&conn, &id).map_err(|e| format!("Failed to get image: {:#}", e))?;
 
     db::images::permanently_delete_image(&conn, &id)
         .map_err(|e| format!("Failed to permanently delete image: {:#}", e))?;
 
     // Delete files from disk
     if let Some(img) = image {
-        let _ = storage::delete_image_files(&img.filename);
+        let config = state.config.lock().map_err(|e| e.to_string())?;
+        let _ = storage::delete_image_files_for(&config, &img.filename);
     }
 
     Ok(())
@@ -167,26 +160,36 @@ pub async fn get_image_lineage(
 
 #[tauri::command]
 pub async fn get_image_file_path(
-    _state: tauri::State<'_, AppState>,
+    state: tauri::State<'_, AppState>,
     filename: String,
 ) -> Result<String, String> {
-    let path = storage::get_image_path(&filename);
+    let config = state.config.lock().map_err(|e| e.to_string())?;
+    let path = storage::get_image_path_for(&config, &filename);
     if path.exists() {
-        Ok(path.to_string_lossy().to_string())
-    } else {
-        Err(format!("Image file not found: {}", filename))
+        return Ok(path.to_string_lossy().to_string());
     }
+    // Fallback to default path for images saved before config change
+    let fallback = storage::get_image_path(&filename);
+    if fallback.exists() {
+        return Ok(fallback.to_string_lossy().to_string());
+    }
+    Err(format!("Image file not found: {}", filename))
 }
 
 #[tauri::command]
 pub async fn get_thumbnail_file_path(
-    _state: tauri::State<'_, AppState>,
+    state: tauri::State<'_, AppState>,
     filename: String,
 ) -> Result<String, String> {
-    let path = storage::get_thumbnail_path(&filename);
+    let config = state.config.lock().map_err(|e| e.to_string())?;
+    let path = storage::get_thumbnail_path_for(&config, &filename);
     if path.exists() {
-        Ok(path.to_string_lossy().to_string())
-    } else {
-        Err(format!("Thumbnail not found for: {}", filename))
+        return Ok(path.to_string_lossy().to_string());
     }
+    // Fallback to default path for images saved before config change
+    let fallback = storage::get_thumbnail_path(&filename);
+    if fallback.exists() {
+        return Ok(fallback.to_string_lossy().to_string());
+    }
+    Err(format!("Thumbnail not found for: {}", filename))
 }

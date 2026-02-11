@@ -1,10 +1,10 @@
-pub mod migrations;
-pub mod images;
-pub mod tags;
-pub mod seeds;
 pub mod checkpoints;
 pub mod comparisons;
+pub mod images;
+pub mod migrations;
 pub mod queue;
+pub mod seeds;
+pub mod tags;
 
 use anyhow::{Context, Result};
 use rusqlite::Connection;

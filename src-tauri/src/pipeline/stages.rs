@@ -31,9 +31,11 @@ pub async fn run_ideator(
         },
     ];
 
-    let resp = ollama::chat(client, endpoint, model, &messages, false)
-        .await
-        .context("Ideator stage failed")?;
+    let resp = ollama::chat_with_options(
+        client, endpoint, model, &messages, false, &ollama::stage_options(1024),
+    )
+    .await
+    .context("Ideator stage failed")?;
 
     let concepts = parse_numbered_list(&resp.content);
     if concepts.is_empty() {
@@ -74,9 +76,11 @@ pub async fn run_composer(
         },
     ];
 
-    let resp = ollama::chat(client, endpoint, model, &messages, false)
-        .await
-        .context("Composer stage failed")?;
+    let resp = ollama::chat_with_options(
+        client, endpoint, model, &messages, false, &ollama::stage_options(2048),
+    )
+    .await
+    .context("Composer stage failed")?;
 
     let output = resp.content.trim().to_string();
     if output.is_empty() {
@@ -115,12 +119,14 @@ pub async fn run_judge(
         },
     ];
 
-    let resp = ollama::chat(client, endpoint, model, &messages, true)
-        .await
-        .context("Judge stage failed")?;
+    let resp = ollama::chat_with_options(
+        client, endpoint, model, &messages, true, &ollama::stage_options(1024),
+    )
+    .await
+    .context("Judge stage failed")?;
 
-    let rankings = parse_judge_rankings(&resp.content)
-        .context("Failed to parse Judge output as rankings")?;
+    let rankings =
+        parse_judge_rankings(&resp.content).context("Failed to parse Judge output as rankings")?;
 
     if rankings.is_empty() {
         anyhow::bail!(
@@ -128,6 +134,8 @@ pub async fn run_judge(
             &resp.content[..resp.content.len().min(200)]
         );
     }
+
+    let rankings = backfill_rankings(rankings, concepts.len());
 
     Ok(JudgeOutput {
         input: concepts.to_vec(),
@@ -164,9 +172,11 @@ pub async fn run_prompt_engineer(
         },
     ];
 
-    let resp = ollama::chat(client, endpoint, model, &messages, true)
-        .await
-        .context("Prompt Engineer stage failed")?;
+    let resp = ollama::chat_with_options(
+        client, endpoint, model, &messages, true, &ollama::stage_options(1024),
+    )
+    .await
+    .context("Prompt Engineer stage failed")?;
 
     let pair = parse_prompt_pair(&resp.content)
         .context("Failed to parse Prompt Engineer output as positive/negative pair")?;
@@ -204,12 +214,13 @@ pub async fn run_reviewer(
         },
     ];
 
-    let resp = ollama::chat(client, endpoint, model, &messages, true)
-        .await
-        .context("Reviewer stage failed")?;
+    let resp = ollama::chat_with_options(
+        client, endpoint, model, &messages, true, &ollama::stage_options(1024),
+    )
+    .await
+    .context("Reviewer stage failed")?;
 
-    let output = parse_reviewer_output(&resp.content)
-        .context("Failed to parse Reviewer output")?;
+    let output = parse_reviewer_output(&resp.content).context("Failed to parse Reviewer output")?;
 
     Ok(ReviewerOutput {
         approved: output.approved,
@@ -237,8 +248,8 @@ pub(super) fn parse_numbered_list(text: &str) -> Vec<String> {
             .find(|c: char| !c.is_ascii_digit())
             .unwrap_or(trimmed.len());
         let after_digits = &trimmed[prefix_end..];
-        let is_new_item = prefix_end > 0
-            && (after_digits.starts_with(". ") || after_digits.starts_with(") "));
+        let is_new_item =
+            prefix_end > 0 && (after_digits.starts_with(". ") || after_digits.starts_with(") "));
 
         if is_new_item {
             if !current.is_empty() {
@@ -292,18 +303,12 @@ pub(super) fn parse_judge_rankings(text: &str) -> Result<Vec<JudgeRanking>> {
 
     let mut rankings = Vec::new();
     for item in arr {
-        let rank = item
-            .get("rank")
-            .and_then(|v| v.as_u64())
-            .unwrap_or(0) as u32;
+        let rank = item.get("rank").and_then(|v| v.as_u64()).unwrap_or(0) as u32;
         let concept_index = item
             .get("concept_index")
             .and_then(|v| v.as_u64())
             .unwrap_or(0) as usize;
-        let score = item
-            .get("score")
-            .and_then(|v| v.as_u64())
-            .unwrap_or(0) as u32;
+        let score = item.get("score").and_then(|v| v.as_u64()).unwrap_or(0) as u32;
         let reasoning = item
             .get("reasoning")
             .and_then(|v| v.as_str())
@@ -320,6 +325,27 @@ pub(super) fn parse_judge_rankings(text: &str) -> Result<Vec<JudgeRanking>> {
 
     rankings.sort_by_key(|r| r.rank);
     Ok(rankings)
+}
+
+/// Backfill any missing concept indices so the judge output has one entry per concept.
+/// Missing concepts get appended with a low score and placeholder reasoning.
+pub(super) fn backfill_rankings(mut rankings: Vec<JudgeRanking>, num_concepts: usize) -> Vec<JudgeRanking> {
+    let present: std::collections::HashSet<usize> = rankings.iter().map(|r| r.concept_index).collect();
+    let max_rank = rankings.iter().map(|r| r.rank).max().unwrap_or(0);
+
+    for i in 0..num_concepts {
+        if !present.contains(&i) {
+            rankings.push(JudgeRanking {
+                rank: max_rank + 1 + (i as u32),
+                concept_index: i,
+                score: 0,
+                reasoning: "(Not evaluated by judge)".to_string(),
+            });
+        }
+    }
+
+    rankings.sort_by_key(|r| r.rank);
+    rankings
 }
 
 pub(super) fn parse_prompt_pair(text: &str) -> Result<PromptPair> {

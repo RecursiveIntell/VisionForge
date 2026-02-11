@@ -11,6 +11,29 @@ pub fn config_path() -> PathBuf {
     data_dir().join("config.toml")
 }
 
+/// Returns the image base directory. Uses the custom directory from config
+/// if set and non-empty, otherwise falls back to ~/.visionforge/images.
+/// Expands `~` to the user's home directory (shell-style tilde expansion).
+pub fn image_dir(config: &AppConfig) -> PathBuf {
+    let custom = &config.storage.image_directory;
+    if custom.is_empty() {
+        data_dir().join("images")
+    } else {
+        expand_tilde(custom)
+    }
+}
+
+/// Expand a leading `~` or `~/` to the user's home directory.
+fn expand_tilde(path: &str) -> PathBuf {
+    if path == "~" {
+        dirs_home()
+    } else if let Some(rest) = path.strip_prefix("~/") {
+        dirs_home().join(rest)
+    } else {
+        PathBuf::from(path)
+    }
+}
+
 fn dirs_home() -> PathBuf {
     std::env::var("HOME")
         .or_else(|_| std::env::var("USERPROFILE"))
@@ -33,8 +56,7 @@ pub fn load_or_create_default() -> Result<AppConfig> {
 pub fn load_config(path: &std::path::Path) -> Result<AppConfig> {
     let content = std::fs::read_to_string(path)
         .with_context(|| format!("Failed to read config at {}", path.display()))?;
-    let config: TomlConfig =
-        toml::from_str(&content).context("Failed to parse config.toml")?;
+    let config: TomlConfig = toml::from_str(&content).context("Failed to parse config.toml")?;
     Ok(config.into_app_config())
 }
 
@@ -68,6 +90,14 @@ struct TomlConfig {
     hardware: TomlHardware,
     #[serde(default)]
     presets: std::collections::HashMap<String, TomlPreset>,
+    #[serde(default)]
+    storage: TomlStorage,
+}
+
+#[derive(Debug, Default, serde::Serialize, serde::Deserialize)]
+struct TomlStorage {
+    #[serde(default)]
+    image_directory: String,
 }
 
 #[derive(Debug, serde::Serialize, serde::Deserialize)]
@@ -138,13 +168,27 @@ impl Default for TomlModels {
     }
 }
 
-fn default_ideator() -> String { "mistral:7b".to_string() }
-fn default_composer() -> String { "llama3.1:8b".to_string() }
-fn default_judge() -> String { "qwen2.5:7b".to_string() }
-fn default_prompt_engineer() -> String { "mistral:7b".to_string() }
-fn default_reviewer() -> String { "qwen2.5:7b".to_string() }
-fn default_tagger() -> String { "llava:7b".to_string() }
-fn default_captioner() -> String { "llava:7b".to_string() }
+fn default_ideator() -> String {
+    "mistral:7b".to_string()
+}
+fn default_composer() -> String {
+    "llama3.1:8b".to_string()
+}
+fn default_judge() -> String {
+    "qwen2.5:7b".to_string()
+}
+fn default_prompt_engineer() -> String {
+    "mistral:7b".to_string()
+}
+fn default_reviewer() -> String {
+    "qwen2.5:7b".to_string()
+}
+fn default_tagger() -> String {
+    "llava:7b".to_string()
+}
+fn default_captioner() -> String {
+    "llava:7b".to_string()
+}
 
 #[derive(Debug, serde::Serialize, serde::Deserialize)]
 struct TomlPipeline {
@@ -175,7 +219,9 @@ impl Default for TomlPipeline {
     }
 }
 
-fn default_true() -> bool { true }
+fn default_true() -> bool {
+    true
+}
 
 #[derive(Debug, serde::Serialize, serde::Deserialize)]
 struct TomlHardware {
@@ -203,10 +249,18 @@ impl Default for TomlHardware {
     }
 }
 
-fn default_cooldown() -> u32 { 30 }
-fn default_max_consecutive() -> u32 { 5 }
-fn default_ha_entity() -> String { "sensor.gpu_power_draw".to_string() }
-fn default_ha_watts() -> u32 { 180 }
+fn default_cooldown() -> u32 {
+    30
+}
+fn default_max_consecutive() -> u32 {
+    5
+}
+fn default_ha_entity() -> String {
+    "sensor.gpu_power_draw".to_string()
+}
+fn default_ha_watts() -> u32 {
+    180
+}
 
 #[derive(Debug, serde::Serialize, serde::Deserialize)]
 struct TomlPreset {
@@ -274,6 +328,9 @@ impl TomlConfig {
                 ha_entity_id: self.hardware.ha_entity_id,
                 ha_max_watts: self.hardware.ha_max_watts,
             },
+            storage: crate::types::config::StorageSettings {
+                image_directory: self.storage.image_directory,
+            },
             presets,
         }
     }
@@ -325,6 +382,9 @@ impl TomlConfig {
                 ha_entity_id: config.hardware.ha_entity_id.clone(),
                 ha_max_watts: config.hardware.ha_max_watts,
             },
+            storage: TomlStorage {
+                image_directory: config.storage.image_directory.clone(),
+            },
             presets,
         }
     }
@@ -357,9 +417,41 @@ mod tests {
         assert_eq!(roundtripped.comfyui.endpoint, config.comfyui.endpoint);
         assert_eq!(roundtripped.ollama.endpoint, config.ollama.endpoint);
         assert_eq!(roundtripped.models.ideator, config.models.ideator);
-        assert_eq!(roundtripped.pipeline.enable_ideator, config.pipeline.enable_ideator);
-        assert_eq!(roundtripped.hardware.cooldown_seconds, config.hardware.cooldown_seconds);
+        assert_eq!(
+            roundtripped.pipeline.enable_ideator,
+            config.pipeline.enable_ideator
+        );
+        assert_eq!(
+            roundtripped.hardware.cooldown_seconds,
+            config.hardware.cooldown_seconds
+        );
         assert_eq!(roundtripped.presets.len(), config.presets.len());
+    }
+
+    #[test]
+    fn test_expand_tilde() {
+        let home = super::dirs_home();
+        assert_eq!(super::expand_tilde("~"), home);
+        assert_eq!(super::expand_tilde("~/Pictures"), home.join("Pictures"));
+        assert_eq!(
+            super::expand_tilde("~/Pictures/SD"),
+            home.join("Pictures/SD")
+        );
+        // Non-tilde paths pass through unchanged
+        assert_eq!(
+            super::expand_tilde("/tmp/images"),
+            PathBuf::from("/tmp/images")
+        );
+    }
+
+    #[test]
+    fn test_image_dir_expands_tilde() {
+        let mut config = AppConfig::default();
+        config.storage.image_directory = "~/Pictures/SD".to_string();
+        let dir = super::image_dir(&config);
+        assert!(dir.to_str().unwrap().contains("Pictures/SD"));
+        // Must NOT contain a literal ~
+        assert!(!dir.to_str().unwrap().contains('~'));
     }
 
     #[test]

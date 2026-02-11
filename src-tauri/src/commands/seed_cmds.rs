@@ -8,8 +8,7 @@ pub async fn create_seed(
     seed: SeedEntry,
 ) -> Result<i64, String> {
     let conn = state.db.lock().map_err(|e| e.to_string())?;
-    db::seeds::insert_seed(&conn, &seed)
-        .map_err(|e| format!("Failed to create seed: {:#}", e))
+    db::seeds::insert_seed(&conn, &seed).map_err(|e| format!("Failed to create seed: {:#}", e))
 }
 
 #[tauri::command]
@@ -18,8 +17,7 @@ pub async fn get_seed(
     id: i64,
 ) -> Result<Option<SeedEntry>, String> {
     let conn = state.db.lock().map_err(|e| e.to_string())?;
-    db::seeds::get_seed(&conn, id)
-        .map_err(|e| format!("Failed to get seed: {:#}", e))
+    db::seeds::get_seed(&conn, id).map_err(|e| format!("Failed to get seed: {:#}", e))
 }
 
 #[tauri::command]
@@ -28,18 +26,13 @@ pub async fn list_seeds(
     filter: SeedFilter,
 ) -> Result<Vec<SeedEntry>, String> {
     let conn = state.db.lock().map_err(|e| e.to_string())?;
-    db::seeds::list_seeds(&conn, &filter)
-        .map_err(|e| format!("Failed to list seeds: {:#}", e))
+    db::seeds::list_seeds(&conn, &filter).map_err(|e| format!("Failed to list seeds: {:#}", e))
 }
 
 #[tauri::command]
-pub async fn delete_seed(
-    state: tauri::State<'_, AppState>,
-    id: i64,
-) -> Result<(), String> {
+pub async fn delete_seed(state: tauri::State<'_, AppState>, id: i64) -> Result<(), String> {
     let conn = state.db.lock().map_err(|e| e.to_string())?;
-    db::seeds::delete_seed(&conn, id)
-        .map_err(|e| format!("Failed to delete seed: {:#}", e))
+    db::seeds::delete_seed(&conn, id).map_err(|e| format!("Failed to delete seed: {:#}", e))
 }
 
 #[tauri::command]

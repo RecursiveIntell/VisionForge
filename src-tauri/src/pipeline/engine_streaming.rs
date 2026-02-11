@@ -1,5 +1,7 @@
 use anyhow::{Context, Result};
 use reqwest::Client;
+use std::sync::atomic::{AtomicBool, Ordering};
+use std::sync::Arc;
 use tauri::{AppHandle, Emitter};
 
 use super::engine::PipelineInput;
@@ -10,11 +12,19 @@ use crate::types::pipeline::{
     PipelineStageStartEvent, PipelineStageTokenEvent, PipelineStages, PromptPair,
 };
 
+fn check_cancelled(cancelled: &Arc<AtomicBool>) -> Result<()> {
+    if cancelled.load(Ordering::Relaxed) {
+        anyhow::bail!("Pipeline cancelled by user");
+    }
+    Ok(())
+}
+
 pub async fn run_pipeline_streaming(
     client: &Client,
     config: &AppConfig,
     input: PipelineInput,
     app_handle: AppHandle,
+    cancelled: Arc<AtomicBool>,
 ) -> Result<PipelineResult> {
     let pipeline = &config.pipeline;
     let models = &config.models;
@@ -65,6 +75,7 @@ pub async fn run_pipeline_streaming(
 
     // Stage 1: Ideator
     let concepts = if stages_enabled[0] {
+        check_cancelled(&cancelled)?;
         let _ = app_handle.emit(
             "pipeline:stage_start",
             PipelineStageStartEvent {
@@ -79,6 +90,7 @@ pub async fn run_pipeline_streaming(
             &models.ideator,
             &input.idea,
             input.num_concepts,
+            Some(cancelled.clone()),
             move |token: &str| {
                 let _ = ah.emit(
                     "pipeline:stage_token",
@@ -109,6 +121,7 @@ pub async fn run_pipeline_streaming(
 
     // Stage 2: Composer — enrich each concept
     let (composed, all_composer_outputs) = if stages_enabled[1] {
+        check_cancelled(&cancelled)?;
         let _ = app_handle.emit(
             "pipeline:stage_start",
             PipelineStageStartEvent {
@@ -120,6 +133,7 @@ pub async fn run_pipeline_streaming(
         let mut all_outputs: Vec<ComposerOutput> = Vec::new();
 
         for (i, concept) in concepts.iter().enumerate() {
+            check_cancelled(&cancelled)?;
             let ah = app_handle.clone();
             let output = stages_streaming::run_composer_streaming(
                 client,
@@ -127,6 +141,7 @@ pub async fn run_pipeline_streaming(
                 &models.composer,
                 concept,
                 i,
+                Some(cancelled.clone()),
                 move |token: &str| {
                     let _ = ah.emit(
                         "pipeline:stage_token",
@@ -138,9 +153,7 @@ pub async fn run_pipeline_streaming(
                 },
             )
             .await
-            .with_context(|| {
-                format!("Pipeline failed at Composer stage for concept {}", i)
-            })?;
+            .with_context(|| format!("Pipeline failed at Composer stage for concept {}", i))?;
             composed_descs.push(output.output.clone());
             all_outputs.push(output);
         }
@@ -160,6 +173,7 @@ pub async fn run_pipeline_streaming(
 
     // Stage 3: Judge — rank composed descriptions (skip if only 1 concept)
     let (top_description, selected_index) = if stages_enabled[2] && composed.len() > 1 {
+        check_cancelled(&cancelled)?;
         let _ = app_handle.emit(
             "pipeline:stage_start",
             PipelineStageStartEvent {
@@ -174,6 +188,7 @@ pub async fn run_pipeline_streaming(
             &models.judge,
             &input.idea,
             &composed,
+            Some(cancelled.clone()),
             move |token: &str| {
                 let _ = ah.emit(
                     "pipeline:stage_token",
@@ -219,6 +234,7 @@ pub async fn run_pipeline_streaming(
 
     // Stage 4: Prompt Engineer — convert to SD prompts
     let prompt_pair = if stages_enabled[3] {
+        check_cancelled(&cancelled)?;
         let _ = app_handle.emit(
             "pipeline:stage_start",
             PipelineStageStartEvent {
@@ -233,6 +249,7 @@ pub async fn run_pipeline_streaming(
             &models.prompt_engineer,
             &top_description,
             input.checkpoint_context,
+            Some(cancelled.clone()),
             move |token: &str| {
                 let _ = ah.emit(
                     "pipeline:stage_token",
@@ -265,6 +282,7 @@ pub async fn run_pipeline_streaming(
 
     // Stage 5: Reviewer — sanity check
     if stages_enabled[4] {
+        check_cancelled(&cancelled)?;
         let _ = app_handle.emit(
             "pipeline:stage_start",
             PipelineStageStartEvent {
@@ -280,6 +298,7 @@ pub async fn run_pipeline_streaming(
             &input.idea,
             &prompt_pair.positive,
             &prompt_pair.negative,
+            Some(cancelled.clone()),
             move |token: &str| {
                 let _ = ah.emit(
                     "pipeline:stage_token",
@@ -315,6 +334,24 @@ pub async fn run_pipeline_streaming(
                 }
             }
         }
+    }
+
+    // Unload the last used model to free VRAM for Stable Diffusion
+    let last_model = if stages_enabled[4] {
+        Some(&models.reviewer)
+    } else if stages_enabled[3] {
+        Some(&models.prompt_engineer)
+    } else if stages_enabled[2] && composed.len() > 1 {
+        Some(&models.judge)
+    } else if stages_enabled[1] {
+        Some(&models.composer)
+    } else if stages_enabled[0] {
+        Some(&models.ideator)
+    } else {
+        None
+    };
+    if let Some(model) = last_model {
+        let _ = super::ollama::unload_model(client, endpoint, model).await;
     }
 
     Ok(PipelineResult {

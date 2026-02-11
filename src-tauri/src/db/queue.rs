@@ -99,32 +99,22 @@ pub fn get_pending_jobs(conn: &Connection) -> Result<Vec<QueueJob>> {
     Ok(jobs)
 }
 
-pub fn update_job_status(
-    conn: &Connection,
-    id: &str,
-    status: &QueueJobStatus,
-) -> Result<()> {
+pub fn update_job_status(conn: &Connection, id: &str, status: &QueueJobStatus) -> Result<()> {
     let now = chrono::Utc::now().to_rfc3339();
 
     match status {
-        QueueJobStatus::Generating => {
-            conn.execute(
-                "UPDATE queue_jobs SET status = ?1, started_at = ?2 WHERE id = ?3",
-                params![status.as_str(), now, id],
-            )
-        }
-        QueueJobStatus::Completed | QueueJobStatus::Failed => {
-            conn.execute(
-                "UPDATE queue_jobs SET status = ?1, completed_at = ?2 WHERE id = ?3",
-                params![status.as_str(), now, id],
-            )
-        }
-        _ => {
-            conn.execute(
-                "UPDATE queue_jobs SET status = ?1 WHERE id = ?2",
-                params![status.as_str(), id],
-            )
-        }
+        QueueJobStatus::Generating => conn.execute(
+            "UPDATE queue_jobs SET status = ?1, started_at = ?2 WHERE id = ?3",
+            params![status.as_str(), now, id],
+        ),
+        QueueJobStatus::Completed | QueueJobStatus::Failed => conn.execute(
+            "UPDATE queue_jobs SET status = ?1, completed_at = ?2 WHERE id = ?3",
+            params![status.as_str(), now, id],
+        ),
+        _ => conn.execute(
+            "UPDATE queue_jobs SET status = ?1 WHERE id = ?2",
+            params![status.as_str(), id],
+        ),
     }
     .context("Failed to update job status")?;
     Ok(())
@@ -148,17 +138,42 @@ pub fn update_job_priority(conn: &Connection, id: &str, priority: &QueuePriority
     Ok(())
 }
 
-pub fn cancel_job(conn: &Connection, id: &str) -> Result<()> {
-    let rows = conn
-        .execute(
-            "UPDATE queue_jobs SET status = 'cancelled' WHERE id = ?1 AND status = 'pending'",
+/// Cancel a job. Returns the previous status so the caller can decide whether
+/// to also interrupt ComfyUI (i.e. if it was 'generating').
+pub fn cancel_job(conn: &Connection, id: &str) -> Result<String> {
+    // First read the current status
+    let prev_status: String = conn
+        .query_row(
+            "SELECT status FROM queue_jobs WHERE id = ?1",
             params![id],
+            |row| row.get(0),
         )
-        .context("Failed to cancel job")?;
-    if rows == 0 {
-        anyhow::bail!("Job '{}' not found or is not in pending status", id);
+        .map_err(|_| anyhow::anyhow!("Job '{}' not found", id))?;
+
+    if prev_status != "pending" && prev_status != "generating" {
+        anyhow::bail!("Job '{}' is not cancellable (status: {})", id, prev_status);
     }
-    Ok(())
+
+    let now = chrono::Utc::now().to_rfc3339();
+    conn.execute(
+        "UPDATE queue_jobs SET status = 'cancelled', completed_at = ?1 WHERE id = ?2 AND status IN ('pending', 'generating')",
+        params![now, id],
+    )
+    .context("Failed to cancel job")?;
+
+    Ok(prev_status)
+}
+
+/// Check if a job has been cancelled (used by executor during generation).
+pub fn is_job_cancelled(conn: &Connection, id: &str) -> Result<bool> {
+    let status: String = conn
+        .query_row(
+            "SELECT status FROM queue_jobs WHERE id = ?1",
+            params![id],
+            |row| row.get(0),
+        )
+        .map_err(|_| anyhow::anyhow!("Job '{}' not found", id))?;
+    Ok(status == "cancelled")
 }
 
 pub fn requeue_interrupted_jobs(conn: &Connection) -> Result<u32> {
@@ -198,7 +213,9 @@ mod tests {
     use super::*;
     use crate::db;
 
-    fn setup() -> Connection { db::open_memory_database().unwrap() }
+    fn setup() -> Connection {
+        db::open_memory_database().unwrap()
+    }
 
     fn make_job(id: &str, priority: QueuePriority) -> QueueJob {
         QueueJob {
@@ -261,28 +278,47 @@ mod tests {
     }
 
     #[test]
-    fn test_cancel_job() {
+    fn test_cancel_pending_job() {
         let conn = setup();
         insert_job(&conn, &make_job("job-1", QueuePriority::Normal)).unwrap();
-        cancel_job(&conn, "job-1").unwrap();
+        let prev = cancel_job(&conn, "job-1").unwrap();
+        assert_eq!(prev, "pending");
 
         let job = get_job(&conn, "job-1").unwrap().unwrap();
         assert_eq!(job.status, QueueJobStatus::Cancelled);
     }
 
     #[test]
-    fn test_cancel_only_pending() {
+    fn test_cancel_generating_job() {
         let conn = setup();
         insert_job(&conn, &make_job("job-1", QueuePriority::Normal)).unwrap();
         update_job_status(&conn, "job-1", &QueueJobStatus::Generating).unwrap();
 
-        // Cancelling a non-pending job should return an error
+        let prev = cancel_job(&conn, "job-1").unwrap();
+        assert_eq!(prev, "generating");
+
+        let job = get_job(&conn, "job-1").unwrap().unwrap();
+        assert_eq!(job.status, QueueJobStatus::Cancelled);
+    }
+
+    #[test]
+    fn test_cancel_completed_fails() {
+        let conn = setup();
+        insert_job(&conn, &make_job("job-1", QueuePriority::Normal)).unwrap();
+        update_job_status(&conn, "job-1", &QueueJobStatus::Completed).unwrap();
+
         let result = cancel_job(&conn, "job-1");
         assert!(result.is_err());
+    }
 
-        // Status should remain unchanged
-        let job = get_job(&conn, "job-1").unwrap().unwrap();
-        assert_eq!(job.status, QueueJobStatus::Generating);
+    #[test]
+    fn test_is_job_cancelled() {
+        let conn = setup();
+        insert_job(&conn, &make_job("job-1", QueuePriority::Normal)).unwrap();
+        assert!(!is_job_cancelled(&conn, "job-1").unwrap());
+
+        cancel_job(&conn, "job-1").unwrap();
+        assert!(is_job_cancelled(&conn, "job-1").unwrap());
     }
 
     #[test]
@@ -317,7 +353,8 @@ mod tests {
         conn.execute(
             "INSERT INTO images (id, filename) VALUES ('img-001', 'test.png')",
             [],
-        ).unwrap();
+        )
+        .unwrap();
 
         insert_job(&conn, &make_job("job-1", QueuePriority::Normal)).unwrap();
         set_job_result_image(&conn, "job-1", "img-001").unwrap();

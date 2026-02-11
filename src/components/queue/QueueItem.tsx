@@ -10,9 +10,11 @@ import {
 } from "lucide-react";
 import { ProgressBar } from "./ProgressBar";
 import type { QueueJob, QueuePriority } from "../../types";
+import type { JobProgress } from "../../hooks/useQueue";
 
 interface QueueItemProps {
   job: QueueJob;
+  progress?: JobProgress;
   onCancel: () => void;
   onReorder: (priority: QueuePriority) => void;
 }
@@ -31,7 +33,7 @@ const priorityColors: Record<QueuePriority, string> = {
   low: "text-zinc-500 bg-zinc-800",
 };
 
-export function QueueItem({ job, onCancel, onReorder }: QueueItemProps) {
+export function QueueItem({ job, progress, onCancel, onReorder }: QueueItemProps) {
   const status = statusConfig[job.status];
   const StatusIcon = status.icon;
   const isActive = job.status === "pending" || job.status === "generating";
@@ -69,7 +71,17 @@ export function QueueItem({ job, onCancel, onReorder }: QueueItemProps) {
           </div>
 
           {job.status === "generating" && (
-            <ProgressBar progress={50} className="mt-2" />
+            <div className="mt-2">
+              <ProgressBar
+                progress={progress ? progress.progress * 100 : 0}
+                className=""
+              />
+              {progress && progress.totalSteps > 0 && (
+                <p className="text-[10px] text-zinc-500 mt-0.5">
+                  Step {progress.currentStep}/{progress.totalSteps}
+                </p>
+              )}
+            </div>
           )}
         </div>
 

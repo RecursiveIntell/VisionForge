@@ -254,9 +254,9 @@ export function GalleryView() {
                   handleCompareToggle(img.id);
                 } else {
                   handleSelect(img);
-                  openLightbox(img);
                 }
               }}
+              onEnlarge={openLightbox}
               onFavoriteToggle={handleFavoriteToggle}
             />
           </div>
@@ -276,6 +276,7 @@ export function GalleryView() {
             onRemoveTag={handleRemoveTag}
             onDelete={handleDelete}
             onRefresh={refresh}
+            onViewFullSize={() => openLightbox(selectedImage)}
           />
           <div className="px-4 pb-4">
             <LineageViewer imageId={selectedImage.id} />

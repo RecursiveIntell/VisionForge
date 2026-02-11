@@ -2,7 +2,8 @@ use anyhow::{Context, Result};
 use rusqlite::Connection;
 
 pub fn run(conn: &Connection) -> Result<()> {
-    conn.execute_batch(SCHEMA).context("Failed to execute database schema")?;
+    conn.execute_batch(SCHEMA)
+        .context("Failed to execute database schema")?;
     Ok(())
 }
 

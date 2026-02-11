@@ -113,6 +113,22 @@ export interface GenerationSettings {
 }
 
 // ============================================
+// Generation Controls (UI state for PromptStudio)
+// ============================================
+
+export interface GenSettings {
+  checkpoint: string;
+  sampler: string;
+  scheduler: string;
+  steps: number;
+  cfg: number;
+  width: number;
+  height: number;
+  seed: number;
+  batchCount: number;
+}
+
+// ============================================
 // Generation Types
 // ============================================
 
@@ -329,6 +345,11 @@ export interface AppConfig {
   pipeline: PipelineSettings;
   hardware: HardwareSettings;
   presets: Record<string, QualityPreset>;
+  storage: StorageSettings;
+}
+
+export interface StorageSettings {
+  imageDirectory: string;
 }
 
 export interface ComfyUiConfig {

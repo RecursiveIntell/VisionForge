@@ -4,7 +4,7 @@ import { useQueue } from "../../hooks/useQueue";
 import { LoadingSpinner } from "../shared/LoadingSpinner";
 
 export function QueuePanel() {
-  const { jobs, paused, loading, error, refresh, togglePause, cancel, reorder } =
+  const { jobs, paused, loading, error, refresh, togglePause, cancel, reorder, progressMap } =
     useQueue();
 
   const pendingCount = jobs.filter((j) => j.status === "pending").length;
@@ -80,6 +80,7 @@ export function QueuePanel() {
             <QueueItem
               key={job.id}
               job={job}
+              progress={progressMap[job.id]}
               onCancel={() => cancel(job.id)}
               onReorder={(priority) => reorder(job.id, priority)}
             />

@@ -115,7 +115,9 @@ mod tests {
     use crate::db::images;
     use crate::types::gallery::ImageEntry;
 
-    fn setup() -> Connection { db::open_memory_database().unwrap() }
+    fn setup() -> Connection {
+        db::open_memory_database().unwrap()
+    }
 
     fn insert_test_image(conn: &Connection, id: &str, checkpoint: &str) {
         let img = ImageEntry {
@@ -123,12 +125,26 @@ mod tests {
             filename: format!("{}.png", id),
             created_at: "2026-01-15T10:00:00".to_string(),
             checkpoint: Some(checkpoint.to_string()),
-            positive_prompt: None, negative_prompt: None, original_idea: None,
-            width: None, height: None, steps: None, cfg_scale: None,
-            sampler: None, scheduler: None, seed: None, pipeline_log: None,
-            selected_concept: None, auto_approved: false, caption: None,
-            caption_edited: false, rating: None, favorite: false,
-            deleted: false, user_note: None, tags: None,
+            positive_prompt: None,
+            negative_prompt: None,
+            original_idea: None,
+            width: None,
+            height: None,
+            steps: None,
+            cfg_scale: None,
+            sampler: None,
+            scheduler: None,
+            seed: None,
+            pipeline_log: None,
+            selected_concept: None,
+            auto_approved: false,
+            caption: None,
+            caption_edited: false,
+            rating: None,
+            favorite: false,
+            deleted: false,
+            user_note: None,
+            tags: None,
         };
         images::insert_image(conn, &img).unwrap();
     }
@@ -161,13 +177,18 @@ mod tests {
         insert_test_image(&conn, "img-b", "dl");
 
         for i in 0..3 {
-            insert_comparison(&conn, &Comparison {
-                id: format!("cmp-{}", i),
-                image_a_id: "img-a".to_string(),
-                image_b_id: "img-b".to_string(),
-                variable_changed: "cfg".to_string(),
-                note: None, created_at: None,
-            }).unwrap();
+            insert_comparison(
+                &conn,
+                &Comparison {
+                    id: format!("cmp-{}", i),
+                    image_a_id: "img-a".to_string(),
+                    image_b_id: "img-b".to_string(),
+                    variable_changed: "cfg".to_string(),
+                    note: None,
+                    created_at: None,
+                },
+            )
+            .unwrap();
         }
 
         let all = list_comparisons(&conn).unwrap();
@@ -181,13 +202,18 @@ mod tests {
         insert_test_image(&conn, "img-b", "deliberate");
         insert_test_image(&conn, "img-c", "dreamshaper");
 
-        insert_comparison(&conn, &Comparison {
-            id: "cmp-1".to_string(),
-            image_a_id: "img-a".to_string(),
-            image_b_id: "img-b".to_string(),
-            variable_changed: "checkpoint".to_string(),
-            note: None, created_at: None,
-        }).unwrap();
+        insert_comparison(
+            &conn,
+            &Comparison {
+                id: "cmp-1".to_string(),
+                image_a_id: "img-a".to_string(),
+                image_b_id: "img-b".to_string(),
+                variable_changed: "checkpoint".to_string(),
+                note: None,
+                created_at: None,
+            },
+        )
+        .unwrap();
 
         let ds_comps = list_comparisons_for_checkpoint(&conn, "dreamshaper").unwrap();
         assert_eq!(ds_comps.len(), 1);
@@ -202,13 +228,18 @@ mod tests {
         insert_test_image(&conn, "img-a", "ds");
         insert_test_image(&conn, "img-b", "dl");
 
-        insert_comparison(&conn, &Comparison {
-            id: "cmp-1".to_string(),
-            image_a_id: "img-a".to_string(),
-            image_b_id: "img-b".to_string(),
-            variable_changed: "sampler".to_string(),
-            note: None, created_at: None,
-        }).unwrap();
+        insert_comparison(
+            &conn,
+            &Comparison {
+                id: "cmp-1".to_string(),
+                image_a_id: "img-a".to_string(),
+                image_b_id: "img-b".to_string(),
+                variable_changed: "sampler".to_string(),
+                note: None,
+                created_at: None,
+            },
+        )
+        .unwrap();
 
         update_comparison_note(&conn, "cmp-1", "euler gives sharper edges").unwrap();
         let comp = get_comparison(&conn, "cmp-1").unwrap().unwrap();
@@ -221,13 +252,18 @@ mod tests {
         insert_test_image(&conn, "img-a", "ds");
         insert_test_image(&conn, "img-b", "dl");
 
-        insert_comparison(&conn, &Comparison {
-            id: "cmp-1".to_string(),
-            image_a_id: "img-a".to_string(),
-            image_b_id: "img-b".to_string(),
-            variable_changed: "cfg".to_string(),
-            note: None, created_at: None,
-        }).unwrap();
+        insert_comparison(
+            &conn,
+            &Comparison {
+                id: "cmp-1".to_string(),
+                image_a_id: "img-a".to_string(),
+                image_b_id: "img-b".to_string(),
+                variable_changed: "cfg".to_string(),
+                note: None,
+                created_at: None,
+            },
+        )
+        .unwrap();
 
         delete_comparison(&conn, "cmp-1").unwrap();
         assert!(get_comparison(&conn, "cmp-1").unwrap().is_none());

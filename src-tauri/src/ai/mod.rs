@@ -1,2 +1,2 @@
-pub mod tagger;
 pub mod captioner;
+pub mod tagger;

@@ -90,7 +90,11 @@ pub fn list_images(conn: &Connection, filter: &GalleryFilter) -> Result<Vec<Imag
                 auto_approved, caption, caption_edited, rating, favorite,
                 deleted, user_note
          FROM images WHERE {} ORDER BY {} {} LIMIT ?{} OFFSET ?{}",
-        where_clause, sort_col, sort_dir, next_idx, next_idx + 1
+        where_clause,
+        sort_col,
+        sort_dir,
+        next_idx,
+        next_idx + 1
     );
 
     param_values.push(Box::new(limit));
@@ -99,7 +103,9 @@ pub fn list_images(conn: &Connection, filter: &GalleryFilter) -> Result<Vec<Imag
     let params_ref: Vec<&dyn rusqlite::types::ToSql> =
         param_values.iter().map(|p| p.as_ref()).collect();
 
-    let mut stmt = conn.prepare(&sql).context("Failed to prepare list_images query")?;
+    let mut stmt = conn
+        .prepare(&sql)
+        .context("Failed to prepare list_images query")?;
     let rows = stmt
         .query_map(params_ref.as_slice(), row_to_image)
         .context("Failed to execute list_images query")?;
@@ -158,18 +164,29 @@ fn build_filter_conditions(
 }
 
 pub fn update_image_rating(conn: &Connection, id: &str, rating: Option<u32>) -> Result<()> {
-    conn.execute("UPDATE images SET rating = ?1 WHERE id = ?2", params![rating, id])
-        .context("Failed to update image rating")?;
+    conn.execute(
+        "UPDATE images SET rating = ?1 WHERE id = ?2",
+        params![rating, id],
+    )
+    .context("Failed to update image rating")?;
     Ok(())
 }
 
 pub fn update_image_favorite(conn: &Connection, id: &str, favorite: bool) -> Result<()> {
-    conn.execute("UPDATE images SET favorite = ?1 WHERE id = ?2", params![favorite, id])
-        .context("Failed to update image favorite")?;
+    conn.execute(
+        "UPDATE images SET favorite = ?1 WHERE id = ?2",
+        params![favorite, id],
+    )
+    .context("Failed to update image favorite")?;
     Ok(())
 }
 
-pub fn update_image_caption(conn: &Connection, id: &str, caption: &str, edited: bool) -> Result<()> {
+pub fn update_image_caption(
+    conn: &Connection,
+    id: &str,
+    caption: &str,
+    edited: bool,
+) -> Result<()> {
     conn.execute(
         "UPDATE images SET caption = ?1, caption_edited = ?2 WHERE id = ?3",
         params![caption, edited, id],
@@ -179,20 +196,29 @@ pub fn update_image_caption(conn: &Connection, id: &str, caption: &str, edited: 
 }
 
 pub fn update_image_note(conn: &Connection, id: &str, note: &str) -> Result<()> {
-    conn.execute("UPDATE images SET user_note = ?1 WHERE id = ?2", params![note, id])
-        .context("Failed to update image note")?;
+    conn.execute(
+        "UPDATE images SET user_note = ?1 WHERE id = ?2",
+        params![note, id],
+    )
+    .context("Failed to update image note")?;
     Ok(())
 }
 
 pub fn soft_delete_image(conn: &Connection, id: &str) -> Result<()> {
-    conn.execute("UPDATE images SET deleted = TRUE WHERE id = ?1", params![id])
-        .context("Failed to soft-delete image")?;
+    conn.execute(
+        "UPDATE images SET deleted = TRUE WHERE id = ?1",
+        params![id],
+    )
+    .context("Failed to soft-delete image")?;
     Ok(())
 }
 
 pub fn restore_image(conn: &Connection, id: &str) -> Result<()> {
-    conn.execute("UPDATE images SET deleted = FALSE WHERE id = ?1", params![id])
-        .context("Failed to restore image")?;
+    conn.execute(
+        "UPDATE images SET deleted = FALSE WHERE id = ?1",
+        params![id],
+    )
+    .context("Failed to restore image")?;
     Ok(())
 }
 

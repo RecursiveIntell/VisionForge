@@ -5,6 +5,7 @@ use zip::write::FileOptions;
 use zip::ZipWriter;
 
 use crate::gallery::storage;
+use crate::types::config::AppConfig;
 use crate::types::gallery::ImageEntry;
 
 /// Export manifest entry — included in the ZIP as JSON.
@@ -29,21 +30,34 @@ struct ManifestEntry {
 
 /// Create a ZIP bundle containing the specified images and a JSON manifest.
 /// Returns the path to the created ZIP file.
-pub fn create_export_bundle(
+pub fn create_export_bundle(images: &[ImageEntry], output_path: &Path) -> Result<()> {
+    create_export_bundle_with_config(images, output_path, None)
+}
+
+pub fn create_export_bundle_with_config(
     images: &[ImageEntry],
     output_path: &Path,
+    config: Option<&AppConfig>,
 ) -> Result<()> {
     let file = std::fs::File::create(output_path)
         .with_context(|| format!("Failed to create export file at {}", output_path.display()))?;
 
     let mut zip = ZipWriter::new(file);
-    let options = FileOptions::<()>::default()
-        .compression_method(zip::CompressionMethod::Stored);
+    let options = FileOptions::<()>::default().compression_method(zip::CompressionMethod::Stored);
 
     let mut manifest = Vec::new();
 
     for image in images {
-        let image_path = storage::get_image_path(&image.filename);
+        let image_path = if let Some(cfg) = config {
+            let p = storage::get_image_path_for(cfg, &image.filename);
+            if p.exists() {
+                p
+            } else {
+                storage::get_image_path(&image.filename)
+            }
+        } else {
+            storage::get_image_path(&image.filename)
+        };
 
         if image_path.exists() {
             let image_bytes = std::fs::read(&image_path)
@@ -74,8 +88,8 @@ pub fn create_export_bundle(
     }
 
     // Write JSON manifest
-    let manifest_json = serde_json::to_string_pretty(&manifest)
-        .context("Failed to serialize manifest")?;
+    let manifest_json =
+        serde_json::to_string_pretty(&manifest).context("Failed to serialize manifest")?;
     zip.start_file("manifest.json", options)
         .context("Failed to add manifest to ZIP")?;
     zip.write_all(manifest_json.as_bytes())

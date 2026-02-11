@@ -10,6 +10,8 @@ pub struct AppConfig {
     pub pipeline: PipelineSettings,
     pub hardware: HardwareSettings,
     pub presets: HashMap<String, QualityPreset>,
+    #[serde(default)]
+    pub storage: StorageSettings,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -55,6 +57,14 @@ pub struct HardwareSettings {
     pub enable_ha_power_monitoring: bool,
     pub ha_entity_id: String,
     pub ha_max_watts: u32,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, Default)]
+#[serde(rename_all = "camelCase")]
+pub struct StorageSettings {
+    /// Custom image directory. Empty string means use default (~/.visionforge/images).
+    #[serde(default)]
+    pub image_directory: String,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -137,6 +147,7 @@ impl Default for AppConfig {
                 ha_max_watts: 180,
             },
             presets,
+            storage: StorageSettings::default(),
         }
     }
 }

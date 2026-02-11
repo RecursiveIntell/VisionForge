@@ -54,18 +54,24 @@ impl Default for CheckpointContext {
 }
 
 pub fn judge_prompt(original_idea: &str, concepts: &[String]) -> (String, String) {
-    let system = "You are an art director evaluating visual concepts for image generation with \
-Stable Diffusion 1.5. Rank these concepts from best to worst.\n\n\
-Evaluate each on:\n\
+    let count = concepts.len();
+    let system = format!(
+        "You are an art director evaluating visual concepts for image generation with \
+Stable Diffusion 1.5. You MUST evaluate and rank ALL {count} concepts from best to worst.\n\n\
+Evaluate each concept on:\n\
 1. Visual clarity — can this be rendered as a single coherent image?\n\
 2. SD-friendliness — does it avoid things SD1.5 struggles with (hands, text, \
    multiple specific characters, complex spatial relationships)?\n\
 3. Composition — is there a clear focal point and visual hierarchy?\n\
 4. Faithfulness — does it honor the user's original idea?\n\
 5. Appeal — would this make someone go \"wow\"?\n\n\
-Return a JSON array ranked best-to-worst:\n\
-[{\"rank\": 1, \"concept_index\": <n>, \"score\": <0-100>, \"reasoning\": \"...\"}, ...]"
-        .to_string();
+IMPORTANT: Your response MUST contain exactly {count} entries — one for EVERY concept. \
+Do not skip any. Provide a detailed reasoning for each.\n\n\
+Return a JSON array with {count} objects ranked best-to-worst:\n\
+[{{\"rank\": 1, \"concept_index\": <0-based index>, \"score\": <0-100>, \"reasoning\": \"2-3 sentences explaining strengths and weaknesses\"}}, \
+{{\"rank\": 2, \"concept_index\": <0-based index>, \"score\": <0-100>, \"reasoning\": \"...\"}}, \
+... one entry per concept ...]"
+    );
 
     let numbered: Vec<String> = concepts
         .iter()
@@ -74,8 +80,9 @@ Return a JSON array ranked best-to-worst:\n\
         .collect();
 
     let user = format!(
-        "Original idea: {}\n\nConcepts:\n{}",
+        "Original idea: {}\n\nThere are {} concepts to evaluate. Rank ALL of them:\n{}",
         original_idea,
+        count,
         numbered.join("\n")
     );
 
@@ -123,11 +130,7 @@ Respond in EXACTLY this JSON format:\n\
     (system, user)
 }
 
-pub fn reviewer_prompt(
-    original_idea: &str,
-    positive: &str,
-    negative: &str,
-) -> (String, String) {
+pub fn reviewer_prompt(original_idea: &str, positive: &str, negative: &str) -> (String, String) {
     let system = "Compare this SD prompt against the user's original idea. Check for:\n\
 1. Prompt drift — did we lose the core of what they asked for?\n\
 2. Conflicting terms — anything contradictory?\n\
@@ -173,10 +176,13 @@ mod tests {
         ];
         let (system, user) = judge_prompt("cat throne", &concepts);
         assert!(system.contains("art director"));
+        assert!(system.contains("ALL 3 concepts"));
+        assert!(system.contains("exactly 3 entries"));
         assert!(user.contains("0. Concept A"));
         assert!(user.contains("1. Concept B"));
         assert!(user.contains("2. Concept C"));
         assert!(user.contains("cat throne"));
+        assert!(user.contains("3 concepts to evaluate"));
     }
 
     #[test]

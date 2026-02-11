@@ -1,5 +1,7 @@
 use anyhow::{Context, Result};
 use reqwest::Client;
+use std::sync::atomic::{AtomicBool, Ordering};
+use std::sync::Arc;
 
 use crate::pipeline::prompts::CheckpointContext;
 use crate::pipeline::stages;
@@ -19,6 +21,7 @@ pub async fn run_pipeline(
     client: &Client,
     config: &AppConfig,
     input: PipelineInput,
+    cancelled: Option<Arc<AtomicBool>>,
 ) -> Result<PipelineResult> {
     let pipeline = &config.pipeline;
     let models = &config.models;
@@ -69,6 +72,11 @@ pub async fn run_pipeline(
 
     // Stage 1: Ideator
     let concepts = if stages_enabled[0] {
+        if let Some(ref flag) = cancelled {
+            if flag.load(Ordering::Relaxed) {
+                anyhow::bail!("Pipeline cancelled by user");
+            }
+        }
         let ideator_output = stages::run_ideator(
             client,
             endpoint,
@@ -90,14 +98,18 @@ pub async fn run_pipeline(
 
     // Stage 2: Composer — enrich each concept
     let (composed, all_composer_outputs) = if stages_enabled[1] {
+        if let Some(ref flag) = cancelled {
+            if flag.load(Ordering::Relaxed) {
+                anyhow::bail!("Pipeline cancelled by user");
+            }
+        }
         let mut composed_descs = Vec::new();
         let mut all_outputs: Vec<ComposerOutput> = Vec::new();
 
         for (i, concept) in concepts.iter().enumerate() {
-            let output =
-                stages::run_composer(client, endpoint, &models.composer, concept, i)
-                    .await
-                    .with_context(|| format!("Pipeline failed at Composer stage for concept {}", i))?;
+            let output = stages::run_composer(client, endpoint, &models.composer, concept, i)
+                .await
+                .with_context(|| format!("Pipeline failed at Composer stage for concept {}", i))?;
             composed_descs.push(output.output.clone());
             all_outputs.push(output);
         }
@@ -110,15 +122,15 @@ pub async fn run_pipeline(
 
     // Stage 3: Judge — rank composed descriptions (skip if only 1 concept)
     let (top_description, selected_index) = if stages_enabled[2] && composed.len() > 1 {
-        let judge_output = stages::run_judge(
-            client,
-            endpoint,
-            &models.judge,
-            &input.idea,
-            &composed,
-        )
-        .await
-        .context("Pipeline failed at Judge stage")?;
+        if let Some(ref flag) = cancelled {
+            if flag.load(Ordering::Relaxed) {
+                anyhow::bail!("Pipeline cancelled by user");
+            }
+        }
+        let judge_output =
+            stages::run_judge(client, endpoint, &models.judge, &input.idea, &composed)
+                .await
+                .context("Pipeline failed at Judge stage")?;
 
         let top_index = judge_output
             .output
@@ -145,6 +157,11 @@ pub async fn run_pipeline(
 
     // Stage 4: Prompt Engineer — convert to SD prompts
     let prompt_pair = if stages_enabled[3] {
+        if let Some(ref flag) = cancelled {
+            if flag.load(Ordering::Relaxed) {
+                anyhow::bail!("Pipeline cancelled by user");
+            }
+        }
         let pe_output = stages::run_prompt_engineer(
             client,
             endpoint,
@@ -167,6 +184,11 @@ pub async fn run_pipeline(
 
     // Stage 5: Reviewer — sanity check
     if stages_enabled[4] {
+        if let Some(ref flag) = cancelled {
+            if flag.load(Ordering::Relaxed) {
+                anyhow::bail!("Pipeline cancelled by user");
+            }
+        }
         let reviewer_output = stages::run_reviewer(
             client,
             endpoint,
@@ -194,6 +216,24 @@ pub async fn run_pipeline(
         }
     }
 
+    // Unload the last used model to free VRAM for Stable Diffusion
+    let last_model = if stages_enabled[4] {
+        Some(&models.reviewer)
+    } else if stages_enabled[3] {
+        Some(&models.prompt_engineer)
+    } else if stages_enabled[2] && composed.len() > 1 {
+        Some(&models.judge)
+    } else if stages_enabled[1] {
+        Some(&models.composer)
+    } else if stages_enabled[0] {
+        Some(&models.ideator)
+    } else {
+        None
+    };
+    if let Some(model) = last_model {
+        let _ = super::ollama::unload_model(client, endpoint, model).await;
+    }
+
     Ok(PipelineResult {
         original_idea: input.idea,
         pipeline_config,
@@ -215,48 +255,33 @@ pub async fn run_single_stage(
 ) -> Result<String> {
     match stage {
         "ideator" => {
-            let output =
-                stages::run_ideator(client, endpoint, model, input, 5).await?;
+            let output = stages::run_ideator(client, endpoint, model, input, 5).await?;
             serde_json::to_string(&output).context("Failed to serialize ideator output")
         }
         "composer" => {
-            let output =
-                stages::run_composer(client, endpoint, model, input, 0).await?;
+            let output = stages::run_composer(client, endpoint, model, input, 0).await?;
             serde_json::to_string(&output).context("Failed to serialize composer output")
         }
         "judge" => {
             // Input should be JSON array of concepts
-            let concepts: Vec<String> =
-                serde_json::from_str(input).context("Judge input must be a JSON array of strings")?;
-            let output =
-                stages::run_judge(client, endpoint, model, "", &concepts).await?;
+            let concepts: Vec<String> = serde_json::from_str(input)
+                .context("Judge input must be a JSON array of strings")?;
+            let output = stages::run_judge(client, endpoint, model, "", &concepts).await?;
             serde_json::to_string(&output).context("Failed to serialize judge output")
         }
         "prompt_engineer" => {
-            let output = stages::run_prompt_engineer(
-                client,
-                endpoint,
-                model,
-                input,
-                checkpoint_context,
-            )
-            .await?;
-            serde_json::to_string(&output)
-                .context("Failed to serialize prompt engineer output")
+            let output =
+                stages::run_prompt_engineer(client, endpoint, model, input, checkpoint_context)
+                    .await?;
+            serde_json::to_string(&output).context("Failed to serialize prompt engineer output")
         }
         "reviewer" => {
             // Input should be JSON with positive and negative fields
-            let pair: PromptPair =
-                serde_json::from_str(input).context("Reviewer input must be JSON with positive/negative fields")?;
-            let output = stages::run_reviewer(
-                client,
-                endpoint,
-                model,
-                "",
-                &pair.positive,
-                &pair.negative,
-            )
-            .await?;
+            let pair: PromptPair = serde_json::from_str(input)
+                .context("Reviewer input must be JSON with positive/negative fields")?;
+            let output =
+                stages::run_reviewer(client, endpoint, model, "", &pair.positive, &pair.negative)
+                    .await?;
             serde_json::to_string(&output).context("Failed to serialize reviewer output")
         }
         _ => anyhow::bail!("Unknown pipeline stage: {}", stage),

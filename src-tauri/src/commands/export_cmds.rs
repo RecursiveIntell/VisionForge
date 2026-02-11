@@ -13,9 +13,7 @@ pub async fn export_images(
         let conn = state.db.lock().map_err(|e| e.to_string())?;
         let mut images = Vec::new();
         for id in &image_ids {
-            if let Some(img) = db::images::get_image(&conn, id)
-                .map_err(|e| format!("{:#}", e))?
-            {
+            if let Some(img) = db::images::get_image(&conn, id).map_err(|e| format!("{:#}", e))? {
                 images.push(img);
             }
         }
@@ -26,8 +24,9 @@ pub async fn export_images(
         return Err("No images found to export".to_string());
     }
 
+    let config = state.config.lock().map_err(|e| e.to_string())?;
     let path = std::path::Path::new(&output_path);
-    export::create_export_bundle(&images, path)
+    export::create_export_bundle_with_config(&images, path, Some(&config))
         .map_err(|e| format!("Failed to create export: {:#}", e))
 }
 
@@ -37,10 +36,12 @@ pub async fn export_gallery(
     filter: GalleryFilter,
     output_path: String,
 ) -> Result<u32, String> {
-    let images = {
+    let (images, config) = {
         let conn = state.db.lock().map_err(|e| e.to_string())?;
-        db::images::list_images(&conn, &filter)
-            .map_err(|e| format!("Failed to query images: {:#}", e))?
+        let imgs = db::images::list_images(&conn, &filter)
+            .map_err(|e| format!("Failed to query images: {:#}", e))?;
+        let cfg = state.config.lock().map_err(|e| e.to_string())?.clone();
+        (imgs, cfg)
     };
 
     if images.is_empty() {
@@ -49,7 +50,7 @@ pub async fn export_gallery(
 
     let count = images.len() as u32;
     let path = std::path::Path::new(&output_path);
-    export::create_export_bundle(&images, path)
+    export::create_export_bundle_with_config(&images, path, Some(&config))
         .map_err(|e| format!("Failed to create export: {:#}", e))?;
 
     Ok(count)

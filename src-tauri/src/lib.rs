@@ -1,30 +1,30 @@
-pub mod types;
-pub mod db;
-pub mod pipeline;
-pub mod comfyui;
-pub mod queue;
-pub mod gallery;
 pub mod ai;
-pub mod config;
+pub mod comfyui;
 pub mod commands;
+pub mod config;
+pub mod db;
+pub mod gallery;
+pub mod pipeline;
+pub mod queue;
 pub mod state;
+pub mod types;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
-    let config = config::manager::load_or_create_default()
-        .expect("Failed to load configuration");
+    let config = config::manager::load_or_create_default().expect("Failed to load configuration");
 
     let data_dir = config::manager::data_dir();
-    std::fs::create_dir_all(&data_dir)
-        .expect("Failed to create data directory");
-    std::fs::create_dir_all(data_dir.join("images/originals"))
+    std::fs::create_dir_all(&data_dir).expect("Failed to create data directory");
+
+    // Create image directories (respects custom image_directory config)
+    let image_base = config::manager::image_dir(&config);
+    std::fs::create_dir_all(image_base.join("originals"))
         .expect("Failed to create originals directory");
-    std::fs::create_dir_all(data_dir.join("images/thumbnails"))
+    std::fs::create_dir_all(image_base.join("thumbnails"))
         .expect("Failed to create thumbnails directory");
 
     let db_path = data_dir.join("gallery.db");
-    let conn = db::open_database(&db_path)
-        .expect("Failed to initialize database");
+    let conn = db::open_database(&db_path).expect("Failed to initialize database");
 
     // Requeue any jobs interrupted by previous shutdown
     let requeued = queue::manager::requeue_interrupted(&conn).unwrap_or(0);
@@ -35,6 +35,7 @@ pub fn run() {
     let app_state = state::AppState::new(conn, config);
 
     tauri::Builder::default()
+        .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_opener::init())
         .manage(app_state)
         .setup(|app| {
@@ -48,6 +49,7 @@ pub fn run() {
             // Pipeline
             commands::pipeline_cmds::run_full_pipeline,
             commands::pipeline_cmds::run_pipeline_stage,
+            commands::pipeline_cmds::cancel_pipeline,
             commands::pipeline_cmds::get_available_models,
             commands::pipeline_cmds::check_ollama_health,
             // ComfyUI

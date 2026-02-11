@@ -12,8 +12,7 @@ fn test_parse_numbered_list_basic() {
 
 #[test]
 fn test_parse_numbered_list_multiline() {
-    let text =
-        "1. First concept starts here\nand continues on next line.\n2. Second concept.";
+    let text = "1. First concept starts here\nand continues on next line.\n2. Second concept.";
     let result = parse_numbered_list(text);
     assert_eq!(result.len(), 2);
     assert!(result[0].contains("continues on next line"));
@@ -62,8 +61,7 @@ fn test_parse_judge_rankings_invalid() {
 
 #[test]
 fn test_parse_prompt_pair_valid() {
-    let json =
-        r#"{"positive": "masterpiece, best quality, cat", "negative": "lowres, blurry"}"#;
+    let json = r#"{"positive": "masterpiece, best quality, cat", "negative": "lowres, blurry"}"#;
     let result = parse_prompt_pair(json).unwrap();
     assert_eq!(result.positive, "masterpiece, best quality, cat");
     assert_eq!(result.negative, "lowres, blurry");
@@ -220,4 +218,47 @@ fn test_parse_judge_single_object() {
     assert_eq!(result[0].rank, 1);
     assert_eq!(result[0].concept_index, 0);
     assert_eq!(result[0].score, 85);
+}
+
+#[test]
+fn test_backfill_rankings_no_missing() {
+    let rankings = vec![
+        JudgeRanking { rank: 1, concept_index: 0, score: 90, reasoning: "A".into() },
+        JudgeRanking { rank: 2, concept_index: 1, score: 80, reasoning: "B".into() },
+        JudgeRanking { rank: 3, concept_index: 2, score: 70, reasoning: "C".into() },
+    ];
+    let result = backfill_rankings(rankings, 3);
+    assert_eq!(result.len(), 3);
+    assert_eq!(result[0].concept_index, 0);
+    assert_eq!(result[2].concept_index, 2);
+}
+
+#[test]
+fn test_backfill_rankings_with_missing() {
+    // LLM only returned 1 ranking out of 3 concepts
+    let rankings = vec![
+        JudgeRanking { rank: 1, concept_index: 1, score: 85, reasoning: "Best".into() },
+    ];
+    let result = backfill_rankings(rankings, 3);
+    assert_eq!(result.len(), 3);
+    // First is the real ranking
+    assert_eq!(result[0].rank, 1);
+    assert_eq!(result[0].concept_index, 1);
+    assert_eq!(result[0].score, 85);
+    // Remaining are backfilled
+    assert_eq!(result[1].concept_index, 0);
+    assert_eq!(result[1].score, 0);
+    assert!(result[1].reasoning.contains("Not evaluated"));
+    assert_eq!(result[2].concept_index, 2);
+    assert_eq!(result[2].score, 0);
+}
+
+#[test]
+fn test_backfill_rankings_empty_concepts() {
+    let rankings = vec![
+        JudgeRanking { rank: 1, concept_index: 0, score: 90, reasoning: "Good".into() },
+    ];
+    // When num_concepts matches existing rankings, nothing added
+    let result = backfill_rankings(rankings, 1);
+    assert_eq!(result.len(), 1);
 }

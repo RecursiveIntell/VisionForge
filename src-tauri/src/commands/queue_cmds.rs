@@ -7,16 +7,12 @@ pub async fn add_to_queue(
     state: tauri::State<'_, AppState>,
     job: QueueJob,
 ) -> Result<String, String> {
-    manager::add_job(&state, job)
-        .map_err(|e| format!("Failed to add job to queue: {:#}", e))
+    manager::add_job(&state, job).map_err(|e| format!("Failed to add job to queue: {:#}", e))
 }
 
 #[tauri::command]
-pub async fn get_queue(
-    state: tauri::State<'_, AppState>,
-) -> Result<Vec<QueueJob>, String> {
-    manager::get_all_jobs(&state)
-        .map_err(|e| format!("Failed to get queue: {:#}", e))
+pub async fn get_queue(state: tauri::State<'_, AppState>) -> Result<Vec<QueueJob>, String> {
+    manager::get_all_jobs(&state).map_err(|e| format!("Failed to get queue: {:#}", e))
 }
 
 #[tauri::command]
@@ -35,28 +31,23 @@ pub async fn cancel_queue_job(
     job_id: String,
 ) -> Result<(), String> {
     manager::cancel_job(&state, &job_id)
+        .await
         .map_err(|e| format!("Failed to cancel job: {:#}", e))
 }
 
 #[tauri::command]
-pub async fn pause_queue(
-    state: tauri::State<'_, AppState>,
-) -> Result<(), String> {
+pub async fn pause_queue(state: tauri::State<'_, AppState>) -> Result<(), String> {
     manager::pause_queue(&state);
     Ok(())
 }
 
 #[tauri::command]
-pub async fn resume_queue(
-    state: tauri::State<'_, AppState>,
-) -> Result<(), String> {
+pub async fn resume_queue(state: tauri::State<'_, AppState>) -> Result<(), String> {
     manager::resume_queue(&state);
     Ok(())
 }
 
 #[tauri::command]
-pub async fn is_queue_paused(
-    state: tauri::State<'_, AppState>,
-) -> Result<bool, String> {
+pub async fn is_queue_paused(state: tauri::State<'_, AppState>) -> Result<bool, String> {
     Ok(manager::is_paused(&state))
 }

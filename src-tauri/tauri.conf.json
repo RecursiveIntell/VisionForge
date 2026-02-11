@@ -20,9 +20,13 @@
       }
     ],
     "security": {
-      "csp": null,
+      "csp": "default-src 'self' 'unsafe-inline' 'unsafe-eval' ipc: http://ipc.localhost; img-src 'self' asset: http://asset.localhost blob: data:; connect-src 'self' ipc: http://ipc.localhost ws: wss: http: https:",
       "assetProtocol": {
-        "scope": ["$HOME/.visionforge/**"]
+        "enable": true,
+        "scope": {
+          "allow": ["$HOME/.visionforge/**", "$HOME/**", "/**"],
+          "requireLiteralLeadingDot": false
+        }
       }
     }
   },

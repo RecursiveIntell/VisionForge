@@ -1,10 +1,10 @@
-pub mod pipeline_cmds;
-pub mod comfyui_cmds;
-pub mod gallery_cmds;
-pub mod queue_cmds;
-pub mod seed_cmds;
-pub mod checkpoint_cmds;
-pub mod comparison_cmds;
 pub mod ai_cmds;
+pub mod checkpoint_cmds;
+pub mod comfyui_cmds;
+pub mod comparison_cmds;
 pub mod config_cmds;
 pub mod export_cmds;
+pub mod gallery_cmds;
+pub mod pipeline_cmds;
+pub mod queue_cmds;
+pub mod seed_cmds;

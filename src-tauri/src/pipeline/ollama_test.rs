@@ -51,18 +51,14 @@ fn test_parse_generate_response() {
     )
     .unwrap();
 
-    let content = json
-        .get("response")
-        .and_then(|c| c.as_str())
-        .unwrap_or("");
+    let content = json.get("response").and_then(|c| c.as_str()).unwrap_or("");
     assert!(content.contains("Concept one"));
     assert!(content.contains("Concept two"));
 }
 
 #[test]
 fn test_parse_error_response() {
-    let json: Value =
-        serde_json::from_str(r#"{"error": "model not found"}"#).unwrap();
+    let json: Value = serde_json::from_str(r#"{"error": "model not found"}"#).unwrap();
 
     let error = json.get("error").and_then(|v| v.as_str());
     assert_eq!(error, Some("model not found"));

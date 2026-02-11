@@ -1,24 +1,20 @@
 use anyhow::{Context, Result};
 use reqwest::Client;
+use tauri::{AppHandle, Emitter};
 
-use crate::pipeline::prompts::CheckpointContext;
-use crate::pipeline::stages;
+use super::engine::PipelineInput;
+use super::stages_streaming;
 use crate::types::config::AppConfig;
 use crate::types::pipeline::{
-    ComposerOutput, ModelsUsed, PipelineConfig, PipelineResult, PipelineStages, PromptPair,
+    ComposerOutput, ModelsUsed, PipelineConfig, PipelineResult, PipelineStageCompleteEvent,
+    PipelineStageStartEvent, PipelineStageTokenEvent, PipelineStages, PromptPair,
 };
 
-pub struct PipelineInput {
-    pub idea: String,
-    pub num_concepts: u32,
-    pub auto_approve: bool,
-    pub checkpoint_context: Option<CheckpointContext>,
-}
-
-pub async fn run_pipeline(
+pub async fn run_pipeline_streaming(
     client: &Client,
     config: &AppConfig,
     input: PipelineInput,
+    app_handle: AppHandle,
 ) -> Result<PipelineResult> {
     let pipeline = &config.pipeline;
     let models = &config.models;
@@ -69,54 +65,133 @@ pub async fn run_pipeline(
 
     // Stage 1: Ideator
     let concepts = if stages_enabled[0] {
-        let ideator_output = stages::run_ideator(
+        let _ = app_handle.emit(
+            "pipeline:stage_start",
+            PipelineStageStartEvent {
+                stage: "ideator".into(),
+                model: models.ideator.clone(),
+            },
+        );
+        let ah = app_handle.clone();
+        let ideator_output = stages_streaming::run_ideator_streaming(
             client,
             endpoint,
             &models.ideator,
             &input.idea,
             input.num_concepts,
+            move |token: &str| {
+                let _ = ah.emit(
+                    "pipeline:stage_token",
+                    PipelineStageTokenEvent {
+                        stage: "ideator".into(),
+                        token: token.to_string(),
+                    },
+                );
+            },
         )
         .await
         .context("Pipeline failed at Ideator stage")?;
+        let _ = app_handle.emit(
+            "pipeline:stage_complete",
+            PipelineStageCompleteEvent {
+                stage: "ideator".into(),
+                duration_ms: ideator_output.duration_ms,
+            },
+        );
         let concepts = ideator_output.output.clone();
         result_stages.ideator = Some(ideator_output);
         concepts
     } else {
-        // Bypass: use the raw idea as a single concept
         vec![input.idea.clone()]
     };
 
     // Stage 2: Composer — enrich each concept
     let (composed, all_composer_outputs) = if stages_enabled[1] {
+        let _ = app_handle.emit(
+            "pipeline:stage_start",
+            PipelineStageStartEvent {
+                stage: "composer".into(),
+                model: models.composer.clone(),
+            },
+        );
         let mut composed_descs = Vec::new();
         let mut all_outputs: Vec<ComposerOutput> = Vec::new();
 
         for (i, concept) in concepts.iter().enumerate() {
-            let output =
-                stages::run_composer(client, endpoint, &models.composer, concept, i)
-                    .await
-                    .with_context(|| format!("Pipeline failed at Composer stage for concept {}", i))?;
+            let ah = app_handle.clone();
+            let output = stages_streaming::run_composer_streaming(
+                client,
+                endpoint,
+                &models.composer,
+                concept,
+                i,
+                move |token: &str| {
+                    let _ = ah.emit(
+                        "pipeline:stage_token",
+                        PipelineStageTokenEvent {
+                            stage: "composer".into(),
+                            token: token.to_string(),
+                        },
+                    );
+                },
+            )
+            .await
+            .with_context(|| {
+                format!("Pipeline failed at Composer stage for concept {}", i)
+            })?;
             composed_descs.push(output.output.clone());
             all_outputs.push(output);
         }
 
+        let duration_ms = all_outputs.last().map(|c| c.duration_ms).unwrap_or(0);
+        let _ = app_handle.emit(
+            "pipeline:stage_complete",
+            PipelineStageCompleteEvent {
+                stage: "composer".into(),
+                duration_ms,
+            },
+        );
         (composed_descs, all_outputs)
     } else {
-        // Bypass: pass concepts through as-is
         (concepts.clone(), Vec::new())
     };
 
     // Stage 3: Judge — rank composed descriptions
     let (top_description, selected_index) = if stages_enabled[2] {
-        let judge_output = stages::run_judge(
+        let _ = app_handle.emit(
+            "pipeline:stage_start",
+            PipelineStageStartEvent {
+                stage: "judge".into(),
+                model: models.judge.clone(),
+            },
+        );
+        let ah = app_handle.clone();
+        let judge_output = stages_streaming::run_judge_streaming(
             client,
             endpoint,
             &models.judge,
             &input.idea,
             &composed,
+            move |token: &str| {
+                let _ = ah.emit(
+                    "pipeline:stage_token",
+                    PipelineStageTokenEvent {
+                        stage: "judge".into(),
+                        token: token.to_string(),
+                    },
+                );
+            },
         )
         .await
         .context("Pipeline failed at Judge stage")?;
+
+        let _ = app_handle.emit(
+            "pipeline:stage_complete",
+            PipelineStageCompleteEvent {
+                stage: "judge".into(),
+                duration_ms: judge_output.duration_ms,
+            },
+        );
 
         let top_index = judge_output
             .output
@@ -131,7 +206,6 @@ pub async fn run_pipeline(
         result_stages.judge = Some(judge_output);
         (top_desc, top_index)
     } else {
-        // Bypass: use first composed description
         (composed[0].clone(), 0)
     };
 
@@ -143,20 +217,44 @@ pub async fn run_pipeline(
 
     // Stage 4: Prompt Engineer — convert to SD prompts
     let prompt_pair = if stages_enabled[3] {
-        let pe_output = stages::run_prompt_engineer(
+        let _ = app_handle.emit(
+            "pipeline:stage_start",
+            PipelineStageStartEvent {
+                stage: "promptEngineer".into(),
+                model: models.prompt_engineer.clone(),
+            },
+        );
+        let ah = app_handle.clone();
+        let pe_output = stages_streaming::run_prompt_engineer_streaming(
             client,
             endpoint,
             &models.prompt_engineer,
             &top_description,
             input.checkpoint_context,
+            move |token: &str| {
+                let _ = ah.emit(
+                    "pipeline:stage_token",
+                    PipelineStageTokenEvent {
+                        stage: "promptEngineer".into(),
+                        token: token.to_string(),
+                    },
+                );
+            },
         )
         .await
         .context("Pipeline failed at Prompt Engineer stage")?;
+
+        let _ = app_handle.emit(
+            "pipeline:stage_complete",
+            PipelineStageCompleteEvent {
+                stage: "promptEngineer".into(),
+                duration_ms: pe_output.duration_ms,
+            },
+        );
         let pair = pe_output.output.clone();
         result_stages.prompt_engineer = Some(pe_output);
         pair
     } else {
-        // Bypass: use description as positive prompt, default negative
         PromptPair {
             positive: top_description.clone(),
             negative: "lowres, bad anatomy, bad hands, text, watermark, blurry".to_string(),
@@ -165,16 +263,41 @@ pub async fn run_pipeline(
 
     // Stage 5: Reviewer — sanity check
     if stages_enabled[4] {
-        let reviewer_output = stages::run_reviewer(
+        let _ = app_handle.emit(
+            "pipeline:stage_start",
+            PipelineStageStartEvent {
+                stage: "reviewer".into(),
+                model: models.reviewer.clone(),
+            },
+        );
+        let ah = app_handle.clone();
+        let reviewer_output = stages_streaming::run_reviewer_streaming(
             client,
             endpoint,
             &models.reviewer,
             &input.idea,
             &prompt_pair.positive,
             &prompt_pair.negative,
+            move |token: &str| {
+                let _ = ah.emit(
+                    "pipeline:stage_token",
+                    PipelineStageTokenEvent {
+                        stage: "reviewer".into(),
+                        token: token.to_string(),
+                    },
+                );
+            },
         )
         .await
         .context("Pipeline failed at Reviewer stage")?;
+
+        let _ = app_handle.emit(
+            "pipeline:stage_complete",
+            PipelineStageCompleteEvent {
+                stage: "reviewer".into(),
+                duration_ms: reviewer_output.duration_ms,
+            },
+        );
         result_stages.reviewer = Some(reviewer_output);
     }
 
@@ -201,86 +324,3 @@ pub async fn run_pipeline(
         generation_settings: None,
     })
 }
-
-/// Run a single pipeline stage by name (for the run_pipeline_stage command)
-pub async fn run_single_stage(
-    client: &Client,
-    endpoint: &str,
-    stage: &str,
-    model: &str,
-    input: &str,
-    checkpoint_context: Option<CheckpointContext>,
-) -> Result<String> {
-    match stage {
-        "ideator" => {
-            let output =
-                stages::run_ideator(client, endpoint, model, input, 5).await?;
-            serde_json::to_string(&output).context("Failed to serialize ideator output")
-        }
-        "composer" => {
-            let output =
-                stages::run_composer(client, endpoint, model, input, 0).await?;
-            serde_json::to_string(&output).context("Failed to serialize composer output")
-        }
-        "judge" => {
-            // Input should be JSON array of concepts
-            let concepts: Vec<String> =
-                serde_json::from_str(input).context("Judge input must be a JSON array of strings")?;
-            let output =
-                stages::run_judge(client, endpoint, model, "", &concepts).await?;
-            serde_json::to_string(&output).context("Failed to serialize judge output")
-        }
-        "prompt_engineer" => {
-            let output = stages::run_prompt_engineer(
-                client,
-                endpoint,
-                model,
-                input,
-                checkpoint_context,
-            )
-            .await?;
-            serde_json::to_string(&output)
-                .context("Failed to serialize prompt engineer output")
-        }
-        "reviewer" => {
-            // Input should be JSON with positive and negative fields
-            let pair: PromptPair =
-                serde_json::from_str(input).context("Reviewer input must be JSON with positive/negative fields")?;
-            let output = stages::run_reviewer(
-                client,
-                endpoint,
-                model,
-                "",
-                &pair.positive,
-                &pair.negative,
-            )
-            .await?;
-            serde_json::to_string(&output).context("Failed to serialize reviewer output")
-        }
-        _ => anyhow::bail!("Unknown pipeline stage: {}", stage),
-    }
-}
-
-/// Get the final prompts from a pipeline result
-pub fn get_final_prompts(result: &PipelineResult) -> Option<PromptPair> {
-    result
-        .stages
-        .prompt_engineer
-        .as_ref()
-        .map(|pe| pe.output.clone())
-}
-
-/// Get the selected concept index from judge output (0 if no judge)
-pub fn get_selected_concept(result: &PipelineResult) -> usize {
-    result
-        .stages
-        .judge
-        .as_ref()
-        .and_then(|j| j.output.first())
-        .map(|r| r.concept_index)
-        .unwrap_or(0)
-}
-
-#[cfg(test)]
-#[path = "engine_test.rs"]
-mod tests;

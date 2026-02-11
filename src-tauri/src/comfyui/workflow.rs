@@ -66,9 +66,6 @@ pub fn build_txt2img(request: &GenerationRequest) -> Value {
     })
 }
 
-/// The SaveImage node ID in our workflow (used to find output filenames in history)
-pub const SAVE_IMAGE_NODE_ID: &str = "7";
-
 #[cfg(test)]
 mod tests {
     use super::*;

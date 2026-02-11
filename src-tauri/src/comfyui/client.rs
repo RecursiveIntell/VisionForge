@@ -160,13 +160,14 @@ pub async fn get_image(
     subfolder: &str,
     img_type: &str,
 ) -> Result<Vec<u8>> {
-    let url = format!(
-        "{}/view?filename={}&subfolder={}&type={}",
-        endpoint, filename, subfolder, img_type
-    );
+    let url = reqwest::Url::parse_with_params(
+        &format!("{}/view", endpoint),
+        &[("filename", filename), ("subfolder", subfolder), ("type", img_type)],
+    )
+    .with_context(|| format!("Failed to build URL for image {}", filename))?;
 
     let resp = client
-        .get(&url)
+        .get(url)
         .timeout(Duration::from_secs(30))
         .send()
         .await

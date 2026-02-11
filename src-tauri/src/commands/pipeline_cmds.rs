@@ -1,5 +1,6 @@
 use crate::db;
 use crate::pipeline::engine::{self, PipelineInput};
+use crate::pipeline::engine_streaming;
 use crate::pipeline::ollama;
 use crate::pipeline::prompts::CheckpointContext;
 use crate::state::AppState;
@@ -7,6 +8,7 @@ use crate::types::pipeline::PipelineResult;
 
 #[tauri::command]
 pub async fn run_full_pipeline(
+    app_handle: tauri::AppHandle,
     state: tauri::State<'_, AppState>,
     idea: String,
     num_concepts: u32,
@@ -41,7 +43,7 @@ pub async fn run_full_pipeline(
         checkpoint_context,
     };
 
-    engine::run_pipeline(&state.http_client, &config, input)
+    engine_streaming::run_pipeline_streaming(&state.http_client, &config, input, app_handle)
         .await
         .map_err(|e| format!("{:#}", e))
 }

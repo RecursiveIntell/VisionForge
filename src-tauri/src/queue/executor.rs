@@ -38,7 +38,7 @@ pub struct JobFailedEvent {
 
 /// Spawn the background queue executor. Call this once during app setup.
 pub fn spawn(app_handle: AppHandle) {
-    tokio::spawn(async move {
+    tauri::async_runtime::spawn(async move {
         run_loop(app_handle).await;
     });
 }
@@ -51,7 +51,10 @@ async fn run_loop(app_handle: AppHandle) {
 
         let state = match app_handle.try_state::<AppState>() {
             Some(s) => s,
-            None => continue,
+            None => {
+                eprintln!("[queue] AppState not available yet, waiting...");
+                continue;
+            }
         };
 
         // Check if paused
@@ -66,7 +69,10 @@ async fn run_loop(app_handle: AppHandle) {
                     c.hardware.cooldown_seconds,
                     c.hardware.max_consecutive_generations,
                 ),
-                Err(_) => continue,
+                Err(e) => {
+                    eprintln!("[queue] Config mutex poisoned: {}", e);
+                    continue;
+                }
             }
         };
 
@@ -85,7 +91,10 @@ async fn run_loop(app_handle: AppHandle) {
         let job = {
             let conn = match state.db.lock() {
                 Ok(c) => c,
-                Err(_) => continue,
+                Err(e) => {
+                    eprintln!("[queue] DB mutex poisoned: {}", e);
+                    continue;
+                }
             };
             match manager::next_pending_job(&conn) {
                 Ok(Some(j)) => j,
@@ -93,7 +102,10 @@ async fn run_loop(app_handle: AppHandle) {
                     consecutive_count = 0;
                     continue;
                 }
-                Err(_) => continue,
+                Err(e) => {
+                    eprintln!("[queue] Failed to query next pending job: {:#}", e);
+                    continue;
+                }
             }
         };
 
@@ -180,23 +192,24 @@ async fn process_job(
         anyhow::bail!("Generation failed: {}", error);
     }
 
-    let filenames = gen_status
-        .image_filenames
-        .as_ref()
-        .with_context(|| "No images returned from ComfyUI")?;
+    // Fetch full history to get ImageRef data (subfolder, type)
+    let history = client::get_history(&state.http_client, &endpoint, &prompt_id)
+        .await
+        .context("Failed to fetch ComfyUI history after completion")?
+        .with_context(|| "Completed prompt has no history entry")?;
 
-    if filenames.is_empty() {
+    if history.image_filenames.is_empty() {
         anyhow::bail!("ComfyUI returned no image filenames");
     }
 
     // Download and save the first image (batch_size=1 typical)
-    let comfyui_filename = &filenames[0];
+    let img_ref = &history.image_filenames[0];
     let image_bytes = client::get_image(
         &state.http_client,
         &endpoint,
-        comfyui_filename,
-        "",
-        "output",
+        &img_ref.filename,
+        &img_ref.subfolder,
+        &img_ref.img_type,
     )
     .await
     .context("Failed to download image from ComfyUI")?;

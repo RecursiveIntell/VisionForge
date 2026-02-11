@@ -11,15 +11,21 @@ export interface RunPipelineInput {
 export async function runFullPipeline(
   input: RunPipelineInput,
 ): Promise<PipelineResult> {
-  return invoke("run_full_pipeline", { input });
+  return invoke("run_full_pipeline", {
+    idea: input.idea,
+    numConcepts: input.numConcepts,
+    autoApprove: input.autoApprove,
+    checkpoint: input.checkpointContext,
+  });
 }
 
 export async function runPipelineStage(
   stage: string,
   input: string,
+  model: string,
   checkpointContext?: string,
 ): Promise<string> {
-  return invoke("run_pipeline_stage", { stage, input, checkpointContext });
+  return invoke("run_pipeline_stage", { stage, input, model, checkpointContext });
 }
 
 export async function getAvailableModels(): Promise<string[]> {

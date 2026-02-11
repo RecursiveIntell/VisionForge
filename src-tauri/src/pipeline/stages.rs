@@ -221,7 +221,7 @@ pub async fn run_reviewer(
     })
 }
 
-fn parse_numbered_list(text: &str) -> Vec<String> {
+pub(super) fn parse_numbered_list(text: &str) -> Vec<String> {
     let mut concepts = Vec::new();
     let mut current = String::new();
 
@@ -231,25 +231,22 @@ fn parse_numbered_list(text: &str) -> Vec<String> {
             continue;
         }
 
-        // Check if line starts a new numbered item (e.g., "1.", "2.", "1)", "2)")
-        let is_new_item = trimmed
-            .chars()
-            .next()
-            .map(|c| c.is_ascii_digit())
-            .unwrap_or(false)
-            && (trimmed.contains(". ") || trimmed.contains(") "));
+        // Check if line starts a new numbered item (e.g., "1. ", "2. ", "1) ", "2) ")
+        // Only match digits immediately followed by ". " or ") " at the start
+        let prefix_end = trimmed
+            .find(|c: char| !c.is_ascii_digit())
+            .unwrap_or(trimmed.len());
+        let after_digits = &trimmed[prefix_end..];
+        let is_new_item = prefix_end > 0
+            && (after_digits.starts_with(". ") || after_digits.starts_with(") "));
 
         if is_new_item {
             if !current.is_empty() {
                 concepts.push(current.trim().to_string());
             }
-            // Strip the number prefix
-            let content = trimmed
-                .splitn(2, |c: char| c == '.' || c == ')')
-                .nth(1)
-                .unwrap_or(trimmed)
-                .trim();
-            current = content.to_string();
+            // Strip the number prefix (digits + delimiter)
+            let content = &trimmed[prefix_end + 2..];
+            current = content.trim().to_string();
         } else {
             // Continuation of previous item
             if !current.is_empty() {
@@ -266,7 +263,7 @@ fn parse_numbered_list(text: &str) -> Vec<String> {
     concepts
 }
 
-fn parse_judge_rankings(text: &str) -> Result<Vec<JudgeRanking>> {
+pub(super) fn parse_judge_rankings(text: &str) -> Result<Vec<JudgeRanking>> {
     let json = extract_json_from_text(text)?;
     let arr = json
         .as_array()
@@ -304,7 +301,7 @@ fn parse_judge_rankings(text: &str) -> Result<Vec<JudgeRanking>> {
     Ok(rankings)
 }
 
-fn parse_prompt_pair(text: &str) -> Result<PromptPair> {
+pub(super) fn parse_prompt_pair(text: &str) -> Result<PromptPair> {
     let json = extract_json_from_text(text)?;
 
     let positive = json
@@ -322,14 +319,14 @@ fn parse_prompt_pair(text: &str) -> Result<PromptPair> {
     Ok(PromptPair { positive, negative })
 }
 
-struct ParsedReviewer {
-    approved: bool,
-    issues: Option<Vec<String>>,
-    suggested_positive: Option<String>,
-    suggested_negative: Option<String>,
+pub(super) struct ParsedReviewer {
+    pub(super) approved: bool,
+    pub(super) issues: Option<Vec<String>>,
+    pub(super) suggested_positive: Option<String>,
+    pub(super) suggested_negative: Option<String>,
 }
 
-fn parse_reviewer_output(text: &str) -> Result<ParsedReviewer> {
+pub(super) fn parse_reviewer_output(text: &str) -> Result<ParsedReviewer> {
     let json = extract_json_from_text(text)?;
 
     let approved = json
@@ -363,7 +360,7 @@ fn parse_reviewer_output(text: &str) -> Result<ParsedReviewer> {
     })
 }
 
-fn extract_json_from_text(text: &str) -> Result<Value> {
+pub(super) fn extract_json_from_text(text: &str) -> Result<Value> {
     // Try direct parse first
     if let Ok(json) = serde_json::from_str::<Value>(text.trim()) {
         return Ok(json);

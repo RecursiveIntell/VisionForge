@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import { IdeaInput } from "./IdeaInput";
-import { PipelineStepper } from "./PipelineStepper";
+import { StreamingStepper } from "./StreamingStepper";
 import { ApprovalGate } from "./ApprovalGate";
 import { SeedPicker } from "../seeds/SeedPicker";
-import { usePipeline } from "../../hooks/usePipeline";
+import { usePipelineStream } from "../../hooks/usePipelineStream";
 import { useConfig } from "../../hooks/useConfig";
 import { addToQueue } from "../../api/queue";
 import { getComfyuiCheckpoints } from "../../api/comfyui";
@@ -12,7 +12,7 @@ import type { PipelineConfig, QueueJob } from "../../types";
 
 export function PromptStudio() {
   const { config, update: updateConfig } = useConfig();
-  const { result, phase, error, run, reset } = usePipeline();
+  const { result, phase, error, streams, activeStage, run, reset } = usePipelineStream();
   const { addToast } = useToast();
 
   const [selectedConcept, setSelectedConcept] = useState(0);
@@ -23,14 +23,17 @@ export function PromptStudio() {
   const [checkpoints, setCheckpoints] = useState<string[]>([]);
   const [selectedCheckpoint, setSelectedCheckpoint] = useState("");
 
-  // Load available checkpoints
+  // Load available checkpoints (runs once on mount)
   useEffect(() => {
+    let cancelled = false;
     getComfyuiCheckpoints()
       .then((cp) => {
+        if (cancelled) return;
         setCheckpoints(cp);
-        if (cp.length > 0 && !selectedCheckpoint) setSelectedCheckpoint(cp[0]);
+        setSelectedCheckpoint((prev) => (prev || cp[0] || ""));
       })
       .catch(() => {});
+    return () => { cancelled = true; };
   }, []);
 
   // Sync prompt editor when pipeline produces output
@@ -56,13 +59,14 @@ export function PromptStudio() {
       idea,
       numConcepts,
       autoApprove: config?.pipeline.autoApprove ?? false,
+      checkpointContext: selectedCheckpoint || undefined,
     });
   };
 
   const handleGenerate = async () => {
     if (!editedPositive.trim()) return;
 
-    const settings = config?.presets?.["default"] ?? {
+    const settings = config?.presets?.["quality"] ?? {
       steps: 20,
       cfg: 7,
       width: 512,
@@ -133,10 +137,11 @@ export function PromptStudio() {
       <IdeaInput onSubmit={handleSubmit} disabled={isRunning} />
 
       {phase !== "idle" && (
-        <PipelineStepper
+        <StreamingStepper
           config={pipelineConfig}
           result={result}
-          phase={phase}
+          streams={streams}
+          activeStage={activeStage}
           selectedConcept={selectedConcept}
           onSelectConcept={setSelectedConcept}
         />

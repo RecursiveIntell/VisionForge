@@ -6,17 +6,21 @@ import type { AppConfig } from "../../types";
 interface ConnectionSettingsProps {
   config: AppConfig;
   onChange: (config: AppConfig) => void;
+  onSave?: () => void;
 }
 
 type HealthStatus = "idle" | "checking" | "ok" | "error";
 
-export function ConnectionSettings({ config, onChange }: ConnectionSettingsProps) {
+export function ConnectionSettings({ config, onChange, onSave }: ConnectionSettingsProps) {
   const [comfyStatus, setComfyStatus] = useState<HealthStatus>("idle");
   const [ollamaStatus, setOllamaStatus] = useState<HealthStatus>("idle");
 
   const checkComfy = async () => {
     setComfyStatus("checking");
     try {
+      onSave?.();
+      // Small delay to let the save propagate to backend
+      await new Promise((r) => setTimeout(r, 200));
       const ok = await checkComfyuiHealth();
       setComfyStatus(ok ? "ok" : "error");
     } catch {
@@ -27,6 +31,8 @@ export function ConnectionSettings({ config, onChange }: ConnectionSettingsProps
   const checkOllama = async () => {
     setOllamaStatus("checking");
     try {
+      onSave?.();
+      await new Promise((r) => setTimeout(r, 200));
       const ok = await checkOllamaHealth();
       setOllamaStatus(ok ? "ok" : "error");
     } catch {

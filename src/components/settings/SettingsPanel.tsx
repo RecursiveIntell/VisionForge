@@ -38,7 +38,7 @@ export function SettingsPanel() {
         </div>
       )}
 
-      <ConnectionSettings config={config} onChange={update as (c: typeof config) => void} />
+      <ConnectionSettings config={config} onChange={update as (c: typeof config) => void} onSave={() => save(config)} />
       <ModelAssignments config={config} onChange={update as (c: typeof config) => void} />
       <PipelinePrompts config={config} onChange={update as (c: typeof config) => void} />
       <QualityPresets config={config} onChange={update as (c: typeof config) => void} />

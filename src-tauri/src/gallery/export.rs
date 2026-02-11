@@ -94,7 +94,7 @@ pub fn create_export_bundle(
 
 fn build_csv_manifest(entries: &[ManifestEntry]) -> String {
     let mut csv = String::from(
-        "filename,positive_prompt,negative_prompt,checkpoint,width,height,steps,cfg_scale,sampler,scheduler,seed,rating,caption\n"
+        "filename,positivePrompt,negativePrompt,checkpoint,width,height,steps,cfgScale,sampler,scheduler,seed,rating,caption\n"
     );
 
     for e in entries {

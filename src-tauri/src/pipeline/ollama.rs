@@ -1,4 +1,5 @@
 use anyhow::{Context, Result};
+use futures::StreamExt;
 use reqwest::Client;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
@@ -146,6 +147,128 @@ pub async fn chat(
     })
 }
 
+/// Streaming variant of chat that calls `on_token` for each token chunk.
+/// Returns the full accumulated response when done.
+pub async fn chat_streaming<F>(
+    client: &Client,
+    endpoint: &str,
+    model: &str,
+    messages: &[ChatMessage],
+    format_json: bool,
+    mut on_token: F,
+) -> Result<ChatResponse>
+where
+    F: FnMut(&str),
+{
+    let url = format!("{}/api/chat", endpoint);
+
+    let mut body = serde_json::json!({
+        "model": model,
+        "messages": messages,
+        "stream": true,
+    });
+
+    if format_json {
+        body["format"] = serde_json::json!("json");
+    }
+
+    let resp = client
+        .post(&url)
+        .timeout(Duration::from_secs(300))
+        .json(&body)
+        .send()
+        .await
+        .with_context(|| {
+            format!(
+                "Cannot connect to Ollama at {} — is the service running?",
+                endpoint
+            )
+        })?;
+
+    if !resp.status().is_success() {
+        let status = resp.status();
+        let body = resp.text().await.unwrap_or_default();
+        anyhow::bail!("Ollama returned {} for chat: {}", status, body);
+    }
+
+    let mut stream = resp.bytes_stream();
+    let mut accumulated_content = String::new();
+    let mut total_duration_ns: Option<u64> = None;
+    let mut prompt_eval_count: Option<u64> = None;
+    let mut eval_count: Option<u64> = None;
+    let mut line_buffer = String::new();
+
+    while let Some(chunk) = stream.next().await {
+        let chunk = chunk.context("Error reading stream chunk")?;
+        let text = String::from_utf8_lossy(&chunk);
+        line_buffer.push_str(&text);
+
+        // Ollama sends newline-delimited JSON
+        while let Some(newline_pos) = line_buffer.find('\n') {
+            let line = line_buffer[..newline_pos].trim().to_string();
+            line_buffer = line_buffer[newline_pos + 1..].to_string();
+
+            if line.is_empty() {
+                continue;
+            }
+
+            if let Ok(json) = serde_json::from_str::<Value>(&line) {
+                if let Some(error) = json.get("error").and_then(|v| v.as_str()) {
+                    anyhow::bail!("Ollama error: {}", error);
+                }
+
+                if let Some(content) = json
+                    .get("message")
+                    .and_then(|m| m.get("content"))
+                    .and_then(|c| c.as_str())
+                {
+                    if !content.is_empty() {
+                        accumulated_content.push_str(content);
+                        on_token(content);
+                    }
+                }
+
+                if json.get("done").and_then(|v| v.as_bool()).unwrap_or(false) {
+                    total_duration_ns = json.get("total_duration").and_then(|v| v.as_u64());
+                    prompt_eval_count =
+                        json.get("prompt_eval_count").and_then(|v| v.as_u64());
+                    eval_count = json.get("eval_count").and_then(|v| v.as_u64());
+                }
+            }
+        }
+    }
+
+    // Process any remaining buffer
+    let remaining = line_buffer.trim().to_string();
+    if !remaining.is_empty() {
+        if let Ok(json) = serde_json::from_str::<Value>(&remaining) {
+            if let Some(content) = json
+                .get("message")
+                .and_then(|m| m.get("content"))
+                .and_then(|c| c.as_str())
+            {
+                if !content.is_empty() {
+                    accumulated_content.push_str(content);
+                    on_token(content);
+                }
+            }
+            if json.get("done").and_then(|v| v.as_bool()).unwrap_or(false) {
+                total_duration_ns = json.get("total_duration").and_then(|v| v.as_u64());
+                prompt_eval_count =
+                    json.get("prompt_eval_count").and_then(|v| v.as_u64());
+                eval_count = json.get("eval_count").and_then(|v| v.as_u64());
+            }
+        }
+    }
+
+    Ok(ChatResponse {
+        content: accumulated_content,
+        total_duration_ns,
+        prompt_eval_count,
+        eval_count,
+    })
+}
+
 pub async fn generate(
     client: &Client,
     endpoint: &str,
@@ -212,103 +335,5 @@ pub async fn generate(
 }
 
 #[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_chat_message_serialization() {
-        let msg = ChatMessage {
-            role: "system".to_string(),
-            content: "You are a helper.".to_string(),
-        };
-        let json = serde_json::to_value(&msg).unwrap();
-        assert_eq!(json["role"], "system");
-        assert_eq!(json["content"], "You are a helper.");
-    }
-
-    #[test]
-    fn test_parse_chat_response() {
-        let json: Value = serde_json::from_str(
-            r#"{
-                "model": "mistral:7b",
-                "message": {"role": "assistant", "content": "Hello world"},
-                "done": true,
-                "total_duration": 5000000000,
-                "prompt_eval_count": 42,
-                "eval_count": 10
-            }"#,
-        )
-        .unwrap();
-
-        let content = json
-            .get("message")
-            .and_then(|m| m.get("content"))
-            .and_then(|c| c.as_str())
-            .unwrap_or("");
-        assert_eq!(content, "Hello world");
-        assert_eq!(json.get("total_duration").and_then(|v| v.as_u64()), Some(5000000000));
-    }
-
-    #[test]
-    fn test_parse_generate_response() {
-        let json: Value = serde_json::from_str(
-            r#"{
-                "model": "mistral:7b",
-                "response": "1. Concept one\n2. Concept two",
-                "done": true,
-                "total_duration": 3000000000,
-                "prompt_eval_count": 50,
-                "eval_count": 200
-            }"#,
-        )
-        .unwrap();
-
-        let content = json
-            .get("response")
-            .and_then(|c| c.as_str())
-            .unwrap_or("");
-        assert!(content.contains("Concept one"));
-        assert!(content.contains("Concept two"));
-    }
-
-    #[test]
-    fn test_parse_error_response() {
-        let json: Value = serde_json::from_str(
-            r#"{"error": "model not found"}"#,
-        )
-        .unwrap();
-
-        let error = json.get("error").and_then(|v| v.as_str());
-        assert_eq!(error, Some("model not found"));
-    }
-
-    #[test]
-    fn test_parse_models_response() {
-        let json: Value = serde_json::from_str(
-            r#"{
-                "models": [
-                    {"name": "mistral:7b", "size": 4000000000, "digest": "abc123"},
-                    {"name": "llama3.1:8b", "size": 5000000000, "digest": "def456"}
-                ]
-            }"#,
-        )
-        .unwrap();
-
-        let models: Vec<OllamaModel> = json
-            .get("models")
-            .and_then(|m| m.as_array())
-            .unwrap_or(&vec![])
-            .iter()
-            .filter_map(|m| {
-                let name = m.get("name")?.as_str()?.to_string();
-                let size = m.get("size").and_then(|s| s.as_u64());
-                let digest = m.get("digest").and_then(|d| d.as_str().map(String::from));
-                Some(OllamaModel { name, size, digest })
-            })
-            .collect();
-
-        assert_eq!(models.len(), 2);
-        assert_eq!(models[0].name, "mistral:7b");
-        assert_eq!(models[1].name, "llama3.1:8b");
-    }
-}
+#[path = "ollama_test.rs"]
+mod tests;

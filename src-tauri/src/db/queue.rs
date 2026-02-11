@@ -149,37 +149,26 @@ pub fn update_job_priority(conn: &Connection, id: &str, priority: &QueuePriority
 }
 
 pub fn cancel_job(conn: &Connection, id: &str) -> Result<()> {
-    conn.execute(
-        "UPDATE queue_jobs SET status = 'cancelled' WHERE id = ?1 AND status = 'pending'",
-        params![id],
-    )
-    .context("Failed to cancel job")?;
+    let rows = conn
+        .execute(
+            "UPDATE queue_jobs SET status = 'cancelled' WHERE id = ?1 AND status = 'pending'",
+            params![id],
+        )
+        .context("Failed to cancel job")?;
+    if rows == 0 {
+        anyhow::bail!("Job '{}' not found or is not in pending status", id);
+    }
     Ok(())
 }
 
 pub fn requeue_interrupted_jobs(conn: &Connection) -> Result<u32> {
     let count = conn
         .execute(
-            "UPDATE queue_jobs SET status = 'pending', priority = 0
+            "UPDATE queue_jobs SET status = 'pending'
              WHERE status = 'generating'",
             [],
         )
         .context("Failed to requeue interrupted jobs")?;
-    Ok(count as u32)
-}
-
-pub fn cleanup_old_completed(conn: &Connection, keep_count: u32) -> Result<u32> {
-    let count = conn
-        .execute(
-            "DELETE FROM queue_jobs WHERE id IN (
-                SELECT id FROM queue_jobs
-                WHERE status IN ('completed', 'failed', 'cancelled')
-                ORDER BY completed_at DESC
-                LIMIT -1 OFFSET ?1
-            )",
-            params![keep_count],
-        )
-        .context("Failed to cleanup old completed jobs")?;
     Ok(count as u32)
 }
 
@@ -287,7 +276,11 @@ mod tests {
         insert_job(&conn, &make_job("job-1", QueuePriority::Normal)).unwrap();
         update_job_status(&conn, "job-1", &QueueJobStatus::Generating).unwrap();
 
-        cancel_job(&conn, "job-1").unwrap();
+        // Cancelling a non-pending job should return an error
+        let result = cancel_job(&conn, "job-1");
+        assert!(result.is_err());
+
+        // Status should remain unchanged
         let job = get_job(&conn, "job-1").unwrap().unwrap();
         assert_eq!(job.status, QueueJobStatus::Generating);
     }
@@ -303,7 +296,8 @@ mod tests {
 
         let job = get_job(&conn, "job-1").unwrap().unwrap();
         assert_eq!(job.status, QueueJobStatus::Pending);
-        assert_eq!(job.priority, QueuePriority::High);
+        // Requeued jobs retain their original priority
+        assert_eq!(job.priority, QueuePriority::Normal);
     }
 
     #[test]

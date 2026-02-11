@@ -1,5 +1,28 @@
 use serde::{Deserialize, Serialize};
 
+// Pipeline streaming event payloads (emitted via Tauri events)
+
+#[derive(Debug, Clone, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct PipelineStageStartEvent {
+    pub stage: String,
+    pub model: String,
+}
+
+#[derive(Debug, Clone, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct PipelineStageTokenEvent {
+    pub stage: String,
+    pub token: String,
+}
+
+#[derive(Debug, Clone, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct PipelineStageCompleteEvent {
+    pub stage: String,
+    pub duration_ms: u64,
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct PipelineResult {

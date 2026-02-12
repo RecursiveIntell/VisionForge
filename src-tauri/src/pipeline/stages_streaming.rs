@@ -20,6 +20,7 @@ pub async fn run_ideator_streaming<F: FnMut(&str)>(
     model: &str,
     idea: &str,
     num_concepts: u32,
+    think: Option<bool>,
     cancelled: Option<Arc<AtomicBool>>,
     on_token: F,
 ) -> Result<IdeatorOutput> {
@@ -36,7 +37,7 @@ pub async fn run_ideator_streaming<F: FnMut(&str)>(
         },
     ];
     let resp = ollama::chat_streaming_with_options(
-        client, endpoint, model, &messages, false, &ollama::stage_options(1024), cancelled, on_token,
+        client, endpoint, model, &messages, false, &ollama::stage_options_with_thinking(1024, think), cancelled, on_token,
     )
     .await
     .context("Ideator stage failed")?;
@@ -63,6 +64,7 @@ pub async fn run_composer_streaming<F: FnMut(&str)>(
     model: &str,
     concept: &str,
     concept_index: usize,
+    think: Option<bool>,
     cancelled: Option<Arc<AtomicBool>>,
     on_token: F,
 ) -> Result<ComposerOutput> {
@@ -84,7 +86,7 @@ pub async fn run_composer_streaming<F: FnMut(&str)>(
         model,
         &messages,
         false,
-        &ollama::stage_options(2048),
+        &ollama::stage_options_with_thinking(2048, think),
         cancelled,
         on_token,
     )
@@ -111,6 +113,7 @@ pub async fn run_judge_streaming<F: FnMut(&str)>(
     model: &str,
     original_idea: &str,
     concepts: &[String],
+    think: Option<bool>,
     cancelled: Option<Arc<AtomicBool>>,
     on_token: F,
 ) -> Result<JudgeOutput> {
@@ -127,7 +130,7 @@ pub async fn run_judge_streaming<F: FnMut(&str)>(
         },
     ];
     let resp = ollama::chat_streaming_with_options(
-        client, endpoint, model, &messages, true, &ollama::stage_options(1024), cancelled, on_token,
+        client, endpoint, model, &messages, true, &ollama::stage_options_with_thinking(1024, think), cancelled, on_token,
     )
     .await
     .context("Judge stage failed")?;
@@ -154,6 +157,7 @@ pub async fn run_prompt_engineer_streaming<F: FnMut(&str)>(
     model: &str,
     description: &str,
     checkpoint_ctx: Option<CheckpointContext>,
+    think: Option<bool>,
     cancelled: Option<Arc<AtomicBool>>,
     on_token: F,
 ) -> Result<PromptEngineerOutput> {
@@ -175,7 +179,7 @@ pub async fn run_prompt_engineer_streaming<F: FnMut(&str)>(
         },
     ];
     let resp = ollama::chat_streaming_with_options(
-        client, endpoint, model, &messages, true, &ollama::stage_options(1024), cancelled, on_token,
+        client, endpoint, model, &messages, true, &ollama::stage_options_with_thinking(1024, think), cancelled, on_token,
     )
     .await
     .context("Prompt Engineer stage failed")?;
@@ -199,6 +203,7 @@ pub async fn run_reviewer_streaming<F: FnMut(&str)>(
     original_idea: &str,
     positive: &str,
     negative: &str,
+    think: Option<bool>,
     cancelled: Option<Arc<AtomicBool>>,
     on_token: F,
 ) -> Result<ReviewerOutput> {
@@ -215,7 +220,7 @@ pub async fn run_reviewer_streaming<F: FnMut(&str)>(
         },
     ];
     let resp = ollama::chat_streaming_with_options(
-        client, endpoint, model, &messages, true, &ollama::stage_options(1024), cancelled, on_token,
+        client, endpoint, model, &messages, true, &ollama::stage_options_with_thinking(1024, think), cancelled, on_token,
     )
     .await
     .context("Reviewer stage failed")?;

@@ -368,6 +368,12 @@ export interface ModelAssignments {
   reviewer: string;
   tagger: string;
   captioner: string;
+
+  /** Per-stage thinking mode override. Key = stage name, value = thinking enabled. */
+  thinkingOverrides?: Record<string, boolean>;
+
+  /** Model names the user has manually marked as thinking-capable. */
+  customThinkingModels?: string[];
 }
 
 export interface PipelineSettings {

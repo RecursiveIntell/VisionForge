@@ -21,7 +21,7 @@ pub async fn run_full_pipeline(
     state.pipeline_cancelled.store(false, Ordering::Relaxed);
 
     let config = {
-        let cfg = state.config.lock().map_err(|e| e.to_string())?;
+        let cfg = state.config.read().map_err(|e| e.to_string())?;
         cfg.clone()
     };
 
@@ -69,7 +69,7 @@ pub async fn run_pipeline_stage(
     checkpoint_context: Option<String>,
 ) -> Result<String, String> {
     let endpoint = {
-        let config = state.config.lock().map_err(|e| e.to_string())?;
+        let config = state.config.read().map_err(|e| e.to_string())?;
         config.ollama.endpoint.clone()
     };
 
@@ -85,7 +85,7 @@ pub async fn get_available_models(
     state: tauri::State<'_, AppState>,
 ) -> Result<Vec<String>, String> {
     let endpoint = {
-        let config = state.config.lock().map_err(|e| e.to_string())?;
+        let config = state.config.read().map_err(|e| e.to_string())?;
         config.ollama.endpoint.clone()
     };
 
@@ -96,10 +96,50 @@ pub async fn get_available_models(
     Ok(models.into_iter().map(|m| m.name).collect())
 }
 
+/// Returns installed model names that support thinking mode.
+/// Combines auto-detection (template probing + known patterns) with
+/// user-configured custom thinking models from the config.
+#[tauri::command]
+pub async fn get_thinking_models(
+    state: tauri::State<'_, AppState>,
+) -> Result<Vec<String>, String> {
+    let (endpoint, custom_thinking) = {
+        let config = state.config.read().map_err(|e| e.to_string())?;
+        (
+            config.ollama.endpoint.clone(),
+            config.models.custom_thinking_models.clone(),
+        )
+    };
+
+    let all_models = ollama::list_models(&state.http_client, &endpoint)
+        .await
+        .map_err(|e| format!("{:#}", e))?;
+
+    let model_names: Vec<String> = all_models.into_iter().map(|m| m.name).collect();
+
+    let mut thinking = ollama::detect_thinking_models(
+        &state.http_client,
+        &endpoint,
+        &model_names,
+    )
+    .await;
+
+    // Merge in user-configured custom thinking models (only if installed)
+    for custom in &custom_thinking {
+        if !thinking.contains(custom) && model_names.iter().any(|m| m == custom) {
+            thinking.push(custom.clone());
+        }
+    }
+
+    thinking.sort();
+    thinking.dedup();
+    Ok(thinking)
+}
+
 #[tauri::command]
 pub async fn check_ollama_health(state: tauri::State<'_, AppState>) -> Result<bool, String> {
     let endpoint = {
-        let config = state.config.lock().map_err(|e| e.to_string())?;
+        let config = state.config.read().map_err(|e| e.to_string())?;
         config.ollama.endpoint.clone()
     };
 
@@ -115,6 +155,12 @@ pub async fn cancel_pipeline(state: tauri::State<'_, AppState>) -> Result<(), St
 }
 
 fn parse_checkpoint_context_string(context_str: &str, checkpoint: &str) -> CheckpointContext {
+    // Try JSON first (new format)
+    if let Ok(ctx) = serde_json::from_str::<CheckpointContext>(context_str) {
+        return ctx;
+    }
+
+    // Fall back to line-based parsing (legacy format)
     let mut ctx = CheckpointContext::default();
     ctx.checkpoint_name = checkpoint.to_string();
 
@@ -131,7 +177,6 @@ fn parse_checkpoint_context_string(context_str: &str, checkpoint: &str) -> Check
         } else if let Some(rest) = line.strip_prefix("Notes: ") {
             ctx.checkpoint_notes = rest.to_string();
         } else if line.starts_with("Known terms:") {
-            // term_list will be populated from subsequent lines
             ctx.term_list = String::new();
         } else if line.starts_with("- ") {
             if !ctx.term_list.is_empty() {

@@ -11,6 +11,25 @@ pub fn config_path() -> PathBuf {
     data_dir().join("config.toml")
 }
 
+/// Validate that a resolved image directory is safe.
+/// Must be an absolute path and must not contain `..` components.
+fn validate_image_dir(path: &PathBuf) -> Result<PathBuf> {
+    let path_str = path.to_string_lossy();
+    if path_str.contains("..") {
+        anyhow::bail!(
+            "Image directory contains '..': {}. This is not allowed for security.",
+            path.display()
+        );
+    }
+    if !path.is_absolute() {
+        anyhow::bail!(
+            "Image directory must be an absolute path: {}",
+            path.display()
+        );
+    }
+    Ok(path.clone())
+}
+
 /// Returns the image base directory. Uses the custom directory from config
 /// if set and non-empty, otherwise falls back to ~/.visionforge/images.
 /// Expands `~` to the user's home directory (shell-style tilde expansion).
@@ -19,7 +38,14 @@ pub fn image_dir(config: &AppConfig) -> PathBuf {
     if custom.is_empty() {
         data_dir().join("images")
     } else {
-        expand_tilde(custom)
+        let expanded = expand_tilde(custom);
+        match validate_image_dir(&expanded) {
+            Ok(p) => p,
+            Err(e) => {
+                eprintln!("[config] Invalid image directory: {}. Falling back to default.", e);
+                data_dir().join("images")
+            }
+        }
     }
 }
 
@@ -45,7 +71,29 @@ pub fn load_or_create_default() -> Result<AppConfig> {
     let path = config_path();
 
     if path.exists() {
-        load_config(&path)
+        match load_config(&path) {
+            Ok(config) => Ok(config),
+            Err(e) => {
+                eprintln!(
+                    "[config] Failed to parse config: {}. Backing up and regenerating.",
+                    e
+                );
+                // Back up the corrupted config
+                let backup_name = format!(
+                    "config.toml.bak-{}",
+                    chrono::Utc::now().format("%Y%m%d-%H%M%S")
+                );
+                let backup_path = path
+                    .parent()
+                    .unwrap_or(std::path::Path::new("."))
+                    .join(backup_name);
+                let _ = std::fs::rename(&path, &backup_path);
+                // Generate fresh defaults
+                let config = AppConfig::default();
+                save_config_to_disk(&config)?;
+                Ok(config)
+            }
+        }
     } else {
         let config = AppConfig::default();
         save_config_to_disk(&config)?;
@@ -115,7 +163,7 @@ impl Default for TomlComfyUi {
 }
 
 fn default_comfyui_endpoint() -> String {
-    "http://192.168.50.69:8188".to_string()
+    "http://localhost:8188".to_string()
 }
 
 #[derive(Debug, serde::Serialize, serde::Deserialize)]
@@ -152,6 +200,10 @@ struct TomlModels {
     tagger: String,
     #[serde(default = "default_captioner")]
     captioner: String,
+    #[serde(default)]
+    thinking_overrides: std::collections::HashMap<String, bool>,
+    #[serde(default)]
+    custom_thinking_models: Vec<String>,
 }
 
 impl Default for TomlModels {
@@ -164,6 +216,8 @@ impl Default for TomlModels {
             reviewer: default_reviewer(),
             tagger: default_tagger(),
             captioner: default_captioner(),
+            thinking_overrides: std::collections::HashMap::new(),
+            custom_thinking_models: Vec::new(),
         }
     }
 }
@@ -312,6 +366,8 @@ impl TomlConfig {
                 reviewer: self.models.reviewer,
                 tagger: self.models.tagger,
                 captioner: self.models.captioner,
+                thinking_overrides: self.models.thinking_overrides,
+                custom_thinking_models: self.models.custom_thinking_models,
             },
             pipeline: PipelineSettings {
                 enable_ideator: self.pipeline.enable_ideator,
@@ -366,6 +422,8 @@ impl TomlConfig {
                 reviewer: config.models.reviewer.clone(),
                 tagger: config.models.tagger.clone(),
                 captioner: config.models.captioner.clone(),
+                thinking_overrides: config.models.thinking_overrides.clone(),
+                custom_thinking_models: config.models.custom_thinking_models.clone(),
             },
             pipeline: TomlPipeline {
                 enable_ideator: config.pipeline.enable_ideator,

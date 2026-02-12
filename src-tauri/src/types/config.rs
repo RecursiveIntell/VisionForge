@@ -36,6 +36,15 @@ pub struct ModelAssignments {
     pub reviewer: String,
     pub tagger: String,
     pub captioner: String,
+
+    /// Per-stage thinking mode override.
+    /// Key = stage name (e.g., "ideator", "judge"), Value = thinking enabled.
+    #[serde(default)]
+    pub thinking_overrides: HashMap<String, bool>,
+
+    /// Model names the user has manually marked as thinking-capable.
+    #[serde(default)]
+    pub custom_thinking_models: Vec<String>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -117,7 +126,7 @@ impl Default for AppConfig {
 
         Self {
             comfyui: ComfyUiConfig {
-                endpoint: "http://192.168.50.69:8188".to_string(),
+                endpoint: "http://localhost:8188".to_string(),
             },
             ollama: OllamaConfig {
                 endpoint: "http://localhost:11434".to_string(),
@@ -130,6 +139,8 @@ impl Default for AppConfig {
                 reviewer: "qwen2.5:7b".to_string(),
                 tagger: "llava:7b".to_string(),
                 captioner: "llava:7b".to_string(),
+                thinking_overrides: HashMap::new(),
+                custom_thinking_models: Vec::new(),
             },
             pipeline: PipelineSettings {
                 enable_ideator: true,

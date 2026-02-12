@@ -1,3 +1,5 @@
+use tauri::Manager;
+
 pub mod ai;
 pub mod comfyui;
 pub mod commands;
@@ -11,7 +13,8 @@ pub mod types;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
-    let config = config::manager::load_or_create_default().expect("Failed to load configuration");
+    let config = config::manager::load_or_create_default()
+        .expect("Failed to load configuration even after backup/regeneration");
 
     let data_dir = config::manager::data_dir();
     std::fs::create_dir_all(&data_dir).expect("Failed to create data directory");
@@ -32,13 +35,26 @@ pub fn run() {
         eprintln!("[startup] Requeued {} interrupted jobs", requeued);
     }
 
+    // Capture the configured image directory before config is moved into AppState
+    let custom_image_dir = config::manager::image_dir(&config);
+
     let app_state = state::AppState::new(conn, config);
 
     tauri::Builder::default()
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_opener::init())
         .manage(app_state)
-        .setup(|app| {
+        .setup(move |app| {
+            // Expand asset protocol scope to cover the configured image directory
+            // (the static scope in tauri.conf.json only covers ~/.visionforge/**)
+            let scope = app.asset_protocol_scope();
+            if let Err(e) = scope.allow_directory(&custom_image_dir, true) {
+                eprintln!(
+                    "[setup] Failed to add image directory to asset scope: {}",
+                    e
+                );
+            }
+
             queue::executor::spawn(app.handle().clone());
             Ok(())
         })
@@ -51,6 +67,7 @@ pub fn run() {
             commands::pipeline_cmds::run_pipeline_stage,
             commands::pipeline_cmds::cancel_pipeline,
             commands::pipeline_cmds::get_available_models,
+            commands::pipeline_cmds::get_thinking_models,
             commands::pipeline_cmds::check_ollama_health,
             // ComfyUI
             commands::comfyui_cmds::check_comfyui_health,

@@ -93,3 +93,66 @@ fn test_parse_models_response() {
     assert_eq!(models[0].name, "mistral:7b");
     assert_eq!(models[1].name, "llama3.1:8b");
 }
+
+// ========== Thinking model detection tests ==========
+
+#[test]
+fn test_known_thinking_models() {
+    assert!(is_known_thinking_model("qwen3:8b"));
+    assert!(is_known_thinking_model("qwen3:32b-q4_K_M"));
+    assert!(is_known_thinking_model("deepseek-r1:7b"));
+    assert!(is_known_thinking_model("deepseek-r1:1.5b"));
+    assert!(is_known_thinking_model("qwq:latest"));
+    assert!(is_known_thinking_model("phi4-reasoning:14b"));
+    assert!(is_known_thinking_model("phi-4-reasoning:14b"));
+    assert!(is_known_thinking_model("gpt-oss:latest"));
+    assert!(is_known_thinking_model("marco-o1:7b"));
+}
+
+#[test]
+fn test_non_thinking_models() {
+    assert!(!is_known_thinking_model("mistral:7b"));
+    assert!(!is_known_thinking_model("llama3.1:8b"));
+    assert!(!is_known_thinking_model("qwen2.5:7b"));
+    assert!(!is_known_thinking_model("llava:7b"));
+    assert!(!is_known_thinking_model("codellama:13b"));
+    assert!(!is_known_thinking_model("gemma2:9b"));
+}
+
+#[test]
+fn test_thinking_model_case_insensitive() {
+    assert!(is_known_thinking_model("Qwen3:8b"));
+    assert!(is_known_thinking_model("DEEPSEEK-R1:7b"));
+    assert!(is_known_thinking_model("QwQ:latest"));
+}
+
+#[test]
+fn test_stage_options_with_thinking() {
+    let opts = stage_options_with_thinking(1024, Some(false));
+    assert_eq!(opts.think, Some(false));
+    assert_eq!(opts.num_predict, Some(1024));
+
+    let opts_default = stage_options_with_thinking(512, None);
+    assert_eq!(opts_default.think, None);
+
+    let opts_on = stage_options_with_thinking(2048, Some(true));
+    assert_eq!(opts_on.think, Some(true));
+    assert_eq!(opts_on.num_predict, Some(2048));
+}
+
+#[test]
+fn test_think_param_not_in_build_options() {
+    // think is a top-level param, not in "options" sub-object
+    let opts = OllamaOptions {
+        think: Some(false),
+        ..Default::default()
+    };
+    let options = build_options(&opts);
+    assert!(!options.contains_key("think"));
+}
+
+#[test]
+fn test_stage_options_default_has_no_think() {
+    let opts = stage_options(1024);
+    assert_eq!(opts.think, None);
+}

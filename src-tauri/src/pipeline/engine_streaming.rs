@@ -30,6 +30,11 @@ pub async fn run_pipeline_streaming(
     let models = &config.models;
     let endpoint = &config.ollama.endpoint;
 
+    // Resolve per-stage thinking mode from config
+    let think_for = |stage_name: &str| -> Option<bool> {
+        models.thinking_overrides.get(stage_name).copied()
+    };
+
     let stages_enabled = [
         pipeline.enable_ideator,
         pipeline.enable_composer,
@@ -90,6 +95,7 @@ pub async fn run_pipeline_streaming(
             &models.ideator,
             &input.idea,
             input.num_concepts,
+            think_for("ideator"),
             Some(cancelled.clone()),
             move |token: &str| {
                 let _ = ah.emit(
@@ -141,6 +147,7 @@ pub async fn run_pipeline_streaming(
                 &models.composer,
                 concept,
                 i,
+                think_for("composer"),
                 Some(cancelled.clone()),
                 move |token: &str| {
                     let _ = ah.emit(
@@ -188,6 +195,7 @@ pub async fn run_pipeline_streaming(
             &models.judge,
             &input.idea,
             &composed,
+            think_for("judge"),
             Some(cancelled.clone()),
             move |token: &str| {
                 let _ = ah.emit(
@@ -249,6 +257,7 @@ pub async fn run_pipeline_streaming(
             &models.prompt_engineer,
             &top_description,
             input.checkpoint_context,
+            think_for("promptEngineer"),
             Some(cancelled.clone()),
             move |token: &str| {
                 let _ = ah.emit(
@@ -298,6 +307,7 @@ pub async fn run_pipeline_streaming(
             &input.idea,
             &prompt_pair.positive,
             &prompt_pair.negative,
+            think_for("reviewer"),
             Some(cancelled.clone()),
             move |token: &str| {
                 let _ = ah.emit(

@@ -32,6 +32,14 @@ export async function getAvailableModels(): Promise<string[]> {
   return invoke("get_available_models");
 }
 
+/**
+ * Returns installed model names that support thinking mode.
+ * Combines auto-detection with user-configured custom thinking models.
+ */
+export async function getThinkingModels(): Promise<string[]> {
+  return invoke("get_thinking_models");
+}
+
 export async function cancelPipeline(): Promise<void> {
   return invoke("cancel_pipeline");
 }

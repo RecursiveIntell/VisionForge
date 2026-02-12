@@ -27,6 +27,11 @@ pub async fn run_pipeline(
     let models = &config.models;
     let endpoint = &config.ollama.endpoint;
 
+    // Resolve per-stage thinking mode from config
+    let think_for = |stage_name: &str| -> Option<bool> {
+        models.thinking_overrides.get(stage_name).copied()
+    };
+
     let stages_enabled = [
         pipeline.enable_ideator,
         pipeline.enable_composer,
@@ -83,6 +88,7 @@ pub async fn run_pipeline(
             &models.ideator,
             &input.idea,
             input.num_concepts,
+            think_for("ideator"),
         )
         .await
         .context("Pipeline failed at Ideator stage")?;
@@ -107,7 +113,7 @@ pub async fn run_pipeline(
         let mut all_outputs: Vec<ComposerOutput> = Vec::new();
 
         for (i, concept) in concepts.iter().enumerate() {
-            let output = stages::run_composer(client, endpoint, &models.composer, concept, i)
+            let output = stages::run_composer(client, endpoint, &models.composer, concept, i, think_for("composer"))
                 .await
                 .with_context(|| format!("Pipeline failed at Composer stage for concept {}", i))?;
             composed_descs.push(output.output.clone());
@@ -128,7 +134,7 @@ pub async fn run_pipeline(
             }
         }
         let judge_output =
-            stages::run_judge(client, endpoint, &models.judge, &input.idea, &composed)
+            stages::run_judge(client, endpoint, &models.judge, &input.idea, &composed, think_for("judge"))
                 .await
                 .context("Pipeline failed at Judge stage")?;
 
@@ -168,6 +174,7 @@ pub async fn run_pipeline(
             &models.prompt_engineer,
             &top_description,
             input.checkpoint_context,
+            think_for("promptEngineer"),
         )
         .await
         .context("Pipeline failed at Prompt Engineer stage")?;
@@ -196,6 +203,7 @@ pub async fn run_pipeline(
             &input.idea,
             &prompt_pair.positive,
             &prompt_pair.negative,
+            think_for("reviewer"),
         )
         .await
         .context("Pipeline failed at Reviewer stage")?;
@@ -255,32 +263,30 @@ pub async fn run_single_stage(
 ) -> Result<String> {
     match stage {
         "ideator" => {
-            let output = stages::run_ideator(client, endpoint, model, input, 5).await?;
+            let output = stages::run_ideator(client, endpoint, model, input, 5, None).await?;
             serde_json::to_string(&output).context("Failed to serialize ideator output")
         }
         "composer" => {
-            let output = stages::run_composer(client, endpoint, model, input, 0).await?;
+            let output = stages::run_composer(client, endpoint, model, input, 0, None).await?;
             serde_json::to_string(&output).context("Failed to serialize composer output")
         }
         "judge" => {
-            // Input should be JSON array of concepts
             let concepts: Vec<String> = serde_json::from_str(input)
                 .context("Judge input must be a JSON array of strings")?;
-            let output = stages::run_judge(client, endpoint, model, "", &concepts).await?;
+            let output = stages::run_judge(client, endpoint, model, "", &concepts, None).await?;
             serde_json::to_string(&output).context("Failed to serialize judge output")
         }
         "prompt_engineer" => {
             let output =
-                stages::run_prompt_engineer(client, endpoint, model, input, checkpoint_context)
+                stages::run_prompt_engineer(client, endpoint, model, input, checkpoint_context, None)
                     .await?;
             serde_json::to_string(&output).context("Failed to serialize prompt engineer output")
         }
         "reviewer" => {
-            // Input should be JSON with positive and negative fields
             let pair: PromptPair = serde_json::from_str(input)
                 .context("Reviewer input must be JSON with positive/negative fields")?;
             let output =
-                stages::run_reviewer(client, endpoint, model, "", &pair.positive, &pair.negative)
+                stages::run_reviewer(client, endpoint, model, "", &pair.positive, &pair.negative, None)
                     .await?;
             serde_json::to_string(&output).context("Failed to serialize reviewer output")
         }

@@ -16,6 +16,7 @@ pub async fn run_ideator(
     model: &str,
     idea: &str,
     num_concepts: u32,
+    think: Option<bool>,
 ) -> Result<IdeatorOutput> {
     let start = Instant::now();
     let (system, user) = prompts::ideator_prompt(idea, num_concepts);
@@ -32,7 +33,7 @@ pub async fn run_ideator(
     ];
 
     let resp = ollama::chat_with_options(
-        client, endpoint, model, &messages, false, &ollama::stage_options(1024),
+        client, endpoint, model, &messages, false, &ollama::stage_options_with_thinking(1024, think),
     )
     .await
     .context("Ideator stage failed")?;
@@ -61,6 +62,7 @@ pub async fn run_composer(
     model: &str,
     concept: &str,
     concept_index: usize,
+    think: Option<bool>,
 ) -> Result<ComposerOutput> {
     let start = Instant::now();
     let (system, user) = prompts::composer_prompt(concept);
@@ -77,7 +79,7 @@ pub async fn run_composer(
     ];
 
     let resp = ollama::chat_with_options(
-        client, endpoint, model, &messages, false, &ollama::stage_options(2048),
+        client, endpoint, model, &messages, false, &ollama::stage_options_with_thinking(2048, think),
     )
     .await
     .context("Composer stage failed")?;
@@ -104,6 +106,7 @@ pub async fn run_judge(
     model: &str,
     original_idea: &str,
     concepts: &[String],
+    think: Option<bool>,
 ) -> Result<JudgeOutput> {
     let start = Instant::now();
     let (system, user) = prompts::judge_prompt(original_idea, concepts);
@@ -120,7 +123,7 @@ pub async fn run_judge(
     ];
 
     let resp = ollama::chat_with_options(
-        client, endpoint, model, &messages, true, &ollama::stage_options(1024),
+        client, endpoint, model, &messages, true, &ollama::stage_options_with_thinking(1024, think),
     )
     .await
     .context("Judge stage failed")?;
@@ -151,6 +154,7 @@ pub async fn run_prompt_engineer(
     model: &str,
     description: &str,
     checkpoint_ctx: Option<CheckpointContext>,
+    think: Option<bool>,
 ) -> Result<PromptEngineerOutput> {
     let start = Instant::now();
     let ctx = checkpoint_ctx.unwrap_or_default();
@@ -173,7 +177,7 @@ pub async fn run_prompt_engineer(
     ];
 
     let resp = ollama::chat_with_options(
-        client, endpoint, model, &messages, true, &ollama::stage_options(1024),
+        client, endpoint, model, &messages, true, &ollama::stage_options_with_thinking(1024, think),
     )
     .await
     .context("Prompt Engineer stage failed")?;
@@ -199,6 +203,7 @@ pub async fn run_reviewer(
     original_idea: &str,
     positive: &str,
     negative: &str,
+    think: Option<bool>,
 ) -> Result<ReviewerOutput> {
     let start = Instant::now();
     let (system, user) = prompts::reviewer_prompt(original_idea, positive, negative);
@@ -215,7 +220,7 @@ pub async fn run_reviewer(
     ];
 
     let resp = ollama::chat_with_options(
-        client, endpoint, model, &messages, true, &ollama::stage_options(1024),
+        client, endpoint, model, &messages, true, &ollama::stage_options_with_thinking(1024, think),
     )
     .await
     .context("Reviewer stage failed")?;
@@ -302,15 +307,28 @@ pub(super) fn parse_judge_rankings(text: &str) -> Result<Vec<JudgeRanking>> {
     };
 
     let mut rankings = Vec::new();
-    for item in arr {
-        let rank = item.get("rank").and_then(|v| v.as_u64()).unwrap_or(0) as u32;
+    for (i, item) in arr.iter().enumerate() {
+        let rank = item
+            .get("rank")
+            .and_then(|v| v.as_u64())
+            .map(|v| v as u32)
+            .unwrap_or_else(|| (i + 1) as u32); // Default to position-based rank
+
         let concept_index = item
             .get("concept_index")
+            .or_else(|| item.get("index"))
             .and_then(|v| v.as_u64())
             .unwrap_or(0) as usize;
-        let score = item.get("score").and_then(|v| v.as_u64()).unwrap_or(0) as u32;
+
+        let score = item
+            .get("score")
+            .and_then(|v| v.as_u64())
+            .unwrap_or(0) as u32;
+
         let reasoning = item
             .get("reasoning")
+            .or_else(|| item.get("reason"))
+            .or_else(|| item.get("explanation"))
             .and_then(|v| v.as_str())
             .unwrap_or("")
             .to_string();

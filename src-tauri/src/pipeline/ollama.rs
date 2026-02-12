@@ -7,6 +7,10 @@ use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::Arc;
 use std::time::Duration;
 
+fn normalize_endpoint(endpoint: &str) -> &str {
+    endpoint.trim_end_matches('/')
+}
+
 #[derive(Debug, Clone, Serialize)]
 pub struct ChatMessage {
     pub role: String,
@@ -26,6 +30,10 @@ pub struct OllamaOptions {
     pub num_predict: Option<u32>,
     pub repeat_penalty: Option<f64>,
     pub repeat_last_n: Option<u32>,
+    /// Control thinking/reasoning mode for supported models.
+    /// Some(true) = force thinking on, Some(false) = force thinking off,
+    /// None = omit parameter (model uses its default behavior).
+    pub think: Option<bool>,
 }
 
 /// Default options for pipeline stages: repeat_penalty=1.2, repeat_last_n=128, with
@@ -35,6 +43,17 @@ pub fn stage_options(num_predict: u32) -> OllamaOptions {
         num_predict: Some(num_predict),
         repeat_penalty: Some(1.2),
         repeat_last_n: Some(128),
+        think: None,
+    }
+}
+
+/// Create stage options with an explicit thinking mode.
+pub fn stage_options_with_thinking(num_predict: u32, think: Option<bool>) -> OllamaOptions {
+    OllamaOptions {
+        num_predict: Some(num_predict),
+        repeat_penalty: Some(1.2),
+        repeat_last_n: Some(128),
+        think,
     }
 }
 
@@ -46,6 +65,7 @@ pub struct OllamaModel {
 }
 
 pub async fn check_health(client: &Client, endpoint: &str) -> Result<bool> {
+    let endpoint = normalize_endpoint(endpoint);
     let resp = client
         .get(endpoint)
         .timeout(Duration::from_secs(5))
@@ -61,6 +81,7 @@ pub async fn check_health(client: &Client, endpoint: &str) -> Result<bool> {
 }
 
 pub async fn list_models(client: &Client, endpoint: &str) -> Result<Vec<OllamaModel>> {
+    let endpoint = normalize_endpoint(endpoint);
     let url = format!("{}/api/tags", endpoint);
     let resp = client
         .get(&url)
@@ -96,6 +117,99 @@ pub async fn list_models(client: &Client, endpoint: &str) -> Result<Vec<OllamaMo
     Ok(models)
 }
 
+/// Built-in list of model family name patterns known to support thinking mode.
+/// Matched case-insensitively against the model name before the ":" tag separator.
+const KNOWN_THINKING_MODEL_PATTERNS: &[&str] = &[
+    "qwen3",
+    "qwq",
+    "deepseek-r1",
+    "phi4-reasoning",
+    "phi-4-reasoning",
+    "marco-o1",
+    "gpt-oss",
+    "skywork-or1",
+    "smallthinker",
+    "granite3-moe",
+];
+
+/// Check if a model name matches a known thinking model pattern.
+pub fn is_known_thinking_model(model_name: &str) -> bool {
+    let base = model_name.split(':').next().unwrap_or(model_name);
+    let base_lower = base.to_lowercase();
+    KNOWN_THINKING_MODEL_PATTERNS
+        .iter()
+        .any(|pattern| base_lower.contains(&pattern.to_lowercase()))
+}
+
+/// Probe a specific model via `/api/show` to check if it supports thinking.
+/// Falls back to the known-models list if the probe fails.
+pub async fn probe_model_thinking(
+    client: &Client,
+    endpoint: &str,
+    model_name: &str,
+) -> bool {
+    if is_known_thinking_model(model_name) {
+        return true;
+    }
+
+    let endpoint = normalize_endpoint(endpoint);
+    let url = format!("{}/api/show", endpoint);
+    let body = serde_json::json!({ "name": model_name });
+
+    let resp = match client
+        .post(&url)
+        .timeout(Duration::from_secs(5))
+        .json(&body)
+        .send()
+        .await
+    {
+        Ok(r) if r.status().is_success() => r,
+        _ => return false,
+    };
+
+    let json: Value = match resp.json().await {
+        Ok(j) => j,
+        Err(_) => return false,
+    };
+
+    if let Some(template) = json.get("template").and_then(|t| t.as_str()) {
+        let tpl_lower = template.to_lowercase();
+        if tpl_lower.contains("<think>")
+            || tpl_lower.contains("thinking")
+            || tpl_lower.contains(".thinking")
+        {
+            return true;
+        }
+    }
+
+    if let Some(caps) = json.get("capabilities").and_then(|c| c.as_array()) {
+        for cap in caps {
+            if let Some(s) = cap.as_str() {
+                if s.eq_ignore_ascii_case("thinking") {
+                    return true;
+                }
+            }
+        }
+    }
+
+    false
+}
+
+/// Batch-detect thinking capability for all provided models.
+pub async fn detect_thinking_models(
+    client: &Client,
+    endpoint: &str,
+    model_names: &[String],
+) -> Vec<String> {
+    let mut thinking_models = Vec::new();
+    for name in model_names {
+        if probe_model_thinking(client, endpoint, name).await {
+            thinking_models.push(name.clone());
+        }
+    }
+    thinking_models
+}
+
 pub async fn chat(
     client: &Client,
     endpoint: &str,
@@ -114,6 +228,7 @@ pub async fn chat_with_options(
     format_json: bool,
     opts: &OllamaOptions,
 ) -> Result<ChatResponse> {
+    let endpoint = normalize_endpoint(endpoint);
     let url = format!("{}/api/chat", endpoint);
 
     let mut body = serde_json::json!({
@@ -130,6 +245,11 @@ pub async fn chat_with_options(
     let options = build_options(opts);
     if !options.is_empty() {
         body["options"] = serde_json::json!(options);
+    }
+
+    // Apply thinking mode — this is a top-level parameter, not inside "options"
+    if let Some(think) = opts.think {
+        body["think"] = serde_json::json!(think);
     }
 
     let resp = client
@@ -218,6 +338,7 @@ pub async fn chat_streaming_with_options<F>(
 where
     F: FnMut(&str),
 {
+    let endpoint = normalize_endpoint(endpoint);
     let url = format!("{}/api/chat", endpoint);
 
     let mut body = serde_json::json!({
@@ -234,6 +355,11 @@ where
     let options = build_options(opts);
     if !options.is_empty() {
         body["options"] = serde_json::json!(options);
+    }
+
+    // Apply thinking mode — this is a top-level parameter, not inside "options"
+    if let Some(think) = opts.think {
+        body["think"] = serde_json::json!(think);
     }
 
     let resp = client
@@ -261,6 +387,7 @@ where
     let mut prompt_eval_count: Option<u64> = None;
     let mut eval_count: Option<u64> = None;
     let mut line_buffer = String::new();
+    const MAX_BUFFER_SIZE: usize = 1_048_576; // 1MB
 
     while let Some(chunk) = stream.next().await {
         if let Some(ref flag) = cancelled {
@@ -271,6 +398,14 @@ where
         let chunk = chunk.context("Error reading stream chunk")?;
         let text = String::from_utf8_lossy(&chunk);
         line_buffer.push_str(&text);
+
+        // Guard against unbounded buffer accumulation
+        if line_buffer.len() > MAX_BUFFER_SIZE {
+            anyhow::bail!(
+                "Ollama response exceeded maximum buffer size ({}MB). Response may be malformed.",
+                MAX_BUFFER_SIZE / 1_048_576
+            );
+        }
 
         // Ollama sends newline-delimited JSON
         while let Some(newline_pos) = line_buffer.find('\n') {
@@ -293,6 +428,9 @@ where
                 {
                     if !content.is_empty() {
                         accumulated_content.push_str(content);
+                        if accumulated_content.len() > MAX_BUFFER_SIZE {
+                            anyhow::bail!("Ollama accumulated response exceeded {}MB limit", MAX_BUFFER_SIZE / 1_048_576);
+                        }
                         on_token(content);
                     }
                 }
@@ -357,6 +495,7 @@ fn build_options(opts: &OllamaOptions) -> serde_json::Map<String, Value> {
 
 /// Unload a model from VRAM by setting keep_alive to 0.
 pub async fn unload_model(client: &Client, endpoint: &str, model: &str) -> Result<()> {
+    let endpoint = normalize_endpoint(endpoint);
     let url = format!("{}/api/generate", endpoint);
     let body = serde_json::json!({
         "model": model,
@@ -381,6 +520,7 @@ pub async fn generate(
     prompt: &str,
     format_json: bool,
 ) -> Result<ChatResponse> {
+    let endpoint = normalize_endpoint(endpoint);
     let url = format!("{}/api/generate", endpoint);
 
     let mut body = serde_json::json!({

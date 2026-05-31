@@ -1,0 +1,2064 @@
+{
+  "archive_sha256_semantics": "zip-byte-sha256-not-canonical-content-hash",
+  "archive_zip_byte_sha256": "a8a0774511a8fe1f9212a507f72caa8193c40095011aa016f71283afd7845cc0",
+  "codex_archive": {
+    "active_stale_after": [],
+    "archive_only": false,
+    "archive_root": "/home/sikmindz/Coding/visionforge/docs/codex-runs/archive",
+    "collisions": [],
+    "current_run": "P30",
+    "dry_run": false,
+    "enabled": true,
+    "errors": [],
+    "manifest_paths": [],
+    "moved": [],
+    "planned": [],
+    "report_path": "/home/sikmindz/Coding/visionforge/visionforge-generic-next-codex-context-20260522.codex-archive.json",
+    "skipped_existing": [],
+    "stale_active_before": [],
+    "unclassified": [],
+    "verify_only": false
+  },
+  "content_manifest_sha256": "42e4e968ba0387b83ec6672a1d4a51fb19d179cc4d43ec821c9e2cf89e809db7",
+  "excluded": "/home/sikmindz/Coding/visionforge/visionforge-generic-next-codex-context-20260522.excluded.json",
+  "files": [
+    {
+      "bytes": 345,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T07:56:20Z",
+      "path": ".gitignore",
+      "sha256": "207910857de5a42c4043d85eb850493ef8368059097fb5a8234719ed230fa6bb"
+    },
+    {
+      "bytes": 23520,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T00:48:52Z",
+      "path": "CLAUDE.md",
+      "sha256": "499fe47db669c74f5a2f581b07128476dde7e9bb1e13c0039d2694ca658e0ac7"
+    },
+    {
+      "bytes": 4810,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T05:48:45Z",
+      "path": "README.md",
+      "sha256": "3bb6ffb3455d8607ea413e588a3c23846751773b395455f3267ebdf7b0a90780"
+    },
+    {
+      "bytes": 54258,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T00:55:31Z",
+      "path": "docs/SPEC.md",
+      "sha256": "72ea9e608e91a783592f5e7095e31e3d60253983efc6074a6e028fbde3a8d0d0"
+    },
+    {
+      "bytes": 395,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-05-22T06:41:05Z",
+      "path": "docs/codex-runs/ARCHIVAL_POLICY.md",
+      "sha256": "f1e9546ca27f5d3c141db2d95b4e484ed29ce71b2257acbde7437ebe8563705e"
+    },
+    {
+      "bytes": 154,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-05-22T06:41:05Z",
+      "path": "docs/codex-runs/CODEX_RUN_INDEX.md",
+      "sha256": "3c5273d2ff1ab2b91ad5c23e0120fa4726c6b0a9d7e2c0dbcd3adebe955da304"
+    },
+    {
+      "bytes": 168,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-05-22T06:41:05Z",
+      "path": "docs/codex-runs/CURRENT_RUN.md",
+      "sha256": "48ef9d2fa3b48046c192cb600abd71908def1f641958e4986d48ce5d6c36ce9d"
+    },
+    {
+      "bytes": 376,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T00:57:33Z",
+      "path": "index.html",
+      "sha256": "15d08508752a498afcc492cb6ff81c21df7d1097fdb5b39d966692093a604ad3"
+    },
+    {
+      "bytes": 102357,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T11:45:20Z",
+      "path": "package-lock.json",
+      "sha256": "802d9e1d7e0f83d39d2de49f5d98d369bee1400f164d9da0ee3249cfd50c8439"
+    },
+    {
+      "bytes": 796,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T11:45:19Z",
+      "path": "package.json",
+      "sha256": "a0797617f639e02d645343eb482097e049f823e8e1034e84b95fa8928c7ddca8"
+    },
+    {
+      "bytes": 80,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T01:25:08Z",
+      "path": "postcss.config.js",
+      "sha256": "190c877db466995bf1482f4a16abd06e04a89ede3119341e2a86ff96e1737b27"
+    },
+    {
+      "bytes": 166,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T00:57:33Z",
+      "path": "s/.gitignore",
+      "sha256": "88707cda7ba4226eda3ffa91d8284f1a0d12b827f06fb9bc48425cc0d4af04af"
+    },
+    {
+      "bytes": 165613,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T11:45:16Z",
+      "path": "s/Cargo.lock",
+      "sha256": "b620e2a0f172862313894b2fcb52ae48666f33f9ce4d40e99e09745e1f55df93"
+    },
+    {
+      "bytes": 928,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T11:45:14Z",
+      "path": "s/Cargo.toml",
+      "sha256": "0b65fce14a0a78f467ec51257b8ed157cf815ecd547a4b7f81746d70fc235f3d"
+    },
+    {
+      "bytes": 39,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T00:57:33Z",
+      "path": "s/build.rs",
+      "sha256": "487059eaf8a947b80f20a9aacac038a5047b2ad69d2401b827376c67d6fe847f"
+    },
+    {
+      "bytes": 368,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T11:45:20Z",
+      "path": "s/capabilities/default.json",
+      "sha256": "b4a6c463a2c8c68d80434b1db09de10fd5289279c02da82d343e3b10f3665f44"
+    },
+    {
+      "bytes": 69606,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T11:45:24Z",
+      "path": "s/gen/schemas/acl-manifests.json",
+      "sha256": "db6c79b1c810e3840d0356c34bf7ea7d7d7b4def65c22139368ac78823799df4"
+    },
+    {
+      "bytes": 279,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T11:45:24Z",
+      "path": "s/gen/schemas/capabilities.json",
+      "sha256": "b78468713c3ac38db15c377a9ab5cba24a5ccfe853c6b649b1eea19d909be613"
+    },
+    {
+      "bytes": 129753,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T11:45:24Z",
+      "path": "s/gen/schemas/desktop-schema.json",
+      "sha256": "30537d50853f0a1fe2bdd975e28492c752698abd8eac4ae0a2bbca483952f1ba"
+    },
+    {
+      "bytes": 129753,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T11:45:24Z",
+      "path": "s/gen/schemas/linux-schema.json",
+      "sha256": "30537d50853f0a1fe2bdd975e28492c752698abd8eac4ae0a2bbca483952f1ba"
+    },
+    {
+      "bytes": 2796,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T12:06:26Z",
+      "path": "s/src/ai/captioner.rs",
+      "sha256": "0cd0bd0f5ce477498b4d8b94a834d7e15d0bd0de48f334dbbae12867c80a808d"
+    },
+    {
+      "bytes": 35,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T11:45:20Z",
+      "path": "s/src/ai/mod.rs",
+      "sha256": "02aa9636c13838caef8595bcc96c18ddeb804bb3f34564964f0ba95b8141024c"
+    },
+    {
+      "bytes": 10130,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T12:06:21Z",
+      "path": "s/src/ai/tagger.rs",
+      "sha256": "097f17bbfac0e48674376e4dfb623fae0db4563cf9f80b474cda661f96a3d762"
+    },
+    {
+      "bytes": 3923,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-12T05:07:58Z",
+      "path": "s/src/ai_batch/downscale.rs",
+      "sha256": "1ede99a42569f12db77b70da1696a2297cd794020e5f909e157203671c6b86da"
+    },
+    {
+      "bytes": 9811,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-12T05:03:23Z",
+      "path": "s/src/ai_batch/executor.rs",
+      "sha256": "5023e7552a459d5ac4f1d4eacd6e8904fb6a77c8ba64b4fecd6a7f541ea11cc4"
+    },
+    {
+      "bytes": 67,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-12T05:01:10Z",
+      "path": "s/src/ai_batch/mod.rs",
+      "sha256": "8a8c914abadb10bff6b898d4f6cb9e6eba8471ab38a903055604e7ddda39b583"
+    },
+    {
+      "bytes": 17537,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-12T05:08:02Z",
+      "path": "s/src/ai_batch/queue.rs",
+      "sha256": "f8a79a5482ae7dcdb0f36009663f2bafcc656c80cba406e72ade320b2c0eaac7"
+    },
+    {
+      "bytes": 3659,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-12T05:05:08Z",
+      "path": "s/src/ai_batch/types.rs",
+      "sha256": "a0575c337fadf4852c37cd7acb1cddf9059e45ea85c912c3ff4d9afc6f3830da"
+    },
+    {
+      "bytes": 13696,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T18:02:01Z",
+      "path": "s/src/comfyui/client.rs",
+      "sha256": "80919d6dab20ec4bae193f1c9095f980cbfdbe893625cf09912cf2e23c48c328"
+    },
+    {
+      "bytes": 2483,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T11:45:20Z",
+      "path": "s/src/comfyui/client_test.rs",
+      "sha256": "f914a0ad33c90e5a7bb9e700aa761e0dcadcc5de34ddd57d1f07aef8a66d6ffd"
+    },
+    {
+      "bytes": 50,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T11:45:20Z",
+      "path": "s/src/comfyui/mod.rs",
+      "sha256": "a0cb0b1733f1d0c64ab29aec6434c23edc20eb66b2d6264fd8a6321757adf9aa"
+    },
+    {
+      "bytes": 6353,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T18:03:13Z",
+      "path": "s/src/comfyui/models.rs",
+      "sha256": "892822172a52f7125855d82b87eff310cc93bb094a7d1d9a4d7071a08d113f83"
+    },
+    {
+      "bytes": 6687,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T11:45:20Z",
+      "path": "s/src/comfyui/workflow.rs",
+      "sha256": "bbafac6952b93c2760082554e5ea8b4a92e6177b71935850abf45a9eb48a5709"
+    },
+    {
+      "bytes": 4554,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-12T05:03:47Z",
+      "path": "s/src/commands/ai_batch_cmds.rs",
+      "sha256": "ec863d9f1d027b9010ddb3c41fa6971c3f947892fe9336783384938b78b36b23"
+    },
+    {
+      "bytes": 2901,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T17:56:58Z",
+      "path": "s/src/commands/ai_cmds.rs",
+      "sha256": "1de16b5e7698621dead0ad4f007d0076bf0e4a1ccf2e9e4e58965575e6e16bd9"
+    },
+    {
+      "bytes": 2853,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T02:13:39Z",
+      "path": "s/src/commands/checkpoint_cmds.rs",
+      "sha256": "2764e525326d3ffe661c59e1181c69dbcb3c5b3ccd0bb8bd321a7839dfd8271d"
+    },
+    {
+      "bytes": 5951,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T17:56:48Z",
+      "path": "s/src/commands/comfyui_cmds.rs",
+      "sha256": "5ec87c4a67ab39def366a6466724b950d191d82af7e1bece9a39e406cced414c"
+    },
+    {
+      "bytes": 2189,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T17:55:21Z",
+      "path": "s/src/commands/comparison_cmds.rs",
+      "sha256": "7a47f581111b9c96ef49578f78fd9078d513947c30367cf5c8cb136cc52030af"
+    },
+    {
+      "bytes": 1492,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T22:23:04Z",
+      "path": "s/src/commands/config_cmds.rs",
+      "sha256": "99f2cf6b33dd4fb2df41c6f13e4ad7c9feb68253ed43ad139d089e04ed5a44a0"
+    },
+    {
+      "bytes": 2169,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T18:38:32Z",
+      "path": "s/src/commands/export_cmds.rs",
+      "sha256": "80fac11b0f6f83a17d95528b2970c2a0b2513cd70c15517cacb68f707282e8cb"
+    },
+    {
+      "bytes": 6675,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T17:59:18Z",
+      "path": "s/src/commands/gallery_cmds.rs",
+      "sha256": "1505a4b2b40079fbf236e4f2cf65093d6942e335f90cb8ec7d72be30a86a95b2"
+    },
+    {
+      "bytes": 238,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-12T05:03:52Z",
+      "path": "s/src/commands/mod.rs",
+      "sha256": "a9cd704e09b9a54d909005b38b35913a070e4b1f7a1e87c06c657c75c94cc7fd"
+    },
+    {
+      "bytes": 5895,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-12T03:57:53Z",
+      "path": "s/src/commands/pipeline_cmds.rs",
+      "sha256": "3b7b6360885c85effb6f570e8d81308bd18bbcac8ffc0d168edb5d6bdec06cce"
+    },
+    {
+      "bytes": 1531,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T11:45:20Z",
+      "path": "s/src/commands/queue_cmds.rs",
+      "sha256": "e8b8e9b4a14d8c05b38cef2fda448031008beff163622f8ff22fabaaaecf0347"
+    },
+    {
+      "bytes": 2623,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T11:45:20Z",
+      "path": "s/src/commands/seed_cmds.rs",
+      "sha256": "861dcea2e67d77e2b0231c952400c346872ac91ec2d1ba0ceadb354a6f7d48aa"
+    },
+    {
+      "bytes": 17598,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-12T05:06:18Z",
+      "path": "s/src/config/manager.rs",
+      "sha256": "648468963f718ad4e0fc17eea6dbd66edaa64c5c179045f23276246ec716bc2e"
+    },
+    {
+      "bytes": 17,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T01:18:40Z",
+      "path": "s/src/config/mod.rs",
+      "sha256": "93f08a8d53f93567647504663fdb6eb867ff5f837871d381bd3f090a25f07497"
+    },
+    {
+      "bytes": 14047,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T11:45:20Z",
+      "path": "s/src/db/checkpoints.rs",
+      "sha256": "982c46d71fa77bb81c5ce5bdf018238e5338312bcd7931d1fd6f75dac2643c3f"
+    },
+    {
+      "bytes": 8477,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T11:45:20Z",
+      "path": "s/src/db/comparisons.rs",
+      "sha256": "7448db65f35666225276e66ec428cbe26a41a69e0989aba5a75cfe93c4863537"
+    },
+    {
+      "bytes": 8627,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-12T05:04:45Z",
+      "path": "s/src/db/images.rs",
+      "sha256": "12b63cec60a847c831391c6639c5c2a0e55f7128ce40f45f671c462f28a42a56"
+    },
+    {
+      "bytes": 6306,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T11:45:20Z",
+      "path": "s/src/db/images_test.rs",
+      "sha256": "7fb9d8488dc7f2a5406e5774ced2f44cc721c7256dba7ddcdacd025fc5ed9e66"
+    },
+    {
+      "bytes": 8935,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T18:00:37Z",
+      "path": "s/src/db/migrations.rs",
+      "sha256": "5b3b0551c367e92d2082eec6ba130a1e12b66b3d348a79cfa3aa2c735190ddbd"
+    },
+    {
+      "bytes": 1023,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T11:45:20Z",
+      "path": "s/src/db/mod.rs",
+      "sha256": "d8dbe0214c771b65183dc927b7951037273a69d5db9fb64ef112b5365d0ca3d4"
+    },
+    {
+      "bytes": 12462,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T11:45:20Z",
+      "path": "s/src/db/queue.rs",
+      "sha256": "07ee1c532c49f0494f991f958027c99a80888bf10aae0305691f36e74e1416ff"
+    },
+    {
+      "bytes": 11705,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T17:58:54Z",
+      "path": "s/src/db/seeds.rs",
+      "sha256": "542b993af80b74760ef2dba55ed18d1ff4975fe55b806b3fe291979f01c61aac"
+    },
+    {
+      "bytes": 10352,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T17:59:09Z",
+      "path": "s/src/db/tags.rs",
+      "sha256": "30058296f925dedb7f9a86d79e600ae428922cca73b236b448cd94606b48d857"
+    },
+    {
+      "bytes": 11482,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T18:38:20Z",
+      "path": "s/src/gallery/export.rs",
+      "sha256": "9383e4636f576aaec0feb08f4bbb2ae4750c3922b84709151bdac92371566cda"
+    },
+    {
+      "bytes": 33,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T11:45:20Z",
+      "path": "s/src/gallery/mod.rs",
+      "sha256": "570263fdb24466bcb01cb10f6ef27022c54c4ef8043eb659e3cad0ac1a4a37a2"
+    },
+    {
+      "bytes": 8805,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T17:55:46Z",
+      "path": "s/src/gallery/storage.rs",
+      "sha256": "f87c9725b0a281258382696a3a319e7525a8cf02bcfebbcf3e3475711e0e6434"
+    },
+    {
+      "bytes": 6641,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-12T05:04:11Z",
+      "path": "s/src/lib.rs",
+      "sha256": "f53840b89acf19189da57ea3e1df09e04a428914f7034b1503dcea6d777a84d4"
+    },
+    {
+      "bytes": 186,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T00:57:33Z",
+      "path": "s/src/main.rs",
+      "sha256": "498fe7cb33ee29dc0041577abfcc9384230c3139cf6d3b60020c935f4e7f5638"
+    },
+    {
+      "bytes": 10725,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-12T03:56:35Z",
+      "path": "s/src/pipeline/engine.rs",
+      "sha256": "54bd2002d21e6d051460e79e0e3c09bda5b0cc5da73cd70279717a9880d0148e"
+    },
+    {
+      "bytes": 12145,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-12T03:57:01Z",
+      "path": "s/src/pipeline/engine_streaming.rs",
+      "sha256": "4a6511b09044d08d7e662e63b0736aec2716021acc5b14a3ea12006630b68172"
+    },
+    {
+      "bytes": 5147,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T01:52:19Z",
+      "path": "s/src/pipeline/engine_test.rs",
+      "sha256": "5c021c483f53a68f9fcd771a6bf84da8816c39fb974712ff28b7cc5c7d5245e3"
+    },
+    {
+      "bytes": 117,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T11:45:20Z",
+      "path": "s/src/pipeline/mod.rs",
+      "sha256": "b47c2ebbd6d3d2a9b4e6bd7604e2ac0d26173ca49b9df2962d0a92fc146d1f1a"
+    },
+    {
+      "bytes": 17006,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-12T03:52:04Z",
+      "path": "s/src/pipeline/ollama.rs",
+      "sha256": "bd83b4e2c71d31cb866298da23e43a5b4241b237b7f1fe61c07bc369ae4593fe"
+    },
+    {
+      "bytes": 4777,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-12T03:59:01Z",
+      "path": "s/src/pipeline/ollama_test.rs",
+      "sha256": "4a1364fa9ce82ab936aa78fbe3477f4eb044739cc65fc0cc8280859c1bba9c28"
+    },
+    {
+      "bytes": 9400,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T18:03:56Z",
+      "path": "s/src/pipeline/prompts.rs",
+      "sha256": "5d5a698ad3670c294ea93a83b997a6853cc428f4e7a8240dd88312cf10d58b4f"
+    },
+    {
+      "bytes": 16221,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-12T03:55:14Z",
+      "path": "s/src/pipeline/stages.rs",
+      "sha256": "e526d95163a3fe945bedf4a656f88f56cedfd118220cfe80b44306337c788029"
+    },
+    {
+      "bytes": 7393,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-12T03:55:51Z",
+      "path": "s/src/pipeline/stages_streaming.rs",
+      "sha256": "3c23f1c028f5c4d3f8b08ac2cec406c06e8c7cd678cb2e048910f3fade131716"
+    },
+    {
+      "bytes": 8682,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T12:07:23Z",
+      "path": "s/src/pipeline/stages_test.rs",
+      "sha256": "06da71647e15e0d8615b4e8578a8d6d65eafdec2863bd22ac079d56d9cd57ee9"
+    },
+    {
+      "bytes": 14103,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T18:03:28Z",
+      "path": "s/src/queue/executor.rs",
+      "sha256": "79e7234c68236bae7f03037e4d25b217abaa64c257836c80f0dfb6c343197293"
+    },
+    {
+      "bytes": 3448,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T17:58:27Z",
+      "path": "s/src/queue/executor_test.rs",
+      "sha256": "6c7528cb45105affda5852e6d05d8447a50031627ddcf160849bf52dfc6199a3"
+    },
+    {
+      "bytes": 7355,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T17:57:28Z",
+      "path": "s/src/queue/manager.rs",
+      "sha256": "d132e3747e200094848c1f32b88e9f247f65934d5f7c124f10c5c314d8901a98"
+    },
+    {
+      "bytes": 35,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T01:18:38Z",
+      "path": "s/src/queue/mod.rs",
+      "sha256": "3aa586ac8f046ebcb4b853addb1a42bf7ca820f734365ce79cd611b88c9bf3c2"
+    },
+    {
+      "bytes": 1388,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T18:00:50Z",
+      "path": "s/src/state.rs",
+      "sha256": "799f7d59b17686bdcf4582d450747b903991db086932a78c7b05239e7eda3945"
+    },
+    {
+      "bytes": 2758,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T01:19:52Z",
+      "path": "s/src/types/checkpoints.rs",
+      "sha256": "08944748fa4cc585e882a5869c45ac4d5f9bd27f1aef45877b974d70f150ae66"
+    },
+    {
+      "bytes": 323,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T01:19:54Z",
+      "path": "s/src/types/comparison.rs",
+      "sha256": "87181ac57060ab013a6dfe1169510ef75bef301c76888f6d137c418b01a93ae6"
+    },
+    {
+      "bytes": 5499,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-12T05:04:30Z",
+      "path": "s/src/types/config.rs",
+      "sha256": "56864a0e576cbf1a2d516aa74cdc035408a628e60d68c34a4f808490d5623fa4"
+    },
+    {
+      "bytes": 2151,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-12T05:04:38Z",
+      "path": "s/src/types/gallery.rs",
+      "sha256": "3e2a32b1592ad34b29e1e736a6563fa102ada63c74e21823d6e5d773492b57fc"
+    },
+    {
+      "bytes": 971,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T01:19:33Z",
+      "path": "s/src/types/generation.rs",
+      "sha256": "abbd05414d41a676c32785ab51764dac31d59d875e78ab3cd4ad461fa476b092"
+    },
+    {
+      "bytes": 142,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T11:45:20Z",
+      "path": "s/src/types/mod.rs",
+      "sha256": "0d403d3429cbd4008985572226c366e84451d0651d1e91fd3830904dc205dbb4"
+    },
+    {
+      "bytes": 4277,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T07:13:50Z",
+      "path": "s/src/types/pipeline.rs",
+      "sha256": "61786e58f9b0a1eec6de2070ae88109e8ae46d80ef051c2f33bf96e135b1f67a"
+    },
+    {
+      "bytes": 1960,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T01:19:59Z",
+      "path": "s/src/types/queue.rs",
+      "sha256": "9174a6f40867b8500dc46f1c98515572596a173c17fb82fb60f01ab83860e861"
+    },
+    {
+      "bytes": 831,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T01:43:33Z",
+      "path": "s/src/types/seeds.rs",
+      "sha256": "7b951b2e8399d8656ed3bb3034edb50c1f63921756b9310a2af96342a7ef795d"
+    },
+    {
+      "bytes": 1155,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T17:55:30Z",
+      "path": "s/tauri.conf.json",
+      "sha256": "20434268008eea16c9bae116bbbd2841255475151177aaefe3ea824ba8a84b19"
+    },
+    {
+      "bytes": 166,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T00:57:33Z",
+      "path": "src-tauri/.gitignore",
+      "sha256": "88707cda7ba4226eda3ffa91d8284f1a0d12b827f06fb9bc48425cc0d4af04af"
+    },
+    {
+      "bytes": 165613,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T11:45:16Z",
+      "path": "src-tauri/Cargo.lock",
+      "sha256": "b620e2a0f172862313894b2fcb52ae48666f33f9ce4d40e99e09745e1f55df93"
+    },
+    {
+      "bytes": 928,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T11:45:14Z",
+      "path": "src-tauri/Cargo.toml",
+      "sha256": "0b65fce14a0a78f467ec51257b8ed157cf815ecd547a4b7f81746d70fc235f3d"
+    },
+    {
+      "bytes": 39,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T00:57:33Z",
+      "path": "src-tauri/build.rs",
+      "sha256": "487059eaf8a947b80f20a9aacac038a5047b2ad69d2401b827376c67d6fe847f"
+    },
+    {
+      "bytes": 368,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T11:45:20Z",
+      "path": "src-tauri/capabilities/default.json",
+      "sha256": "b4a6c463a2c8c68d80434b1db09de10fd5289279c02da82d343e3b10f3665f44"
+    },
+    {
+      "bytes": 69606,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T11:45:24Z",
+      "path": "src-tauri/gen/schemas/acl-manifests.json",
+      "sha256": "db6c79b1c810e3840d0356c34bf7ea7d7d7b4def65c22139368ac78823799df4"
+    },
+    {
+      "bytes": 279,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T11:45:24Z",
+      "path": "src-tauri/gen/schemas/capabilities.json",
+      "sha256": "b78468713c3ac38db15c377a9ab5cba24a5ccfe853c6b649b1eea19d909be613"
+    },
+    {
+      "bytes": 129753,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T11:45:24Z",
+      "path": "src-tauri/gen/schemas/desktop-schema.json",
+      "sha256": "30537d50853f0a1fe2bdd975e28492c752698abd8eac4ae0a2bbca483952f1ba"
+    },
+    {
+      "bytes": 129753,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T11:45:24Z",
+      "path": "src-tauri/gen/schemas/linux-schema.json",
+      "sha256": "30537d50853f0a1fe2bdd975e28492c752698abd8eac4ae0a2bbca483952f1ba"
+    },
+    {
+      "bytes": 2796,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T12:06:26Z",
+      "path": "src-tauri/src/ai/captioner.rs",
+      "sha256": "0cd0bd0f5ce477498b4d8b94a834d7e15d0bd0de48f334dbbae12867c80a808d"
+    },
+    {
+      "bytes": 35,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T11:45:20Z",
+      "path": "src-tauri/src/ai/mod.rs",
+      "sha256": "02aa9636c13838caef8595bcc96c18ddeb804bb3f34564964f0ba95b8141024c"
+    },
+    {
+      "bytes": 10130,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T12:06:21Z",
+      "path": "src-tauri/src/ai/tagger.rs",
+      "sha256": "097f17bbfac0e48674376e4dfb623fae0db4563cf9f80b474cda661f96a3d762"
+    },
+    {
+      "bytes": 3923,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-12T05:07:58Z",
+      "path": "src-tauri/src/ai_batch/downscale.rs",
+      "sha256": "1ede99a42569f12db77b70da1696a2297cd794020e5f909e157203671c6b86da"
+    },
+    {
+      "bytes": 9811,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-12T05:03:23Z",
+      "path": "src-tauri/src/ai_batch/executor.rs",
+      "sha256": "5023e7552a459d5ac4f1d4eacd6e8904fb6a77c8ba64b4fecd6a7f541ea11cc4"
+    },
+    {
+      "bytes": 67,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-12T05:01:10Z",
+      "path": "src-tauri/src/ai_batch/mod.rs",
+      "sha256": "8a8c914abadb10bff6b898d4f6cb9e6eba8471ab38a903055604e7ddda39b583"
+    },
+    {
+      "bytes": 17882,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-12T20:21:22Z",
+      "path": "src-tauri/src/ai_batch/queue.rs",
+      "sha256": "8edd149fbef279b017801f5060e81f90fd000c6c5ef683499fc1a2a07c54d580"
+    },
+    {
+      "bytes": 3659,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-12T05:05:08Z",
+      "path": "src-tauri/src/ai_batch/types.rs",
+      "sha256": "a0575c337fadf4852c37cd7acb1cddf9059e45ea85c912c3ff4d9afc6f3830da"
+    },
+    {
+      "bytes": 14308,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-12T20:21:13Z",
+      "path": "src-tauri/src/comfyui/client.rs",
+      "sha256": "6ef93f88ea3c50f7aec264e25c086886c1e489b247e4cfe3bbdd3c1fc1df26a6"
+    },
+    {
+      "bytes": 2483,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T11:45:20Z",
+      "path": "src-tauri/src/comfyui/client_test.rs",
+      "sha256": "f914a0ad33c90e5a7bb9e700aa761e0dcadcc5de34ddd57d1f07aef8a66d6ffd"
+    },
+    {
+      "bytes": 50,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T11:45:20Z",
+      "path": "src-tauri/src/comfyui/mod.rs",
+      "sha256": "a0cb0b1733f1d0c64ab29aec6434c23edc20eb66b2d6264fd8a6321757adf9aa"
+    },
+    {
+      "bytes": 6353,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T18:03:13Z",
+      "path": "src-tauri/src/comfyui/models.rs",
+      "sha256": "892822172a52f7125855d82b87eff310cc93bb094a7d1d9a4d7071a08d113f83"
+    },
+    {
+      "bytes": 6687,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T11:45:20Z",
+      "path": "src-tauri/src/comfyui/workflow.rs",
+      "sha256": "bbafac6952b93c2760082554e5ea8b4a92e6177b71935850abf45a9eb48a5709"
+    },
+    {
+      "bytes": 4554,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-12T05:03:47Z",
+      "path": "src-tauri/src/commands/ai_batch_cmds.rs",
+      "sha256": "ec863d9f1d027b9010ddb3c41fa6971c3f947892fe9336783384938b78b36b23"
+    },
+    {
+      "bytes": 2901,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T17:56:58Z",
+      "path": "src-tauri/src/commands/ai_cmds.rs",
+      "sha256": "1de16b5e7698621dead0ad4f007d0076bf0e4a1ccf2e9e4e58965575e6e16bd9"
+    },
+    {
+      "bytes": 2853,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T02:13:39Z",
+      "path": "src-tauri/src/commands/checkpoint_cmds.rs",
+      "sha256": "2764e525326d3ffe661c59e1181c69dbcb3c5b3ccd0bb8bd321a7839dfd8271d"
+    },
+    {
+      "bytes": 5951,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T17:56:48Z",
+      "path": "src-tauri/src/commands/comfyui_cmds.rs",
+      "sha256": "5ec87c4a67ab39def366a6466724b950d191d82af7e1bece9a39e406cced414c"
+    },
+    {
+      "bytes": 2189,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T17:55:21Z",
+      "path": "src-tauri/src/commands/comparison_cmds.rs",
+      "sha256": "7a47f581111b9c96ef49578f78fd9078d513947c30367cf5c8cb136cc52030af"
+    },
+    {
+      "bytes": 1492,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T22:23:04Z",
+      "path": "src-tauri/src/commands/config_cmds.rs",
+      "sha256": "99f2cf6b33dd4fb2df41c6f13e4ad7c9feb68253ed43ad139d089e04ed5a44a0"
+    },
+    {
+      "bytes": 2169,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T18:38:32Z",
+      "path": "src-tauri/src/commands/export_cmds.rs",
+      "sha256": "80fac11b0f6f83a17d95528b2970c2a0b2513cd70c15517cacb68f707282e8cb"
+    },
+    {
+      "bytes": 6675,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T17:59:18Z",
+      "path": "src-tauri/src/commands/gallery_cmds.rs",
+      "sha256": "1505a4b2b40079fbf236e4f2cf65093d6942e335f90cb8ec7d72be30a86a95b2"
+    },
+    {
+      "bytes": 238,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-12T05:03:52Z",
+      "path": "src-tauri/src/commands/mod.rs",
+      "sha256": "a9cd704e09b9a54d909005b38b35913a070e4b1f7a1e87c06c657c75c94cc7fd"
+    },
+    {
+      "bytes": 5895,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-12T03:57:53Z",
+      "path": "src-tauri/src/commands/pipeline_cmds.rs",
+      "sha256": "3b7b6360885c85effb6f570e8d81308bd18bbcac8ffc0d168edb5d6bdec06cce"
+    },
+    {
+      "bytes": 1840,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-12T20:27:00Z",
+      "path": "src-tauri/src/commands/queue_cmds.rs",
+      "sha256": "fd24f377c5d6eda21eeffca983c02ddd1f697b16469172982c3a08d0602ac8d4"
+    },
+    {
+      "bytes": 2623,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T11:45:20Z",
+      "path": "src-tauri/src/commands/seed_cmds.rs",
+      "sha256": "861dcea2e67d77e2b0231c952400c346872ac91ec2d1ba0ceadb354a6f7d48aa"
+    },
+    {
+      "bytes": 17598,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-12T05:06:18Z",
+      "path": "src-tauri/src/config/manager.rs",
+      "sha256": "648468963f718ad4e0fc17eea6dbd66edaa64c5c179045f23276246ec716bc2e"
+    },
+    {
+      "bytes": 17,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T01:18:40Z",
+      "path": "src-tauri/src/config/mod.rs",
+      "sha256": "93f08a8d53f93567647504663fdb6eb867ff5f837871d381bd3f090a25f07497"
+    },
+    {
+      "bytes": 14047,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T11:45:20Z",
+      "path": "src-tauri/src/db/checkpoints.rs",
+      "sha256": "982c46d71fa77bb81c5ce5bdf018238e5338312bcd7931d1fd6f75dac2643c3f"
+    },
+    {
+      "bytes": 8477,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T11:45:20Z",
+      "path": "src-tauri/src/db/comparisons.rs",
+      "sha256": "7448db65f35666225276e66ec428cbe26a41a69e0989aba5a75cfe93c4863537"
+    },
+    {
+      "bytes": 8627,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-12T05:04:45Z",
+      "path": "src-tauri/src/db/images.rs",
+      "sha256": "12b63cec60a847c831391c6639c5c2a0e55f7128ce40f45f671c462f28a42a56"
+    },
+    {
+      "bytes": 6306,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T11:45:20Z",
+      "path": "src-tauri/src/db/images_test.rs",
+      "sha256": "7fb9d8488dc7f2a5406e5774ced2f44cc721c7256dba7ddcdacd025fc5ed9e66"
+    },
+    {
+      "bytes": 9307,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-12T20:26:40Z",
+      "path": "src-tauri/src/db/migrations.rs",
+      "sha256": "c3e5f05bee73ba2b583a246b00dc25bf1c4042e2f82e13f0fe9b4d5d12662d50"
+    },
+    {
+      "bytes": 1023,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T11:45:20Z",
+      "path": "src-tauri/src/db/mod.rs",
+      "sha256": "d8dbe0214c771b65183dc927b7951037273a69d5db9fb64ef112b5365d0ca3d4"
+    },
+    {
+      "bytes": 13039,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-12T20:26:46Z",
+      "path": "src-tauri/src/db/queue.rs",
+      "sha256": "e91757d48e23da1ad09338314321ce46b2a993f6f4ecd8213d3fd6d5302ec08f"
+    },
+    {
+      "bytes": 11705,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T17:58:54Z",
+      "path": "src-tauri/src/db/seeds.rs",
+      "sha256": "542b993af80b74760ef2dba55ed18d1ff4975fe55b806b3fe291979f01c61aac"
+    },
+    {
+      "bytes": 10352,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T17:59:09Z",
+      "path": "src-tauri/src/db/tags.rs",
+      "sha256": "30058296f925dedb7f9a86d79e600ae428922cca73b236b448cd94606b48d857"
+    },
+    {
+      "bytes": 11482,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T18:38:20Z",
+      "path": "src-tauri/src/gallery/export.rs",
+      "sha256": "9383e4636f576aaec0feb08f4bbb2ae4750c3922b84709151bdac92371566cda"
+    },
+    {
+      "bytes": 33,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T11:45:20Z",
+      "path": "src-tauri/src/gallery/mod.rs",
+      "sha256": "570263fdb24466bcb01cb10f6ef27022c54c4ef8043eb659e3cad0ac1a4a37a2"
+    },
+    {
+      "bytes": 9075,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-12T20:21:30Z",
+      "path": "src-tauri/src/gallery/storage.rs",
+      "sha256": "caa35602637a5c21bd9ba3251400a1d5bb072ec8ac91b42e3ee1c93eff4505b6"
+    },
+    {
+      "bytes": 8820,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-12T20:27:04Z",
+      "path": "src-tauri/src/lib.rs",
+      "sha256": "0404074bf051027dec7ee98c6c6b9562db89886b93cd9f3898ba936561a68150"
+    },
+    {
+      "bytes": 186,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T00:57:33Z",
+      "path": "src-tauri/src/main.rs",
+      "sha256": "498fe7cb33ee29dc0041577abfcc9384230c3139cf6d3b60020c935f4e7f5638"
+    },
+    {
+      "bytes": 11679,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-12T20:27:13Z",
+      "path": "src-tauri/src/pipeline/engine.rs",
+      "sha256": "e8c22fe52bfd4f77222a98d1f216630df20df59ae59ced73df8e4aac9c31cf5a"
+    },
+    {
+      "bytes": 13099,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-12T20:27:20Z",
+      "path": "src-tauri/src/pipeline/engine_streaming.rs",
+      "sha256": "159c9c770d99ed625326df0ff9db6cc36135908d38242c874f5da87bd31f306d"
+    },
+    {
+      "bytes": 5147,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T01:52:19Z",
+      "path": "src-tauri/src/pipeline/engine_test.rs",
+      "sha256": "5c021c483f53a68f9fcd771a6bf84da8816c39fb974712ff28b7cc5c7d5245e3"
+    },
+    {
+      "bytes": 117,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T11:45:20Z",
+      "path": "src-tauri/src/pipeline/mod.rs",
+      "sha256": "b47c2ebbd6d3d2a9b4e6bd7604e2ac0d26173ca49b9df2962d0a92fc146d1f1a"
+    },
+    {
+      "bytes": 17424,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-13T00:08:23Z",
+      "path": "src-tauri/src/pipeline/ollama.rs",
+      "sha256": "617c2657cf72ad0e44dd2bb52cebd1ab001d75c7ffda7826eb818b2134942d81"
+    },
+    {
+      "bytes": 4777,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-12T03:59:01Z",
+      "path": "src-tauri/src/pipeline/ollama_test.rs",
+      "sha256": "4a1364fa9ce82ab936aa78fbe3477f4eb044739cc65fc0cc8280859c1bba9c28"
+    },
+    {
+      "bytes": 9400,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T18:03:56Z",
+      "path": "src-tauri/src/pipeline/prompts.rs",
+      "sha256": "5d5a698ad3670c294ea93a83b997a6853cc428f4e7a8240dd88312cf10d58b4f"
+    },
+    {
+      "bytes": 16221,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-12T03:55:14Z",
+      "path": "src-tauri/src/pipeline/stages.rs",
+      "sha256": "e526d95163a3fe945bedf4a656f88f56cedfd118220cfe80b44306337c788029"
+    },
+    {
+      "bytes": 7393,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-12T03:55:51Z",
+      "path": "src-tauri/src/pipeline/stages_streaming.rs",
+      "sha256": "3c23f1c028f5c4d3f8b08ac2cec406c06e8c7cd678cb2e048910f3fade131716"
+    },
+    {
+      "bytes": 8682,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T12:07:23Z",
+      "path": "src-tauri/src/pipeline/stages_test.rs",
+      "sha256": "06da71647e15e0d8615b4e8578a8d6d65eafdec2863bd22ac079d56d9cd57ee9"
+    },
+    {
+      "bytes": 13670,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-12T20:21:55Z",
+      "path": "src-tauri/src/queue/executor.rs",
+      "sha256": "8a95fdce05a8e5e14b05ba495df53557c6dc3622dcdfb5b58fcfdabbde6458dc"
+    },
+    {
+      "bytes": 3617,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-12T20:25:54Z",
+      "path": "src-tauri/src/queue/executor_test.rs",
+      "sha256": "ced3c261755431c994df26ea051d1d6f58e437ea112d20279d9543e61a9c501f"
+    },
+    {
+      "bytes": 7355,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T17:57:28Z",
+      "path": "src-tauri/src/queue/manager.rs",
+      "sha256": "d132e3747e200094848c1f32b88e9f247f65934d5f7c124f10c5c314d8901a98"
+    },
+    {
+      "bytes": 35,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T01:18:38Z",
+      "path": "src-tauri/src/queue/mod.rs",
+      "sha256": "3aa586ac8f046ebcb4b853addb1a42bf7ca820f734365ce79cd611b88c9bf3c2"
+    },
+    {
+      "bytes": 1388,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T18:00:50Z",
+      "path": "src-tauri/src/state.rs",
+      "sha256": "799f7d59b17686bdcf4582d450747b903991db086932a78c7b05239e7eda3945"
+    },
+    {
+      "bytes": 2758,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T01:19:52Z",
+      "path": "src-tauri/src/types/checkpoints.rs",
+      "sha256": "08944748fa4cc585e882a5869c45ac4d5f9bd27f1aef45877b974d70f150ae66"
+    },
+    {
+      "bytes": 323,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T01:19:54Z",
+      "path": "src-tauri/src/types/comparison.rs",
+      "sha256": "87181ac57060ab013a6dfe1169510ef75bef301c76888f6d137c418b01a93ae6"
+    },
+    {
+      "bytes": 5499,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-12T05:04:30Z",
+      "path": "src-tauri/src/types/config.rs",
+      "sha256": "56864a0e576cbf1a2d516aa74cdc035408a628e60d68c34a4f808490d5623fa4"
+    },
+    {
+      "bytes": 2151,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-12T05:04:38Z",
+      "path": "src-tauri/src/types/gallery.rs",
+      "sha256": "3e2a32b1592ad34b29e1e736a6563fa102ada63c74e21823d6e5d773492b57fc"
+    },
+    {
+      "bytes": 3130,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-12T20:21:44Z",
+      "path": "src-tauri/src/types/generation.rs",
+      "sha256": "92ad9e913bd8a157295bac30ad1570c261faa7129685bcaad325d1e04201cab0"
+    },
+    {
+      "bytes": 142,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T11:45:20Z",
+      "path": "src-tauri/src/types/mod.rs",
+      "sha256": "0d403d3429cbd4008985572226c366e84451d0651d1e91fd3830904dc205dbb4"
+    },
+    {
+      "bytes": 4277,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T07:13:50Z",
+      "path": "src-tauri/src/types/pipeline.rs",
+      "sha256": "61786e58f9b0a1eec6de2070ae88109e8ae46d80ef051c2f33bf96e135b1f67a"
+    },
+    {
+      "bytes": 1960,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T01:19:59Z",
+      "path": "src-tauri/src/types/queue.rs",
+      "sha256": "9174a6f40867b8500dc46f1c98515572596a173c17fb82fb60f01ab83860e861"
+    },
+    {
+      "bytes": 831,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T01:43:33Z",
+      "path": "src-tauri/src/types/seeds.rs",
+      "sha256": "7b951b2e8399d8656ed3bb3034edb50c1f63921756b9310a2af96342a7ef795d"
+    },
+    {
+      "bytes": 1303,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-12T20:22:12Z",
+      "path": "src-tauri/tauri.conf.json",
+      "sha256": "b3aa210a5f7e1d429bec681579213e556a593cd6cc00938b8540fd161f1aaa7b"
+    },
+    {
+      "bytes": 1739,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T00:57:33Z",
+      "path": "src/App.css",
+      "sha256": "eb5874b63446b353c05c5a204fbd3978b88d476d3a99f9df7386dc189282e00c"
+    },
+    {
+      "bytes": 347,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-12T20:27:35Z",
+      "path": "src/App.tsx",
+      "sha256": "6b5578e0bf96c3e6321f5ed5edb0d7c3dcb5242de8eb8264bb88090b2a2ec4d2"
+    },
+    {
+      "bytes": 283,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T02:28:29Z",
+      "path": "src/api/ai.ts",
+      "sha256": "67458f639333d8305e26b5714ef7278c956f4236e7ecb87d1d8fe12a39240c91"
+    },
+    {
+      "bytes": 1137,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-12T05:08:40Z",
+      "path": "src/api/aiBatch.ts",
+      "sha256": "649d298ed449c8a64a492e968fe067cd8c910004675d0332c9b8c4232c0ccf66"
+    },
+    {
+      "bytes": 1323,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T07:42:46Z",
+      "path": "src/api/checkpoints.ts",
+      "sha256": "f8e55d844219b7e332e42a3b760b63a62db7794cba88964402f5038829b5becb"
+    },
+    {
+      "bytes": 1298,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T07:42:38Z",
+      "path": "src/api/comfyui.ts",
+      "sha256": "fd430752097dec1deda97748a22148775f6cc74e7cd64ecf7c65ba1e50fbdf0a"
+    },
+    {
+      "bytes": 899,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T02:31:40Z",
+      "path": "src/api/comparison.ts",
+      "sha256": "2ce247d22e7697beca7161f00f46f245a1430a45f952b73e2f6f6e0a546e9159"
+    },
+    {
+      "bytes": 296,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T02:19:32Z",
+      "path": "src/api/config.ts",
+      "sha256": "7a29e7577d787fa4d72757dcdf1b7e2d81cd13340e692f9000b7ff0184a5c5d2"
+    },
+    {
+      "bytes": 423,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T07:42:49Z",
+      "path": "src/api/export.ts",
+      "sha256": "ff29366f74ba55812eef78ebc428a1d474d26cca946173dae69563a704d9319e"
+    },
+    {
+      "bytes": 2031,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T07:42:38Z",
+      "path": "src/api/gallery.ts",
+      "sha256": "b634ed27f31f10fcf8ca3e31cdaea76b6b6c931d5c48c204691032f05a435497"
+    },
+    {
+      "bytes": 1288,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-12T03:59:57Z",
+      "path": "src/api/pipeline.ts",
+      "sha256": "6fdde7bc0e7c9e425e44b89e3f39124bf3c30cacef77c1d0d2192a9084f8220f"
+    },
+    {
+      "bytes": 861,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T07:42:38Z",
+      "path": "src/api/queue.ts",
+      "sha256": "636e8f260b81bf6afb30613673e37b1042b0fb34d59b7a8095d19e08bdea42c7"
+    },
+    {
+      "bytes": 1180,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T07:42:44Z",
+      "path": "src/api/seeds.ts",
+      "sha256": "5d6cd172fdd643220868dc4bf8de8aafe7fe057c6a8d7eec949389751d4bb9bf"
+    },
+    {
+      "bytes": 6308,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T02:34:07Z",
+      "path": "src/components/comparison/ComparisonView.tsx",
+      "sha256": "706b0e2e71b4cf7d9a250e35a83088fa8471c2632a9cf84565356821f0557adb"
+    },
+    {
+      "bytes": 2925,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T02:33:20Z",
+      "path": "src/components/comparison/DiffTable.tsx",
+      "sha256": "d5fb093f7483c446490f3c4224d3637c63524cb48babecd865587c11c8a18c48"
+    },
+    {
+      "bytes": 3380,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T18:39:43Z",
+      "path": "src/components/comparison/SliderOverlay.tsx",
+      "sha256": "bd65a057cb4e7ebeaf83d7f49da0aed263093f435e906ca103cbd169b35e8ac6"
+    },
+    {
+      "bytes": 3287,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-12T05:09:21Z",
+      "path": "src/components/gallery/BatchConfirmDialog.tsx",
+      "sha256": "58b526bc007df80f9c0b7c4e682b5200181b4c96d75b1267f6ef159217607d43"
+    },
+    {
+      "bytes": 5327,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-12T05:09:48Z",
+      "path": "src/components/gallery/FilterBar.tsx",
+      "sha256": "b39a812310e10f22d7c89472955d96f937ca87ea0fec8ffb62b39b04a89ac45f"
+    },
+    {
+      "bytes": 13724,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-12T05:11:12Z",
+      "path": "src/components/gallery/GalleryView.tsx",
+      "sha256": "4cc3ce0cbc61a1a4e63d3a27dae57befa94c95f8755bc5a17f47b7fd9fab7701"
+    },
+    {
+      "bytes": 4500,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-12T05:10:08Z",
+      "path": "src/components/gallery/ImageCard.tsx",
+      "sha256": "4099efa3bb58896984f07147288b1cc5760e31cd68e52a5c49c8961e20d70607"
+    },
+    {
+      "bytes": 1507,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-12T05:10:25Z",
+      "path": "src/components/gallery/ImageGrid.tsx",
+      "sha256": "fd2c0626aca6141ad50d675c0074eac9f0171d2f97a0c7a3ad51af3132e11609"
+    },
+    {
+      "bytes": 4002,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T02:29:49Z",
+      "path": "src/components/gallery/Lightbox.tsx",
+      "sha256": "6624585f41e1afaee90b15908eea39212fbbf0a231e5f83213921a9f05c5f53c"
+    },
+    {
+      "bytes": 5734,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T02:30:07Z",
+      "path": "src/components/gallery/LineageViewer.tsx",
+      "sha256": "790a9d96ee6c7f5a1d6661a01fb4eba2ce42773a2d448d51f2e8937f507fe231"
+    },
+    {
+      "bytes": 11007,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T10:08:50Z",
+      "path": "src/components/gallery/MetadataPanel.tsx",
+      "sha256": "9b68ff8eb07212d2fe8606f4331af1611de01a28ba04e2b833513175a0aa3c72"
+    },
+    {
+      "bytes": 2021,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-12T05:09:07Z",
+      "path": "src/components/gallery/SelectionToolbar.tsx",
+      "sha256": "238bd263562838a79d6b5076e5e1fcb1eaf4a2e42c70da1b8903e4df421bc3ac"
+    },
+    {
+      "bytes": 4039,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-12T20:21:59Z",
+      "path": "src/components/layout/AppShell.tsx",
+      "sha256": "107149be825967deeacc6f3a39c7af7510f52010aaa418063f3b62d2ebf68813"
+    },
+    {
+      "bytes": 2332,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-12T05:09:34Z",
+      "path": "src/components/layout/BatchStatusBar.tsx",
+      "sha256": "d2966be3fda6c1c17830d9d48b315795428f507fb393044e411a8c3fe1ef23b6"
+    },
+    {
+      "bytes": 573,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T03:44:56Z",
+      "path": "src/components/layout/Header.tsx",
+      "sha256": "29c4d92dd960fa9a713169fd7771755470a6207f378652676446bbaeef1b055e"
+    },
+    {
+      "bytes": 1695,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T03:44:52Z",
+      "path": "src/components/layout/Sidebar.tsx",
+      "sha256": "3204bf88b880aad81060a1dddb75d5454049a0215375b53c56a0492cc37e65cd"
+    },
+    {
+      "bytes": 4081,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T02:26:51Z",
+      "path": "src/components/prompt-studio/ApprovalGate.tsx",
+      "sha256": "3c38ab44a43ea1b0fe277e205eef77e4248ee5e1ee346dc7d1ee8bf3b3cd2e37"
+    },
+    {
+      "bytes": 17612,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T09:19:39Z",
+      "path": "src/components/prompt-studio/GenerationControls.tsx",
+      "sha256": "ea3b97469d4e21a502761638ba4bed8dadf1279ff27863c86ffbf186028dcbe2"
+    },
+    {
+      "bytes": 2232,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T02:23:22Z",
+      "path": "src/components/prompt-studio/IdeaInput.tsx",
+      "sha256": "ff6300bca4bcd80694fa408af85618420876ac0de00077d2e9960668fd97204f"
+    },
+    {
+      "bytes": 3145,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T02:26:32Z",
+      "path": "src/components/prompt-studio/JudgeRanking.tsx",
+      "sha256": "4e466894746a44e7707c2b2140aa2eb71dac18b5c5e768857764b98b362217f1"
+    },
+    {
+      "bytes": 6355,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T02:27:15Z",
+      "path": "src/components/prompt-studio/PipelineStepper.tsx",
+      "sha256": "b408f53625476ca72c72b238b767140134d33dc2a7718c57b53877dc901dc708"
+    },
+    {
+      "bytes": 1561,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T02:26:37Z",
+      "path": "src/components/prompt-studio/PromptEditor.tsx",
+      "sha256": "6ccb4e27a10840eef5b369923214a3009c289467b4409384befadd6abb82f297"
+    },
+    {
+      "bytes": 6534,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T11:26:50Z",
+      "path": "src/components/prompt-studio/PromptStudio.tsx",
+      "sha256": "ce46dfaec6767afe7f9dcde513dae20d1cc8e925466d2b92806d4ff688107e3b"
+    },
+    {
+      "bytes": 1557,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T02:23:30Z",
+      "path": "src/components/prompt-studio/StageCard.tsx",
+      "sha256": "19e2248ceda63f65750dc3a712c0f847c994b4d0d067e42fb2d057b33502473f"
+    },
+    {
+      "bytes": 9944,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T08:01:01Z",
+      "path": "src/components/prompt-studio/StreamingStepper.tsx",
+      "sha256": "6d657b7e03b0a29b759c3ce9778de9304a6280cddbed78ee800b1d87a79778d9"
+    },
+    {
+      "bytes": 490,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T02:32:01Z",
+      "path": "src/components/queue/ProgressBar.tsx",
+      "sha256": "a0d7be650ffcdaf7d84e7bbc4dafcba74dbcb3245a175e96ec45cf33192e3ecf"
+    },
+    {
+      "bytes": 3849,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T08:56:53Z",
+      "path": "src/components/queue/QueueItem.tsx",
+      "sha256": "5718c54ce4383fccc887e3a751c8efc59feff54b1942a281c0cb685dc13e9d7a"
+    },
+    {
+      "bytes": 2985,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T08:56:37Z",
+      "path": "src/components/queue/QueuePanel.tsx",
+      "sha256": "73fd7b3bc265c9c9c8d32a0ce4491adde919bfc0dd55e3da90670e8cfd939e5b"
+    },
+    {
+      "bytes": 1628,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T02:32:31Z",
+      "path": "src/components/seeds/SeedCard.tsx",
+      "sha256": "df22112633e89250de95c93d92b39d548c243cb31aa43702bc3d7642640b9f32"
+    },
+    {
+      "bytes": 6196,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T18:40:52Z",
+      "path": "src/components/seeds/SeedLibrary.tsx",
+      "sha256": "10f49db05d6ae0d2cfa76bcb528514182a166881a114b1a4528658ea20b2ca6b"
+    },
+    {
+      "bytes": 2875,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T02:32:41Z",
+      "path": "src/components/seeds/SeedPicker.tsx",
+      "sha256": "5a23bd465184431f165872fae70b9066a429d0e385e0f8357ceb4e2d41607733"
+    },
+    {
+      "bytes": 4095,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T18:04:17Z",
+      "path": "src/components/settings/ConnectionSettings.tsx",
+      "sha256": "46a5422b66d5ad4e974f650872b8552dcb6aeb1e12779b320eadf95619674a74"
+    },
+    {
+      "bytes": 5077,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-12T05:11:43Z",
+      "path": "src/components/settings/HardwareSettings.tsx",
+      "sha256": "1b01e5f20f48087f4a700bf4256bf4c87556ec4d6e525163f505ceb0d0cfe255"
+    },
+    {
+      "bytes": 12533,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-12T04:00:49Z",
+      "path": "src/components/settings/ModelAssignments.tsx",
+      "sha256": "a81a5a6b7955a8333390ad19204dba35ddf3e74bd12fd6e3227b2647535c56b8"
+    },
+    {
+      "bytes": 2252,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T02:21:10Z",
+      "path": "src/components/settings/PipelinePrompts.tsx",
+      "sha256": "2a853db5b44d707b9fb7524bac99eb40798f5eb726f04f5800ee6e6732152f82"
+    },
+    {
+      "bytes": 4418,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T02:21:37Z",
+      "path": "src/components/settings/QualityPresets.tsx",
+      "sha256": "fcd1ea264e9a40eb515a2f63a22c198754cfcbb4ac4b06eebcc81b553b075d22"
+    },
+    {
+      "bytes": 4307,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T18:05:53Z",
+      "path": "src/components/settings/SettingsPanel.tsx",
+      "sha256": "f1921f94ca45d29ae6dc6e7079ce9de794540eb06eb19c23bdde37c240cd9459"
+    },
+    {
+      "bytes": 1369,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T02:19:52Z",
+      "path": "src/components/shared/ConfirmDialog.tsx",
+      "sha256": "61ddcd7bb4256424dd77bcd37c100a4c3b061a08c25da8849a3af8f50a9ce59a"
+    },
+    {
+      "bytes": 1893,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-12T20:27:58Z",
+      "path": "src/components/shared/ErrorBoundary.tsx",
+      "sha256": "869239bad0dd829cd71929730f5ba0a8b635154704ac518bfa5f7d961f2a44b7"
+    },
+    {
+      "bytes": 316,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T02:19:44Z",
+      "path": "src/components/shared/LoadingSpinner.tsx",
+      "sha256": "f25010d973b4f0faccbacb90115b9a9e94adeba8317f55ec86f99108ed0479ff"
+    },
+    {
+      "bytes": 953,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T02:20:04Z",
+      "path": "src/components/shared/StarRating.tsx",
+      "sha256": "926352a2fb8eb9d49c638b1fa90fd4ad6e677cefbbaa666281c9beed27032baf"
+    },
+    {
+      "bytes": 963,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T02:19:58Z",
+      "path": "src/components/shared/TagChips.tsx",
+      "sha256": "7014ff51dc7384b08b88d8e9f3bcc9b4b21ca1839b5b1272edfa9f668935e18d"
+    },
+    {
+      "bytes": 2457,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T03:48:51Z",
+      "path": "src/components/shared/Toast.tsx",
+      "sha256": "47de3fadbaea767a4f1b92e664fff180bb55f273f0d142c11810fd4d9e95d16f"
+    },
+    {
+      "bytes": 4551,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-12T20:18:06Z",
+      "path": "src/hooks/useAiBatchQueue.ts",
+      "sha256": "02a5b8ff79c7ba642ca61ed917c26780eaa0c1d2ed2b7efcb451d38041a11623"
+    },
+    {
+      "bytes": 1370,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T02:31:56Z",
+      "path": "src/hooks/useComparison.ts",
+      "sha256": "05c8690c833302986bd0f81b968cd380456f3c96b09bca4da9efebce263e6499"
+    },
+    {
+      "bytes": 1392,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T10:07:30Z",
+      "path": "src/hooks/useConfig.ts",
+      "sha256": "9c55cbfd62620d0e396a123304054b4abe0b2bbb8c2d21313f23abcca3dd02d3"
+    },
+    {
+      "bytes": 2666,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T18:39:59Z",
+      "path": "src/hooks/useGallery.ts",
+      "sha256": "3181898ec9964ba6b9c97573e7ab995e6aea516f1cc88dcd4415b6633b7e6ef5"
+    },
+    {
+      "bytes": 1005,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T02:23:07Z",
+      "path": "src/hooks/usePipeline.ts",
+      "sha256": "8b3724f4b5747fa350e8e871cc74c7ac67c37a164d9faf6527147f28e6aaec15"
+    },
+    {
+      "bytes": 6786,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T18:04:47Z",
+      "path": "src/hooks/usePipelineStream.ts",
+      "sha256": "a3444020e1035423bda11732099a6590c6d2a3d38aa939c7535af4233ee789d9"
+    },
+    {
+      "bytes": 4662,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-12T20:19:07Z",
+      "path": "src/hooks/useQueue.ts",
+      "sha256": "4ddc01972e3b505f1160242b430532a6dabcdf28fe69d25432e6fd5ae52ba04e"
+    },
+    {
+      "bytes": 260,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T01:25:28Z",
+      "path": "src/main.tsx",
+      "sha256": "4f2857e99ed4fad5327f16234833453857c94796525433dcc96acc6ed6044d31"
+    },
+    {
+      "bytes": 699,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T01:26:08Z",
+      "path": "src/styles/globals.css",
+      "sha256": "5d88d88fc08140b3f75942f80af685a2381a72fbb138d36b4274d1794be04e99"
+    },
+    {
+      "bytes": 9777,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-12T05:08:33Z",
+      "path": "src/types/index.ts",
+      "sha256": "b81a0a28ed4abd969703d810bee0dfa2e74ad3a09ae55758e1f322ffa18e1ad0"
+    },
+    {
+      "bytes": 38,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T00:57:33Z",
+      "path": "src/vite-env.d.ts",
+      "sha256": "65996936fbb042915f7b74a200fcdde7e410f32a669b1ab9597cfaa4b0faddb5"
+    },
+    {
+      "bytes": 191,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T01:25:14Z",
+      "path": "tailwind.config.js",
+      "sha256": "c3494c7c21a7178770b0717dbeb99555e21143de01042e911c82093e7994a7e2"
+    },
+    {
+      "bytes": 605,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T00:57:33Z",
+      "path": "tsconfig.json",
+      "sha256": "980d6cbe977ddfb52d3ab1bdd3fba30f8c1db9371b3b14aa4557d32bb00ce54b"
+    },
+    {
+      "bytes": 213,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T00:57:33Z",
+      "path": "tsconfig.node.json",
+      "sha256": "9e2abb169ea87b7190613a1d4da57ca608463a453bd4231fa3aeee5e308370dd"
+    },
+    {
+      "bytes": 818,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-02-11T00:57:33Z",
+      "path": "vite.config.ts",
+      "sha256": "984a7dc46a9ce7323a84297e755a7b93ced451917c05b0481e684fde32ed090f"
+    },
+    {
+      "bytes": 129827,
+      "executable": false,
+      "mode": "000644",
+      "mtime_utc": "2026-05-11T21:38:37Z",
+      "path": "z.py",
+      "sha256": "42fb6a9e35160ce72122f011ee8ed25a1e1d1b078f4689dece9349dc8755b8d7"
+    }
+  ],
+  "findings": "/home/sikmindz/Coding/visionforge/visionforge-generic-next-codex-context-20260522.findings.json",
+  "manifest": "/home/sikmindz/Coding/visionforge/visionforge-generic-next-codex-context-20260522.manifest.json",
+  "package": "/home/sikmindz/Coding/visionforge/visionforge-generic-next-codex-context-20260522.zip",
+  "policy": {
+    "allow_secret_like_names": false,
+    "codex_artifact_classification": {},
+    "codex_current_run": "P30",
+    "follow_symlinks": false,
+    "include_codex_archive": false,
+    "include_codex_artifacts": false,
+    "include_doc_binaries": false,
+    "include_editor_config": false,
+    "include_external_path_deps": true,
+    "include_generated_schemas": true,
+    "include_images": false,
+    "include_logs": false,
+    "include_root_markdown_archive": false,
+    "max_file_size_bytes": 26214400,
+    "mode": "next-codex-context",
+    "package_role": "next-codex-context",
+    "profile": "generic",
+    "root_markdown_archive_root": "/home/sikmindz/Coding/visionforge/docs/root-markdown-archive",
+    "root_markdown_archive_root_rel": "docs/root-markdown-archive",
+    "secret_scan_max_bytes": 1048576
+  },
+  "report": {
+    "archive_root": "/home/sikmindz/Coding/visionforge",
+    "archive_sha256": "a8a0774511a8fe1f9212a507f72caa8193c40095011aa016f71283afd7845cc0",
+    "archive_sha256_semantics": "zip-byte-sha256-not-canonical-content-hash",
+    "archive_written": true,
+    "archive_zip_byte_sha256": "a8a0774511a8fe1f9212a507f72caa8193c40095011aa016f71283afd7845cc0",
+    "codex_archive": {
+      "active_stale_after_count": 0,
+      "archive_only": false,
+      "archive_root": "/home/sikmindz/Coding/visionforge/docs/codex-runs/archive",
+      "collision_count": 0,
+      "current_run": "P30",
+      "dry_run": false,
+      "enabled": true,
+      "errors": [],
+      "manifest_paths": [],
+      "moved_count": 0,
+      "planned_count": 0,
+      "report_path": "/home/sikmindz/Coding/visionforge/visionforge-generic-next-codex-context-20260522.codex-archive.json",
+      "skipped_existing_count": 0,
+      "stale_active_before_count": 0,
+      "unclassified_count": 0,
+      "verify_only": false
+    },
+    "content_manifest_sha256": "42e4e968ba0387b83ec6672a1d4a51fb19d179cc4d43ec821c9e2cf89e809db7",
+    "created_utc": "2026-05-22T06:41:06Z",
+    "deterministic_zip_timestamps": true,
+    "dry_run": false,
+    "error_count": 0,
+    "excluded_file_count": 37,
+    "excluded_path": "/home/sikmindz/Coding/visionforge/visionforge-generic-next-codex-context-20260522.excluded.json",
+    "external_path_dep_roots": [],
+    "findings_count": 0,
+    "findings_path": "/home/sikmindz/Coding/visionforge/visionforge-generic-next-codex-context-20260522.findings.json",
+    "include_roots": [
+      "/home/sikmindz/Coding/visionforge"
+    ],
+    "included_bytes": 2313311,
+    "included_count": 233,
+    "manifest_path": "/home/sikmindz/Coding/visionforge/visionforge-generic-next-codex-context-20260522.manifest.json",
+    "mode": "next-codex-context",
+    "output": "/home/sikmindz/Coding/visionforge/visionforge-generic-next-codex-context-20260522.zip",
+    "package_role": "next-codex-context",
+    "profile_requested": "auto",
+    "profile_resolved": "generic",
+    "pruned_dir_count": 3,
+    "report_path": "/home/sikmindz/Coding/visionforge/visionforge-generic-next-codex-context-20260522.report.md",
+    "root": "/home/sikmindz/Coding/visionforge",
+    "root_markdown_archive": {
+      "ambiguous_count": 0,
+      "ambiguous_paths": [],
+      "archive_dir": "/home/sikmindz/Coding/visionforge/docs/root-markdown-archive",
+      "archive_only": false,
+      "archive_root": "/home/sikmindz/Coding/visionforge/docs/root-markdown-archive",
+      "candidate_count": 0,
+      "candidate_paths": [],
+      "collision_count": 0,
+      "current_run": "P30",
+      "dry_run": false,
+      "enabled": false,
+      "errors": [],
+      "inspected_count": 2,
+      "manifest_path": null,
+      "moved_count": 0,
+      "planned_count": 0,
+      "protected_count": 2,
+      "skipped_existing_count": 0,
+      "verify_only": false
+    },
+    "script": "z.py",
+    "script_version": "2026.05.11-p30",
+    "strict": true,
+    "warning_count": 0
+  },
+  "root_markdown_archive": {
+    "ambiguous_count": 0,
+    "ambiguous_paths": [],
+    "archive_dir": "/home/sikmindz/Coding/visionforge/docs/root-markdown-archive",
+    "archive_only": false,
+    "archive_root": "/home/sikmindz/Coding/visionforge/docs/root-markdown-archive",
+    "candidate_count": 0,
+    "candidate_paths": [],
+    "collision_count": 0,
+    "collisions": [],
+    "current_run": "P30",
+    "dry_run": false,
+    "enabled": false,
+    "errors": [],
+    "inspected_count": 2,
+    "manifest_path": null,
+    "manifest_written": false,
+    "moved_count": 0,
+    "planned_count": 0,
+    "protected_count": 2,
+    "protected_paths": [
+      "CLAUDE.md",
+      "README.md"
+    ],
+    "skipped_existing_count": 0,
+    "verify_only": false
+  },
+  "sidecars": {
+    "codex_archive_report": "/home/sikmindz/Coding/visionforge/visionforge-generic-next-codex-context-20260522.codex-archive.json",
+    "excluded": "/home/sikmindz/Coding/visionforge/visionforge-generic-next-codex-context-20260522.excluded.json",
+    "findings": "/home/sikmindz/Coding/visionforge/visionforge-generic-next-codex-context-20260522.findings.json",
+    "manifest": "/home/sikmindz/Coding/visionforge/visionforge-generic-next-codex-context-20260522.manifest.json",
+    "package": "/home/sikmindz/Coding/visionforge/visionforge-generic-next-codex-context-20260522.zip",
+    "report": "/home/sikmindz/Coding/visionforge/visionforge-generic-next-codex-context-20260522.report.md"
+  },
+  "summaries": {
+    "exclusion_reasons": {
+      "archive-file": 1,
+      "generated-output": 1,
+      "image-disabled": 33,
+      "unsupported-extension-or-basename": 2
+    },
+    "extensions": {
+      ".css": 2,
+      ".html": 1,
+      ".js": 2,
+      ".json": 16,
+      ".lock": 2,
+      ".md": 6,
+      ".py": 1,
+      ".rs": 132,
+      ".toml": 2,
+      ".ts": 21,
+      ".tsx": 45,
+      "<no-extension>": 3
+    },
+    "top_level_dirs": {
+      ".gitignore": 1,
+      "CLAUDE.md": 1,
+      "README.md": 1,
+      "docs": 4,
+      "index.html": 1,
+      "package-lock.json": 1,
+      "package.json": 1,
+      "postcss.config.js": 1,
+      "s": 75,
+      "src": 67,
+      "src-tauri": 75,
+      "tailwind.config.js": 1,
+      "tsconfig.json": 1,
+      "tsconfig.node.json": 1,
+      "vite.config.ts": 1,
+      "z.py": 1
+    }
+  }
+}

@@ -8,23 +8,22 @@ pub async fn tag_image(
     state: tauri::State<'_, AppState>,
     image_id: String,
 ) -> Result<Vec<String>, String> {
-    let (endpoint, model, image_path) = {
-        let config = state.config.lock().map_err(|e| e.to_string())?;
-        let endpoint = config.ollama.endpoint.clone();
-        let model = config.models.tagger.clone();
+    let config = state.config_snapshot().map_err(|e| e.to_string())?;
+    let endpoint = config.ollama.endpoint.clone();
+    let model = config.models.tagger.clone();
 
+    let image_path = {
         let conn = state.db.lock().map_err(|e| e.to_string())?;
         let image = db::images::get_image(&conn, &image_id)
             .map_err(|e| format!("{:#}", e))?
             .ok_or_else(|| format!("Image {} not found", image_id))?;
 
         let path = storage::get_image_path_for(&config, &image.filename);
-        let path = if path.exists() {
+        if path.exists() {
             path
         } else {
             storage::get_image_path(&image.filename)
-        };
-        (endpoint, model, path)
+        }
     };
 
     if !image_path.exists() {
@@ -51,23 +50,22 @@ pub async fn caption_image(
     state: tauri::State<'_, AppState>,
     image_id: String,
 ) -> Result<String, String> {
-    let (endpoint, model, image_path) = {
-        let config = state.config.lock().map_err(|e| e.to_string())?;
-        let endpoint = config.ollama.endpoint.clone();
-        let model = config.models.captioner.clone();
+    let config = state.config_snapshot().map_err(|e| e.to_string())?;
+    let endpoint = config.ollama.endpoint.clone();
+    let model = config.models.captioner.clone();
 
+    let image_path = {
         let conn = state.db.lock().map_err(|e| e.to_string())?;
         let image = db::images::get_image(&conn, &image_id)
             .map_err(|e| format!("{:#}", e))?
             .ok_or_else(|| format!("Image {} not found", image_id))?;
 
         let path = storage::get_image_path_for(&config, &image.filename);
-        let path = if path.exists() {
+        if path.exists() {
             path
         } else {
             storage::get_image_path(&image.filename)
-        };
-        (endpoint, model, path)
+        }
     };
 
     if !image_path.exists() {

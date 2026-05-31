@@ -116,7 +116,7 @@ export function usePipelineStream() {
 
   useEffect(() => {
     return () => {
-      cleanup();
+      void cleanup();
     };
   }, [cleanup]);
 

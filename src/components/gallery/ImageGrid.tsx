@@ -4,8 +4,10 @@ import type { ImageEntry } from "../../types";
 interface ImageGridProps {
   images: ImageEntry[];
   selectedId?: string;
+  selectedIds?: Set<string>;
   compareSelection?: string[];
   onSelect: (image: ImageEntry) => void;
+  onMultiSelect?: (image: ImageEntry, event: React.MouseEvent) => void;
   onEnlarge?: (image: ImageEntry) => void;
   onFavoriteToggle: (image: ImageEntry) => void;
 }
@@ -13,8 +15,10 @@ interface ImageGridProps {
 export function ImageGrid({
   images,
   selectedId,
+  selectedIds,
   compareSelection,
   onSelect,
+  onMultiSelect,
   onEnlarge,
   onFavoriteToggle,
 }: ImageGridProps) {
@@ -33,8 +37,12 @@ export function ImageGrid({
           key={image.id}
           image={image}
           selected={image.id === selectedId}
+          multiSelected={selectedIds?.has(image.id)}
           compareSelected={compareSelection?.includes(image.id)}
           onClick={() => onSelect(image)}
+          onMouseDown={
+            onMultiSelect ? (e) => onMultiSelect(image, e) : undefined
+          }
           onEnlarge={onEnlarge ? () => onEnlarge(image) : undefined}
           onFavoriteToggle={() => onFavoriteToggle(image)}
         />

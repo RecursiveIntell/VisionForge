@@ -24,7 +24,7 @@ export function JudgeRanking({
   return (
     <div className="space-y-2">
       <p className="text-xs text-zinc-500 mb-2">
-        Click a concept to select it for prompt engineering.
+        Click a concept to inspect it and attach it to queued lineage.
       </p>
       {rankings.map((r) => {
         const isSelected = r.conceptIndex === selectedIndex;

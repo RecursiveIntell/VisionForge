@@ -28,6 +28,46 @@ struct ManifestEntry {
     caption: Option<String>,
 }
 
+/// Validate that an export output path is safe to write to.
+/// Must be absolute, must not contain `..`, must have a `.zip` extension,
+/// and its parent directory must exist.
+pub fn validate_export_path(output_path: &str) -> Result<std::path::PathBuf> {
+    if output_path.is_empty() {
+        anyhow::bail!("Export path is empty");
+    }
+
+    let path = std::path::PathBuf::from(output_path);
+
+    // Must be absolute — reject relative paths that could resolve unexpectedly
+    if !path.is_absolute() {
+        anyhow::bail!("Export path must be absolute, got: {}", path.display());
+    }
+
+    // No path traversal components
+    let path_str = path.to_string_lossy();
+    if path_str.contains("..") {
+        anyhow::bail!("Export path must not contain '..': {}", path.display());
+    }
+
+    // Must end in .zip to prevent writing arbitrary file types
+    match path.extension().and_then(|e| e.to_str()) {
+        Some(ext) if ext.eq_ignore_ascii_case("zip") => {}
+        _ => anyhow::bail!(
+            "Export file must have a .zip extension, got: {}",
+            path.display()
+        ),
+    }
+
+    // Parent directory must exist (don't create arbitrary directories)
+    match path.parent() {
+        Some(parent) if parent.exists() => {}
+        Some(parent) => anyhow::bail!("Export directory does not exist: {}", parent.display()),
+        None => anyhow::bail!("Export path has no parent directory: {}", path.display()),
+    }
+
+    Ok(path)
+}
+
 /// Create a ZIP bundle containing the specified images and a JSON manifest.
 /// Returns the path to the created ZIP file.
 pub fn create_export_bundle(images: &[ImageEntry], output_path: &Path) -> Result<()> {
@@ -48,6 +88,9 @@ pub fn create_export_bundle_with_config(
     let mut manifest = Vec::new();
 
     for image in images {
+        storage::validate_filename(&image.filename)
+            .with_context(|| format!("Unsafe gallery filename in DB: {}", image.filename))?;
+
         let image_path = if let Some(cfg) = config {
             let p = storage::get_image_path_for(cfg, &image.filename);
             if p.exists() {
@@ -63,6 +106,8 @@ pub fn create_export_bundle_with_config(
             let image_bytes = std::fs::read(&image_path)
                 .with_context(|| format!("Failed to read {}", image_path.display()))?;
 
+            storage::validate_filename(&image.filename)
+                .with_context(|| format!("Unsafe ZIP filename: {}", image.filename))?;
             zip.start_file(&image.filename, options)
                 .context("Failed to add file to ZIP")?;
             zip.write_all(&image_bytes)
@@ -115,18 +160,18 @@ fn build_csv_manifest(entries: &[ManifestEntry]) -> String {
         csv.push_str(&format!(
             "{},{},{},{},{},{},{},{},{},{},{},{},{}\n",
             csv_escape(&e.filename),
-            csv_escape(&e.positive_prompt.as_deref().unwrap_or("")),
-            csv_escape(&e.negative_prompt.as_deref().unwrap_or("")),
-            csv_escape(&e.checkpoint.as_deref().unwrap_or("")),
+            csv_escape(e.positive_prompt.as_deref().unwrap_or("")),
+            csv_escape(e.negative_prompt.as_deref().unwrap_or("")),
+            csv_escape(e.checkpoint.as_deref().unwrap_or("")),
             e.width.map(|v| v.to_string()).unwrap_or_default(),
             e.height.map(|v| v.to_string()).unwrap_or_default(),
             e.steps.map(|v| v.to_string()).unwrap_or_default(),
             e.cfg_scale.map(|v| v.to_string()).unwrap_or_default(),
-            csv_escape(&e.sampler.as_deref().unwrap_or("")),
-            csv_escape(&e.scheduler.as_deref().unwrap_or("")),
+            csv_escape(e.sampler.as_deref().unwrap_or("")),
+            csv_escape(e.scheduler.as_deref().unwrap_or("")),
             e.seed.map(|v| v.to_string()).unwrap_or_default(),
             e.rating.map(|v| v.to_string()).unwrap_or_default(),
-            csv_escape(&e.caption.as_deref().unwrap_or("")),
+            csv_escape(e.caption.as_deref().unwrap_or("")),
         ));
     }
 
@@ -228,5 +273,64 @@ mod tests {
             .collect();
         assert!(names.contains(&"manifest.json".to_string()));
         assert!(names.contains(&"manifest.csv".to_string()));
+    }
+
+    #[test]
+    fn test_validate_export_path_valid() {
+        let tmp = tempfile::tempdir().unwrap();
+        let path = tmp.path().join("export.zip");
+        let result = super::validate_export_path(path.to_str().unwrap());
+        assert!(result.is_ok());
+        assert_eq!(result.unwrap(), path);
+    }
+
+    #[test]
+    fn test_validate_export_path_empty() {
+        let result = super::validate_export_path("");
+        assert!(result.is_err());
+        assert!(result.unwrap_err().to_string().contains("empty"));
+    }
+
+    #[test]
+    fn test_validate_export_path_relative() {
+        let result = super::validate_export_path("relative/path/export.zip");
+        assert!(result.is_err());
+        assert!(result.unwrap_err().to_string().contains("absolute"));
+    }
+
+    #[test]
+    fn test_validate_export_path_traversal() {
+        let result = super::validate_export_path("/tmp/../etc/evil.zip");
+        assert!(result.is_err());
+        assert!(result.unwrap_err().to_string().contains(".."));
+    }
+
+    #[test]
+    fn test_validate_export_path_no_zip_extension() {
+        let result = super::validate_export_path("/tmp/export.tar.gz");
+        assert!(result.is_err());
+        assert!(result.unwrap_err().to_string().contains(".zip"));
+    }
+
+    #[test]
+    fn test_validate_export_path_no_extension() {
+        let result = super::validate_export_path("/tmp/export");
+        assert!(result.is_err());
+        assert!(result.unwrap_err().to_string().contains(".zip"));
+    }
+
+    #[test]
+    fn test_validate_export_path_nonexistent_parent() {
+        let result = super::validate_export_path("/nonexistent/deeply/nested/dir/export.zip");
+        assert!(result.is_err());
+        assert!(result.unwrap_err().to_string().contains("does not exist"));
+    }
+
+    #[test]
+    fn test_validate_export_path_zip_case_insensitive() {
+        let tmp = tempfile::tempdir().unwrap();
+        let path = tmp.path().join("export.ZIP");
+        let result = super::validate_export_path(path.to_str().unwrap());
+        assert!(result.is_ok());
     }
 }

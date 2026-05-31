@@ -223,9 +223,24 @@ fn test_parse_judge_single_object() {
 #[test]
 fn test_backfill_rankings_no_missing() {
     let rankings = vec![
-        JudgeRanking { rank: 1, concept_index: 0, score: 90, reasoning: "A".into() },
-        JudgeRanking { rank: 2, concept_index: 1, score: 80, reasoning: "B".into() },
-        JudgeRanking { rank: 3, concept_index: 2, score: 70, reasoning: "C".into() },
+        JudgeRanking {
+            rank: 1,
+            concept_index: 0,
+            score: 90,
+            reasoning: "A".into(),
+        },
+        JudgeRanking {
+            rank: 2,
+            concept_index: 1,
+            score: 80,
+            reasoning: "B".into(),
+        },
+        JudgeRanking {
+            rank: 3,
+            concept_index: 2,
+            score: 70,
+            reasoning: "C".into(),
+        },
     ];
     let result = backfill_rankings(rankings, 3);
     assert_eq!(result.len(), 3);
@@ -236,9 +251,12 @@ fn test_backfill_rankings_no_missing() {
 #[test]
 fn test_backfill_rankings_with_missing() {
     // LLM only returned 1 ranking out of 3 concepts
-    let rankings = vec![
-        JudgeRanking { rank: 1, concept_index: 1, score: 85, reasoning: "Best".into() },
-    ];
+    let rankings = vec![JudgeRanking {
+        rank: 1,
+        concept_index: 1,
+        score: 85,
+        reasoning: "Best".into(),
+    }];
     let result = backfill_rankings(rankings, 3);
     assert_eq!(result.len(), 3);
     // First is the real ranking
@@ -255,9 +273,12 @@ fn test_backfill_rankings_with_missing() {
 
 #[test]
 fn test_backfill_rankings_empty_concepts() {
-    let rankings = vec![
-        JudgeRanking { rank: 1, concept_index: 0, score: 90, reasoning: "Good".into() },
-    ];
+    let rankings = vec![JudgeRanking {
+        rank: 1,
+        concept_index: 0,
+        score: 90,
+        reasoning: "Good".into(),
+    }];
     // When num_concepts matches existing rankings, nothing added
     let result = backfill_rankings(rankings, 1);
     assert_eq!(result.len(), 1);

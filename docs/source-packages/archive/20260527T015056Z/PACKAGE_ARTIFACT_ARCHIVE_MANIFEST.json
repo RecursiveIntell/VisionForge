@@ -1,0 +1,103 @@
+{
+  "archive_root": "/home/sikmindz/Coding/visionforge/docs/source-packages/archive/20260527T015056Z",
+  "collisions": [],
+  "created_utc": "2026-05-27T01:50:56Z",
+  "errors": [],
+  "files": [
+    {
+      "archived_path": "docs/source-packages/archive/20260527T015056Z/files/visionforge-generic-next-codex-context-20260527T015012Z.codex-archive.json",
+      "bytes": 520,
+      "mtime_utc": "2026-05-27T01:50:13Z",
+      "original_path": "visionforge-generic-next-codex-context-20260527T015012Z.codex-archive.json",
+      "reason": "prior-codex-archive-report",
+      "sha256": "9a8b382c8d096f258569e0eacbea847be1f84aa0337e6111174e37f0f2247a7b"
+    },
+    {
+      "archived_path": "docs/source-packages/archive/20260527T015056Z/files/visionforge-generic-next-codex-context-20260527T015012Z.excluded.json",
+      "bytes": 4041,
+      "mtime_utc": "2026-05-27T01:50:13Z",
+      "original_path": "visionforge-generic-next-codex-context-20260527T015012Z.excluded.json",
+      "reason": "prior-generated-sidecar",
+      "sha256": "5b70e67d8aabad6ae4521e7fd0be579a379b27a7244b28afebc9b4c2464814f4"
+    },
+    {
+      "archived_path": "docs/source-packages/archive/20260527T015056Z/files/visionforge-generic-next-codex-context-20260527T015012Z.findings.json",
+      "bytes": 686,
+      "mtime_utc": "2026-05-27T01:50:13Z",
+      "original_path": "visionforge-generic-next-codex-context-20260527T015012Z.findings.json",
+      "reason": "prior-generated-sidecar",
+      "sha256": "37a0a4434a3c5d23db56abd63e8a8c623c36cef7e362ff843e47972c5564d790"
+    },
+    {
+      "archived_path": "docs/source-packages/archive/20260527T015056Z/files/visionforge-generic-next-codex-context-20260527T015012Z.manifest.json",
+      "bytes": 137310,
+      "mtime_utc": "2026-05-27T01:50:13Z",
+      "original_path": "visionforge-generic-next-codex-context-20260527T015012Z.manifest.json",
+      "reason": "prior-generated-sidecar",
+      "sha256": "dbdf16242c1d159f3c46b1c9bb7b404b494076d156676a031fa32c7fbfa69337"
+    },
+    {
+      "archived_path": "docs/source-packages/archive/20260527T015056Z/files/visionforge-generic-next-codex-context-20260527T015012Z.report.md",
+      "bytes": 3892,
+      "mtime_utc": "2026-05-27T01:50:13Z",
+      "original_path": "visionforge-generic-next-codex-context-20260527T015012Z.report.md",
+      "reason": "prior-generated-sidecar",
+      "sha256": "0b57532f14e951a881f9d5119c248167ad5f35b41b7d5a66d985b4b26ff668f2"
+    }
+  ],
+  "planned": [
+    {
+      "archived_path": "docs/source-packages/archive/20260527T015056Z/files/visionforge-generic-next-codex-context-20260527T015012Z.codex-archive.json",
+      "bytes": 520,
+      "mtime_utc": "2026-05-27T01:50:13Z",
+      "original_path": "visionforge-generic-next-codex-context-20260527T015012Z.codex-archive.json",
+      "reason": "prior-codex-archive-report",
+      "sha256": "9a8b382c8d096f258569e0eacbea847be1f84aa0337e6111174e37f0f2247a7b"
+    },
+    {
+      "archived_path": "docs/source-packages/archive/20260527T015056Z/files/visionforge-generic-next-codex-context-20260527T015012Z.excluded.json",
+      "bytes": 4041,
+      "mtime_utc": "2026-05-27T01:50:13Z",
+      "original_path": "visionforge-generic-next-codex-context-20260527T015012Z.excluded.json",
+      "reason": "prior-generated-sidecar",
+      "sha256": "5b70e67d8aabad6ae4521e7fd0be579a379b27a7244b28afebc9b4c2464814f4"
+    },
+    {
+      "archived_path": "docs/source-packages/archive/20260527T015056Z/files/visionforge-generic-next-codex-context-20260527T015012Z.findings.json",
+      "bytes": 686,
+      "mtime_utc": "2026-05-27T01:50:13Z",
+      "original_path": "visionforge-generic-next-codex-context-20260527T015012Z.findings.json",
+      "reason": "prior-generated-sidecar",
+      "sha256": "37a0a4434a3c5d23db56abd63e8a8c623c36cef7e362ff843e47972c5564d790"
+    },
+    {
+      "archived_path": "docs/source-packages/archive/20260527T015056Z/files/visionforge-generic-next-codex-context-20260527T015012Z.manifest.json",
+      "bytes": 137310,
+      "mtime_utc": "2026-05-27T01:50:13Z",
+      "original_path": "visionforge-generic-next-codex-context-20260527T015012Z.manifest.json",
+      "reason": "prior-generated-sidecar",
+      "sha256": "dbdf16242c1d159f3c46b1c9bb7b404b494076d156676a031fa32c7fbfa69337"
+    },
+    {
+      "archived_path": "docs/source-packages/archive/20260527T015056Z/files/visionforge-generic-next-codex-context-20260527T015012Z.report.md",
+      "bytes": 3892,
+      "mtime_utc": "2026-05-27T01:50:13Z",
+      "original_path": "visionforge-generic-next-codex-context-20260527T015012Z.report.md",
+      "reason": "prior-generated-sidecar",
+      "sha256": "0b57532f14e951a881f9d5119c248167ad5f35b41b7d5a66d985b4b26ff668f2"
+    }
+  ],
+  "repo_root": "/home/sikmindz/Coding/visionforge",
+  "root_package_archive_manifest_version": "RootPackageArtifactArchiveManifestV1",
+  "summary": {
+    "candidate_count": 5,
+    "collision_count": 0,
+    "inspected_count": 19,
+    "moved_count": 5,
+    "planned_count": 5,
+    "protected_count": 3,
+    "skipped_existing_count": 0
+  },
+  "tool": "z.py",
+  "tool_version": "2026.05.22-p31"
+}

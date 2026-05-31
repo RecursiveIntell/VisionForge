@@ -1,0 +1,20 @@
+{
+  "created_utc": "2026-05-27T01:50:13Z",
+  "error_count": 1,
+  "findings": [
+    {
+      "code": "context-package-command-evidence-missing",
+      "detail": "Context/audit package manifest must include command-run evidence (commands_run.log, commands_run.receipts.jsonl, COMMAND_RECEIPTS.jsonl, COMMAND_EXECUTION_RECEIPTS.jsonl, or *_COMMANDS_RUN.md).",
+      "path": "/",
+      "severity": "error"
+    },
+    {
+      "code": "git-metadata-excluded",
+      "detail": "Git metadata detected and intentionally excluded from transferable package contents.",
+      "path": ".git/",
+      "severity": "info"
+    }
+  ],
+  "root": "/home/sikmindz/Coding/visionforge",
+  "warning_count": 0
+}

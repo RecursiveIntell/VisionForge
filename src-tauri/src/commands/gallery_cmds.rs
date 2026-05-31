@@ -12,11 +12,16 @@ pub async fn get_gallery_images(
     let mut images = db::images::list_images(&conn, &filter)
         .map_err(|e| format!("Failed to load gallery: {:#}", e))?;
 
-    // Load tags for each image
+    // Batch load tags (replaces N+1 per-image queries)
+    let image_ids: Vec<String> = images.iter().map(|i| i.id.clone()).collect();
+    let tag_map = db::tags::get_tags_for_images(&conn, &image_ids)
+        .map_err(|e| format!("Failed to load tags: {:#}", e))?;
+
     for img in &mut images {
-        let tags = db::tags::get_image_tags(&conn, &img.id).unwrap_or_default();
-        if !tags.is_empty() {
-            img.tags = Some(tags);
+        if let Some(tags) = tag_map.get(&img.id) {
+            if !tags.is_empty() {
+                img.tags = Some(tags.clone());
+            }
         }
     }
 
@@ -60,19 +65,23 @@ pub async fn permanently_delete_image(
     state: tauri::State<'_, AppState>,
     id: String,
 ) -> Result<(), String> {
-    let conn = state.db.lock().map_err(|e| e.to_string())?;
+    let config = state.config_snapshot().map_err(|e| e.to_string())?;
 
     // Get filename before deleting from DB
-    let image =
-        db::images::get_image(&conn, &id).map_err(|e| format!("Failed to get image: {:#}", e))?;
+    let image = {
+        let conn = state.db.lock().map_err(|e| e.to_string())?;
+        let image = db::images::get_image(&conn, &id)
+            .map_err(|e| format!("Failed to get image: {:#}", e))?;
 
-    db::images::permanently_delete_image(&conn, &id)
-        .map_err(|e| format!("Failed to permanently delete image: {:#}", e))?;
+        db::images::permanently_delete_image(&conn, &id)
+            .map_err(|e| format!("Failed to permanently delete image: {:#}", e))?;
+        image
+    };
 
     // Delete files from disk
     if let Some(img) = image {
-        let config = state.config.lock().map_err(|e| e.to_string())?;
-        let _ = storage::delete_image_files_for(&config, &img.filename);
+        storage::delete_image_files_for(&config, &img.filename)
+            .map_err(|e| format!("DB row deleted but file cleanup failed: {:#}", e))?;
     }
 
     Ok(())
@@ -151,9 +160,11 @@ pub async fn get_image_lineage(
     state: tauri::State<'_, AppState>,
     image_id: String,
 ) -> Result<Option<String>, String> {
-    let conn = state.db.lock().map_err(|e| e.to_string())?;
-    let image = db::images::get_image(&conn, &image_id)
-        .map_err(|e| format!("Failed to get image: {:#}", e))?;
+    let image = {
+        let conn = state.db.lock().map_err(|e| e.to_string())?;
+        db::images::get_image(&conn, &image_id)
+            .map_err(|e| format!("Failed to get image: {:#}", e))?
+    };
 
     Ok(image.and_then(|img| img.pipeline_log))
 }
@@ -163,7 +174,8 @@ pub async fn get_image_file_path(
     state: tauri::State<'_, AppState>,
     filename: String,
 ) -> Result<String, String> {
-    let config = state.config.lock().map_err(|e| e.to_string())?;
+    storage::validate_filename(&filename).map_err(|e| format!("Invalid filename: {:#}", e))?;
+    let config = state.config_snapshot().map_err(|e| e.to_string())?;
     let path = storage::get_image_path_for(&config, &filename);
     if path.exists() {
         return Ok(path.to_string_lossy().to_string());
@@ -181,7 +193,8 @@ pub async fn get_thumbnail_file_path(
     state: tauri::State<'_, AppState>,
     filename: String,
 ) -> Result<String, String> {
-    let config = state.config.lock().map_err(|e| e.to_string())?;
+    storage::validate_filename(&filename).map_err(|e| format!("Invalid filename: {:#}", e))?;
+    let config = state.config_snapshot().map_err(|e| e.to_string())?;
     let path = storage::get_thumbnail_path_for(&config, &filename);
     if path.exists() {
         return Ok(path.to_string_lossy().to_string());

@@ -6,6 +6,9 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
+    "typecheck": "tsc --noEmit",
+    "lint": "echo \"No ESLint config is installed; frontend lint setup is deferred in .codex-runs/P31/final_audit_report.md\"",
+    "test": "echo \"No frontend test runner is installed; frontend tests are deferred in .codex-runs/P31/final_audit_report.md\"",
     "preview": "vite preview",
     "tauri": "tauri"
   },

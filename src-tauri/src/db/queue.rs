@@ -7,8 +7,9 @@ pub fn insert_job(conn: &Connection, job: &QueueJob) -> Result<()> {
     conn.execute(
         "INSERT INTO queue_jobs (
             id, priority, status, positive_prompt, negative_prompt,
-            settings_json, pipeline_log, original_idea, linked_comparison_id
-        ) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9)",
+            settings_json, pipeline_log, original_idea, selected_concept,
+            auto_approved, linked_comparison_id
+        ) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11)",
         params![
             job.id,
             job.priority.as_i32(),
@@ -18,6 +19,8 @@ pub fn insert_job(conn: &Connection, job: &QueueJob) -> Result<()> {
             job.settings_json,
             job.pipeline_log,
             job.original_idea,
+            job.selected_concept,
+            job.auto_approved,
             job.linked_comparison_id,
         ],
     )
@@ -29,7 +32,8 @@ pub fn get_job(conn: &Connection, id: &str) -> Result<Option<QueueJob>> {
     let mut stmt = conn
         .prepare(
             "SELECT id, priority, status, positive_prompt, negative_prompt,
-                    settings_json, pipeline_log, original_idea, linked_comparison_id,
+                    settings_json, pipeline_log, original_idea, selected_concept,
+                    auto_approved, linked_comparison_id,
                     created_at, started_at, completed_at, result_image_id
              FROM queue_jobs WHERE id = ?1",
         )
@@ -49,7 +53,8 @@ pub fn list_jobs(conn: &Connection) -> Result<Vec<QueueJob>> {
     let mut stmt = conn
         .prepare(
             "SELECT id, priority, status, positive_prompt, negative_prompt,
-                    settings_json, pipeline_log, original_idea, linked_comparison_id,
+                    settings_json, pipeline_log, original_idea, selected_concept,
+                    auto_approved, linked_comparison_id,
                     created_at, started_at, completed_at, result_image_id
              FROM queue_jobs
              ORDER BY
@@ -80,7 +85,8 @@ pub fn get_pending_jobs(conn: &Connection) -> Result<Vec<QueueJob>> {
     let mut stmt = conn
         .prepare(
             "SELECT id, priority, status, positive_prompt, negative_prompt,
-                    settings_json, pipeline_log, original_idea, linked_comparison_id,
+                    settings_json, pipeline_log, original_idea, selected_concept,
+                    auto_approved, linked_comparison_id,
                     created_at, started_at, completed_at, result_image_id
              FROM queue_jobs
              WHERE status = 'pending'
@@ -187,6 +193,24 @@ pub fn requeue_interrupted_jobs(conn: &Connection) -> Result<u32> {
     Ok(count as u32)
 }
 
+/// Delete completed/failed/cancelled jobs older than the specified number of days.
+/// Returns the number of jobs deleted.
+pub fn prune_old_jobs(conn: &Connection, days: u32) -> Result<u32> {
+    let cutoff = chrono::Utc::now() - chrono::Duration::days(days as i64);
+    let cutoff_str = cutoff.to_rfc3339();
+
+    let count = conn
+        .execute(
+            "DELETE FROM queue_jobs
+         WHERE status IN ('completed', 'failed', 'cancelled')
+         AND completed_at < ?1",
+            params![cutoff_str],
+        )
+        .context("Failed to prune old queue jobs")?;
+
+    Ok(count as u32)
+}
+
 fn row_to_job(row: &rusqlite::Row) -> rusqlite::Result<QueueJob> {
     let priority_val: i32 = row.get(1)?;
     let status_str: String = row.get(2)?;
@@ -200,11 +224,13 @@ fn row_to_job(row: &rusqlite::Row) -> rusqlite::Result<QueueJob> {
         settings_json: row.get(5)?,
         pipeline_log: row.get(6)?,
         original_idea: row.get(7)?,
-        linked_comparison_id: row.get(8)?,
-        created_at: row.get(9)?,
-        started_at: row.get(10)?,
-        completed_at: row.get(11)?,
-        result_image_id: row.get(12)?,
+        selected_concept: row.get(8)?,
+        auto_approved: row.get(9)?,
+        linked_comparison_id: row.get(10)?,
+        created_at: row.get(11)?,
+        started_at: row.get(12)?,
+        completed_at: row.get(13)?,
+        result_image_id: row.get(14)?,
     })
 }
 
@@ -227,6 +253,8 @@ mod tests {
             settings_json: r#"{"steps":20}"#.to_string(),
             pipeline_log: None,
             original_idea: Some("cat".to_string()),
+            selected_concept: Some(1),
+            auto_approved: false,
             linked_comparison_id: None,
             created_at: None,
             started_at: None,
@@ -245,6 +273,8 @@ mod tests {
         assert_eq!(retrieved.positive_prompt, "a cat");
         assert_eq!(retrieved.priority, QueuePriority::Normal);
         assert_eq!(retrieved.status, QueueJobStatus::Pending);
+        assert_eq!(retrieved.selected_concept, Some(1));
+        assert!(!retrieved.auto_approved);
     }
 
     #[test]

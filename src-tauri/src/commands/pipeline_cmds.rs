@@ -43,7 +43,7 @@ pub async fn run_full_pipeline(
 
     let input = PipelineInput {
         idea,
-        num_concepts: num_concepts.max(1).min(10),
+        num_concepts: num_concepts.clamp(1, 10),
         auto_approve,
         checkpoint_context,
     };
@@ -100,9 +100,7 @@ pub async fn get_available_models(
 /// Combines auto-detection (template probing + known patterns) with
 /// user-configured custom thinking models from the config.
 #[tauri::command]
-pub async fn get_thinking_models(
-    state: tauri::State<'_, AppState>,
-) -> Result<Vec<String>, String> {
+pub async fn get_thinking_models(state: tauri::State<'_, AppState>) -> Result<Vec<String>, String> {
     let (endpoint, custom_thinking) = {
         let config = state.config.read().map_err(|e| e.to_string())?;
         (
@@ -117,12 +115,8 @@ pub async fn get_thinking_models(
 
     let model_names: Vec<String> = all_models.into_iter().map(|m| m.name).collect();
 
-    let mut thinking = ollama::detect_thinking_models(
-        &state.http_client,
-        &endpoint,
-        &model_names,
-    )
-    .await;
+    let mut thinking =
+        ollama::detect_thinking_models(&state.http_client, &endpoint, &model_names).await;
 
     // Merge in user-configured custom thinking models (only if installed)
     for custom in &custom_thinking {
@@ -161,8 +155,10 @@ fn parse_checkpoint_context_string(context_str: &str, checkpoint: &str) -> Check
     }
 
     // Fall back to line-based parsing (legacy format)
-    let mut ctx = CheckpointContext::default();
-    ctx.checkpoint_name = checkpoint.to_string();
+    let mut ctx = CheckpointContext {
+        checkpoint_name: checkpoint.to_string(),
+        ..Default::default()
+    };
 
     for line in context_str.lines() {
         let line = line.trim();

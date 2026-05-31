@@ -1,6 +1,7 @@
 use tauri::Manager;
 
 pub mod ai;
+pub mod ai_batch;
 pub mod comfyui;
 pub mod commands;
 pub mod config;
@@ -10,6 +11,56 @@ pub mod pipeline;
 pub mod queue;
 pub mod state;
 pub mod types;
+
+fn validate_and_scope_image_dir(
+    scope: &tauri::scope::fs::Scope,
+    custom_dir: &std::path::Path,
+) -> anyhow::Result<()> {
+    use anyhow::Context;
+
+    let canonical = custom_dir
+        .canonicalize()
+        .unwrap_or_else(|_| custom_dir.to_path_buf());
+
+    // Reject filesystem root
+    if canonical.parent().is_none() {
+        anyhow::bail!("Cannot use filesystem root as image directory");
+    }
+
+    // Reject home directory root
+    if let Ok(home) = std::env::var("HOME").or_else(|_| std::env::var("USERPROFILE")) {
+        if canonical == std::path::Path::new(&home) {
+            anyhow::bail!("Cannot use home directory root as image directory");
+        }
+    }
+
+    // Reject system directories
+    #[cfg(unix)]
+    {
+        let forbidden = [
+            "/bin", "/sbin", "/usr", "/etc", "/var", "/sys", "/proc", "/dev",
+        ];
+        for prefix in &forbidden {
+            if canonical.starts_with(prefix) {
+                anyhow::bail!("Cannot use system directory {} as image directory", prefix);
+            }
+        }
+    }
+
+    let default_dir = config::manager::data_dir().join("images");
+    if !canonical.starts_with(&default_dir) {
+        eprintln!(
+            "[setup] Using custom image directory outside default location: {}",
+            canonical.display()
+        );
+    }
+
+    scope
+        .allow_directory(&canonical, true)
+        .context("Failed to add directory to asset scope")?;
+
+    Ok(())
+}
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -44,18 +95,34 @@ pub fn run() {
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_opener::init())
         .manage(app_state)
+        .manage(ai_batch::queue::AiBatchQueue::new())
         .setup(move |app| {
             // Expand asset protocol scope to cover the configured image directory
             // (the static scope in tauri.conf.json only covers ~/.visionforge/**)
             let scope = app.asset_protocol_scope();
-            if let Err(e) = scope.allow_directory(&custom_image_dir, true) {
+            if let Err(e) = validate_and_scope_image_dir(&scope, &custom_image_dir) {
                 eprintln!(
-                    "[setup] Failed to add image directory to asset scope: {}",
+                    "[setup] Failed to add image directory to asset scope: {}. \
+                     Using default directory instead.",
                     e
                 );
             }
 
+            // Register window close handler to trigger shutdown
+            let app_handle = app.handle().clone();
+            if let Some(window) = app.get_webview_window("main") {
+                window.on_window_event(move |event| {
+                    if let tauri::WindowEvent::CloseRequested { .. } = event {
+                        eprintln!("[app] Window close requested, sending shutdown signal");
+                        if let Some(state) = app_handle.try_state::<state::AppState>() {
+                            let _ = state.shutdown_tx.send(());
+                        }
+                    }
+                });
+            }
+
             queue::executor::spawn(app.handle().clone());
+            ai_batch::executor::spawn(app.handle().clone());
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![
@@ -87,6 +154,7 @@ pub fn run() {
             commands::queue_cmds::pause_queue,
             commands::queue_cmds::resume_queue,
             commands::queue_cmds::is_queue_paused,
+            commands::queue_cmds::prune_old_queue_jobs,
             // Gallery
             commands::gallery_cmds::get_gallery_images,
             commands::gallery_cmds::get_image,
@@ -105,6 +173,15 @@ pub fn run() {
             // AI
             commands::ai_cmds::tag_image,
             commands::ai_cmds::caption_image,
+            // AI Batch
+            commands::ai_batch_cmds::submit_batch_job,
+            commands::ai_batch_cmds::get_batch_jobs,
+            commands::ai_batch_cmds::get_batch_job,
+            commands::ai_batch_cmds::cancel_batch_item,
+            commands::ai_batch_cmds::cancel_batch_job,
+            commands::ai_batch_cmds::retry_batch_failed,
+            commands::ai_batch_cmds::get_batch_eta,
+            commands::ai_batch_cmds::preview_batch_job,
             // Seeds
             commands::seed_cmds::create_seed,
             commands::seed_cmds::get_seed,

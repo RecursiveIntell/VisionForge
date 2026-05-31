@@ -1,118 +1,73 @@
 # VisionForge
 
-A Tauri 2 desktop app that bridges local LLMs (via Ollama) with Stable Diffusion (via ComfyUI) through a multi-agent prompt engineering pipeline. Enter a simple idea, a chain of LLM agents refines it into optimized SD prompts, images are generated, and a gallery with AI-powered tagging/captioning manages the results.
+VisionForge is a local-first Tauri 2 desktop app for prompt-engineering and image-generation workflow orchestration using a React/TypeScript frontend and a Rust/Tauri backend. It is designed to work with local Ollama and ComfyUI services.
 
-Built for single-GPU homelabs where every VRAM byte matters.
+## Current Status
 
-## Architecture
+This repository is not marked release-ready. The current proof packet shows frontend build, Rust check/test/clippy, audit, and static P31 validations passing, but runtime smoke tests against live Ollama and ComfyUI were not completed in this pass. `npm run tauri build` produced the release binary plus deb/rpm bundles, then failed during AppImage bundling at `linuxdeploy`.
 
-```
-Frontend (React/TypeScript)          Backend (Rust/Tauri)
-───────────────────────             ──────────────────────
-Components                          Commands (thin wrappers)
-    │                                   │
-    ▼                                   ▼
-Hooks (state + logic)               Domain Modules
-    │                               ├── pipeline/   (LLM orchestration)
-    ▼                               ├── comfyui/    (SD generation)
-API wrappers                        ├── queue/      (job management)
-    │                               ├── gallery/    (file storage)
-    ▼                               ├── ai/         (tagger/captioner)
-invoke() ──────────────────►        └── config/     (TOML management)
-                                        │
-                                        ▼
-                                    Database (SQLite)
-```
-
-## Features
-
-- **Prompt Studio** — Enter an idea, run it through a 5-stage LLM pipeline (Ideator → Composer → Judge → Prompt Engineer → Reviewer), edit the output, and generate
-- **Smart Queue** — Priority-based generation queue with pause/resume, GPU cooldown, and live progress via Tauri events
-- **Gallery** — Image grid with lightbox, filtering, sorting, star ratings, favorites, AI auto-tagging/captioning, and pipeline lineage viewer
-- **A/B Comparison** — Select two images, slider overlay for visual diff, parameter diff table
-- **Seed Library** — Save, search, and reuse seeds across generations
-- **Checkpoint Knowledge** — Track checkpoint profiles, prompt term effects, and observations
-- **Settings** — Configure Ollama/ComfyUI endpoints with health checks, model assignments per pipeline stage, quality presets, hardware throttling
-- **Export** — ZIP bundle with images and metadata manifest
-
-## Tech Stack
-
-| Layer | Technology |
-|-------|-----------|
-| Desktop framework | Tauri 2 (Rust) |
-| Frontend | React 18 + TypeScript + Tailwind CSS |
-| Database | SQLite via rusqlite (bundled) |
-| LLM communication | Ollama REST API |
-| SD communication | ComfyUI REST + WebSocket API |
-| Image processing | image crate (Rust) |
-| HTTP client | reqwest |
-| Async runtime | tokio |
-
-## Prerequisites
-
-- [Rust](https://rustup.rs/) (stable)
-- [Node.js](https://nodejs.org/) (18+)
-- [Ollama](https://ollama.ai/) running locally (default: `http://localhost:11434`)
-- [ComfyUI](https://github.com/comfyanonymous/ComfyUI) running locally (default: `http://localhost:8188`)
-
-## Getting Started
+## Quickstart
 
 ```bash
-# Install frontend dependencies
-npm install
-
-# Run in development mode
-cargo tauri dev
-
-# Build for production
-cargo tauri build
-```
-
-## Keyboard Shortcuts
-
-| Shortcut | Action |
-|----------|--------|
-| `Ctrl+1`–`Ctrl+6` | Navigate pages (Studio, Gallery, Queue, Seeds, Compare, Settings) |
-| `Ctrl+Enter` | Submit idea in Prompt Studio |
-| `Escape` | Close lightbox |
-| `←` / `→` | Navigate images in lightbox |
-
-## Project Structure
-
-```
-visionforge/
-├── src-tauri/src/          # Rust backend
-│   ├── commands/           # Tauri command handlers (thin wrappers)
-│   ├── db/                 # SQLite database layer (one module per domain)
-│   ├── pipeline/           # Ollama client + 5-stage pipeline engine
-│   ├── comfyui/            # ComfyUI REST/WebSocket client
-│   ├── queue/              # Background job executor
-│   ├── gallery/            # Image storage + thumbnails + export
-│   ├── ai/                 # Vision model tagger + captioner
-│   ├── config/             # TOML config management
-│   └── types/              # Shared Rust types
-├── src/                    # React frontend
-│   ├── api/                # Tauri invoke wrappers
-│   ├── hooks/              # React hooks (state + logic)
-│   ├── components/         # UI components
-│   └── types/              # TypeScript types
-└── docs/
-    └── SPEC.md             # Full project specification
-```
-
-## Development
-
-```bash
-# Run Rust tests (129 tests)
-cd src-tauri && cargo test
-
-# Type-check and build frontend
+npm ci
 npm run build
+npm run typecheck
+npm audit --audit-level=moderate
 
-# Check Rust compilation
-cd src-tauri && cargo check
+cd src-tauri
+cargo fmt --all -- --check
+cargo check --all-targets
+cargo test --all-targets
+cargo clippy --all-targets -- -D warnings
+cd ..
+
+npm run tauri build
+python3 codex/validation/run_all_validations.py --repo .
 ```
 
-## License
+For local development:
 
-MIT
+```bash
+npm run dev
+```
+
+For the desktop app:
+
+```bash
+npm run tauri dev
+```
+
+## Source Roots
+
+- `src/`: React/TypeScript frontend.
+- `src-tauri/`: canonical Rust/Tauri backend.
+- `docs/SPEC.md`: product intent, not implementation proof.
+- `VISIONFORGE_PROOF_PACKET.md`: current build/test and claim evidence.
+- `docs/source-quarantine/P31_duplicate_backend/s/`: quarantined stale duplicate backend root from the P31 pass.
+
+## Feature Status
+
+| Feature | Status | Evidence | Limitation |
+|---|---|---|---|
+| Single backend root | Implemented/proven | `vf_assert_no_duplicate_tauri_root.py` passes | Quarantined duplicate remains under docs for audit only |
+| Shared frontend config provider | Implemented/proven by static validation/build | `src/context/ConfigContext.tsx`, `npm run build`, config-provider validation | Manual settings-to-prompt-studio smoke not run |
+| Auto-approve queue handoff | Implemented/proven by static validation/build | `PromptStudio` auto-enqueues and queue/gallery metadata is wired | Live pipeline smoke not run |
+| Selected concept metadata | Partial | Queue payload and gallery row carry `selectedConcept`/`selected_concept` | UI selection is lineage metadata/inspection, not a prompt-regeneration control |
+| Queue/gallery metadata | Implemented/proven by tests | `cargo test --all-targets` passes 181 tests | Live ComfyUI generation smoke not run |
+| Ollama/ComfyUI HTTP status honesty | Implemented/proven by static validation | Status helpers check non-2xx for configured routes | Non-2xx mock tests still need expansion |
+| Lock-order hardening | Implemented/proven by static validation | `vf_assert_no_lock_order_inversions.py` passes | Static heuristic only |
+| Export filename validation | Implemented/proven by static validation/tests | Export validation script and Rust tests pass | Invalid-row quarantine policy is fail-fast |
+| File/DB rollback | Partial | Cancellation cleanup path and permanent-delete errors are explicit | Full staged-file transaction tests remain needed |
+| Tauri packaging | Partial | Binary, deb, rpm built during `npm run tauri build` | AppImage bundling failed at `linuxdeploy` |
+
+## Known Limitations
+
+- Release readiness is blocked until live Ollama and ComfyUI smoke tests are recorded.
+- AppImage bundling currently fails at `linuxdeploy`; deb/rpm artifacts were created before that failure.
+- Frontend lint and unit-test runners are not installed; `npm run lint` and `npm run test` are explicit deferred placeholders.
+- The selected concept UI records lineage metadata. It does not rerun prompt engineering when changed after pipeline completion.
+- File/DB persistence has cleanup safeguards, but a fuller staged-file transaction test suite is still needed.
+
+## Proof
+
+See `VISIONFORGE_PROOF_PACKET.md` and `.codex-runs/P31/final_audit_report.md` for dated command receipts, validation results, blockers, and rollback notes.

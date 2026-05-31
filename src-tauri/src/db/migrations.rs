@@ -1,13 +1,56 @@
 use anyhow::{Context, Result};
 use rusqlite::Connection;
 
+/// Current schema version
+#[allow(dead_code)]
+const CURRENT_VERSION: u32 = 2;
+
 pub fn run(conn: &Connection) -> Result<()> {
-    conn.execute_batch(SCHEMA)
-        .context("Failed to execute database schema")?;
+    // Ensure the migrations tracking table exists
+    conn.execute_batch(
+        "CREATE TABLE IF NOT EXISTS schema_version (
+            version INTEGER PRIMARY KEY,
+            applied_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        );",
+    )
+    .context("Failed to create schema_version table")?;
+
+    let current = get_current_version(conn);
+
+    if current < 1 {
+        conn.execute_batch(SCHEMA_V1)
+            .context("Failed to apply migration v1")?;
+        set_version(conn, 1)?;
+    }
+
+    if current < 2 {
+        conn.execute_batch(MIGRATION_V2)
+            .context("Failed to apply migration v2")?;
+        set_version(conn, 2)?;
+    }
+
     Ok(())
 }
 
-const SCHEMA: &str = r#"
+fn get_current_version(conn: &Connection) -> u32 {
+    conn.query_row(
+        "SELECT COALESCE(MAX(version), 0) FROM schema_version",
+        [],
+        |row| row.get(0),
+    )
+    .unwrap_or(0)
+}
+
+fn set_version(conn: &Connection, version: u32) -> Result<()> {
+    conn.execute(
+        "INSERT INTO schema_version (version) VALUES (?1)",
+        rusqlite::params![version],
+    )
+    .context("Failed to record schema version")?;
+    Ok(())
+}
+
+const SCHEMA_V1: &str = r#"
 -- ============================================
 -- Core Gallery
 -- ============================================
@@ -164,9 +207,19 @@ CREATE INDEX IF NOT EXISTS idx_images_seed ON images(seed);
 CREATE INDEX IF NOT EXISTS idx_images_created ON images(created_at);
 CREATE INDEX IF NOT EXISTS idx_images_rating ON images(rating);
 CREATE INDEX IF NOT EXISTS idx_images_deleted ON images(deleted);
+CREATE INDEX IF NOT EXISTS idx_images_favorite ON images(favorite);
+CREATE INDEX IF NOT EXISTS idx_images_created_deleted ON images(created_at, deleted);
+CREATE INDEX IF NOT EXISTS idx_image_tags_image_id ON image_tags(image_id);
+CREATE INDEX IF NOT EXISTS idx_image_tags_tag_id ON image_tags(tag_id);
 CREATE INDEX IF NOT EXISTS idx_checkpoint_terms_checkpoint ON checkpoint_prompt_terms(checkpoint_id);
 CREATE INDEX IF NOT EXISTS idx_queue_status ON queue_jobs(status, priority);
 CREATE INDEX IF NOT EXISTS idx_seeds_value ON seeds(seed_value);
+CREATE INDEX IF NOT EXISTS idx_seeds_checkpoint ON seeds(checkpoint);
+"#;
+
+const MIGRATION_V2: &str = r#"
+ALTER TABLE queue_jobs ADD COLUMN selected_concept INTEGER;
+ALTER TABLE queue_jobs ADD COLUMN auto_approved BOOLEAN DEFAULT FALSE;
 "#;
 
 #[cfg(test)]
@@ -187,6 +240,17 @@ mod tests {
         conn.execute_batch("PRAGMA foreign_keys = ON;").unwrap();
         run(&conn).unwrap();
         run(&conn).unwrap();
+    }
+
+    #[test]
+    fn test_migrations_record_version() {
+        let conn = Connection::open_in_memory().unwrap();
+        conn.execute_batch("PRAGMA foreign_keys = ON;").unwrap();
+        run(&conn).unwrap();
+        assert_eq!(get_current_version(&conn), CURRENT_VERSION);
+        // Running again should not change version
+        run(&conn).unwrap();
+        assert_eq!(get_current_version(&conn), CURRENT_VERSION);
     }
 
     #[test]
@@ -211,6 +275,7 @@ mod tests {
             "image_tags",
             "images",
             "queue_jobs",
+            "schema_version",
             "seed_checkpoint_notes",
             "seed_tags",
             "seeds",

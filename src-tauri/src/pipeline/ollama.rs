@@ -11,6 +11,16 @@ fn normalize_endpoint(endpoint: &str) -> &str {
     endpoint.trim_end_matches('/')
 }
 
+async fn ensure_success(resp: reqwest::Response, action: &str) -> Result<reqwest::Response> {
+    if resp.status().is_success() {
+        return Ok(resp);
+    }
+
+    let status = resp.status();
+    let body = resp.text().await.unwrap_or_default();
+    anyhow::bail!("Ollama returned {} for {}: {}", status, action, body);
+}
+
 #[derive(Debug, Clone, Serialize)]
 pub struct ChatMessage {
     pub role: String,
@@ -143,11 +153,7 @@ pub fn is_known_thinking_model(model_name: &str) -> bool {
 
 /// Probe a specific model via `/api/show` to check if it supports thinking.
 /// Falls back to the known-models list if the probe fails.
-pub async fn probe_model_thinking(
-    client: &Client,
-    endpoint: &str,
-    model_name: &str,
-) -> bool {
+pub async fn probe_model_thinking(client: &Client, endpoint: &str, model_name: &str) -> bool {
     if is_known_thinking_model(model_name) {
         return true;
     }
@@ -217,7 +223,15 @@ pub async fn chat(
     messages: &[ChatMessage],
     format_json: bool,
 ) -> Result<ChatResponse> {
-    chat_with_options(client, endpoint, model, messages, format_json, &OllamaOptions::default()).await
+    chat_with_options(
+        client,
+        endpoint,
+        model,
+        messages,
+        format_json,
+        &OllamaOptions::default(),
+    )
+    .await
 }
 
 pub async fn chat_with_options(
@@ -247,9 +261,13 @@ pub async fn chat_with_options(
         body["options"] = serde_json::json!(options);
     }
 
-    // Apply thinking mode — this is a top-level parameter, not inside "options"
+    // Apply thinking mode — this is a top-level parameter, not inside "options".
+    // Only send it for models that actually support thinking; non-thinking models
+    // (e.g. llama3.1) will reject the parameter with a 400 error.
     if let Some(think) = opts.think {
-        body["think"] = serde_json::json!(think);
+        if is_known_thinking_model(model) {
+            body["think"] = serde_json::json!(think);
+        }
     }
 
     let resp = client
@@ -325,6 +343,7 @@ where
     .await
 }
 
+#[allow(clippy::too_many_arguments)]
 pub async fn chat_streaming_with_options<F>(
     client: &Client,
     endpoint: &str,
@@ -357,9 +376,13 @@ where
         body["options"] = serde_json::json!(options);
     }
 
-    // Apply thinking mode — this is a top-level parameter, not inside "options"
+    // Apply thinking mode — this is a top-level parameter, not inside "options".
+    // Only send it for models that actually support thinking; non-thinking models
+    // (e.g. llama3.1) will reject the parameter with a 400 error.
     if let Some(think) = opts.think {
-        body["think"] = serde_json::json!(think);
+        if is_known_thinking_model(model) {
+            body["think"] = serde_json::json!(think);
+        }
     }
 
     let resp = client
@@ -429,7 +452,10 @@ where
                     if !content.is_empty() {
                         accumulated_content.push_str(content);
                         if accumulated_content.len() > MAX_BUFFER_SIZE {
-                            anyhow::bail!("Ollama accumulated response exceeded {}MB limit", MAX_BUFFER_SIZE / 1_048_576);
+                            anyhow::bail!(
+                                "Ollama accumulated response exceeded {}MB limit",
+                                MAX_BUFFER_SIZE / 1_048_576
+                            );
                         }
                         on_token(content);
                     }
@@ -503,12 +529,14 @@ pub async fn unload_model(client: &Client, endpoint: &str, model: &str) -> Resul
         "keep_alive": 0,
     });
 
-    let _ = client
+    let resp = client
         .post(&url)
         .timeout(Duration::from_secs(10))
         .json(&body)
         .send()
-        .await;
+        .await
+        .with_context(|| format!("Cannot connect to Ollama at {}", endpoint))?;
+    ensure_success(resp, "unload_model").await?;
 
     Ok(())
 }

@@ -23,14 +23,31 @@ pub async fn run_pipeline(
     input: PipelineInput,
     cancelled: Option<Arc<AtomicBool>>,
 ) -> Result<PipelineResult> {
+    // Validate input
+    const MAX_IDEA_LENGTH: usize = 10_000;
+    const MAX_CONCEPTS: u32 = 10;
+
+    if input.idea.is_empty() {
+        anyhow::bail!("Idea cannot be empty");
+    }
+    if input.idea.len() > MAX_IDEA_LENGTH {
+        anyhow::bail!(
+            "Idea text too long ({} chars, max {})",
+            input.idea.len(),
+            MAX_IDEA_LENGTH
+        );
+    }
+    if input.num_concepts == 0 || input.num_concepts > MAX_CONCEPTS {
+        anyhow::bail!("Number of concepts must be between 1 and {}", MAX_CONCEPTS);
+    }
+
     let pipeline = &config.pipeline;
     let models = &config.models;
     let endpoint = &config.ollama.endpoint;
 
     // Resolve per-stage thinking mode from config
-    let think_for = |stage_name: &str| -> Option<bool> {
-        models.thinking_overrides.get(stage_name).copied()
-    };
+    let think_for =
+        |stage_name: &str| -> Option<bool> { models.thinking_overrides.get(stage_name).copied() };
 
     let stages_enabled = [
         pipeline.enable_ideator,
@@ -95,6 +112,13 @@ pub async fn run_pipeline(
         let mut concepts = ideator_output.output.clone();
         // Truncate to requested count — LLMs often generate more than asked
         concepts.truncate(input.num_concepts as usize);
+
+        // Guard against empty LLM response
+        if concepts.is_empty() {
+            eprintln!("[pipeline] Warning: Ideator returned zero concepts, using original idea");
+            concepts = vec![input.idea.clone()];
+        }
+
         result_stages.ideator = Some(ideator_output);
         concepts
     } else {
@@ -113,9 +137,16 @@ pub async fn run_pipeline(
         let mut all_outputs: Vec<ComposerOutput> = Vec::new();
 
         for (i, concept) in concepts.iter().enumerate() {
-            let output = stages::run_composer(client, endpoint, &models.composer, concept, i, think_for("composer"))
-                .await
-                .with_context(|| format!("Pipeline failed at Composer stage for concept {}", i))?;
+            let output = stages::run_composer(
+                client,
+                endpoint,
+                &models.composer,
+                concept,
+                i,
+                think_for("composer"),
+            )
+            .await
+            .with_context(|| format!("Pipeline failed at Composer stage for concept {}", i))?;
             composed_descs.push(output.output.clone());
             all_outputs.push(output);
         }
@@ -133,10 +164,16 @@ pub async fn run_pipeline(
                 anyhow::bail!("Pipeline cancelled by user");
             }
         }
-        let judge_output =
-            stages::run_judge(client, endpoint, &models.judge, &input.idea, &composed, think_for("judge"))
-                .await
-                .context("Pipeline failed at Judge stage")?;
+        let judge_output = stages::run_judge(
+            client,
+            endpoint,
+            &models.judge,
+            &input.idea,
+            &composed,
+            think_for("judge"),
+        )
+        .await
+        .context("Pipeline failed at Judge stage")?;
 
         let top_index = judge_output
             .output
@@ -152,13 +189,19 @@ pub async fn run_pipeline(
         (top_desc, top_index)
     } else {
         // Bypass: use first composed description
-        (composed[0].clone(), 0)
+        if composed.is_empty() {
+            (input.idea.clone(), 0)
+        } else {
+            (composed[0].clone(), 0)
+        }
     };
 
     // Store the composer output for the judge-selected concept (correct metadata)
     if stages_enabled[1] && !all_composer_outputs.is_empty() {
         let idx = selected_index.min(all_composer_outputs.len() - 1);
-        result_stages.composer = Some(all_composer_outputs.into_iter().nth(idx).unwrap());
+        if let Some(output) = all_composer_outputs.into_iter().nth(idx) {
+            result_stages.composer = Some(output);
+        }
     }
 
     // Stage 4: Prompt Engineer — convert to SD prompts
@@ -277,17 +320,30 @@ pub async fn run_single_stage(
             serde_json::to_string(&output).context("Failed to serialize judge output")
         }
         "prompt_engineer" => {
-            let output =
-                stages::run_prompt_engineer(client, endpoint, model, input, checkpoint_context, None)
-                    .await?;
+            let output = stages::run_prompt_engineer(
+                client,
+                endpoint,
+                model,
+                input,
+                checkpoint_context,
+                None,
+            )
+            .await?;
             serde_json::to_string(&output).context("Failed to serialize prompt engineer output")
         }
         "reviewer" => {
             let pair: PromptPair = serde_json::from_str(input)
                 .context("Reviewer input must be JSON with positive/negative fields")?;
-            let output =
-                stages::run_reviewer(client, endpoint, model, "", &pair.positive, &pair.negative, None)
-                    .await?;
+            let output = stages::run_reviewer(
+                client,
+                endpoint,
+                model,
+                "",
+                &pair.positive,
+                &pair.negative,
+                None,
+            )
+            .await?;
             serde_json::to_string(&output).context("Failed to serialize reviewer output")
         }
         _ => anyhow::bail!("Unknown pipeline stage: {}", stage),

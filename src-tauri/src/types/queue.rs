@@ -47,6 +47,7 @@ impl QueueJobStatus {
         }
     }
 
+    #[allow(clippy::should_implement_trait)]
     pub fn from_str(s: &str) -> Option<Self> {
         match s {
             "pending" => Some(Self::Pending),
@@ -70,6 +71,9 @@ pub struct QueueJob {
     pub settings_json: String,
     pub pipeline_log: Option<String>,
     pub original_idea: Option<String>,
+    pub selected_concept: Option<u32>,
+    #[serde(default)]
+    pub auto_approved: bool,
     pub linked_comparison_id: Option<String>,
     pub created_at: Option<String>,
     pub started_at: Option<String>,

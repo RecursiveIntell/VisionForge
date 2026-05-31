@@ -1,0 +1,1653 @@
+{
+  "archive_manifest_version": "CodexRunArchiveManifestV1",
+  "collisions": [],
+  "created_utc": "2026-05-27T21:25:00Z",
+  "files": [
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/.gitignore",
+      "bytes": 166,
+      "mtime_utc": "2026-02-11T00:57:33Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/.gitignore",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "88707cda7ba4226eda3ffa91d8284f1a0d12b827f06fb9bc48425cc0d4af04af"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/Cargo.lock",
+      "bytes": 165613,
+      "mtime_utc": "2026-02-11T11:45:16Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/Cargo.lock",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "b620e2a0f172862313894b2fcb52ae48666f33f9ce4d40e99e09745e1f55df93"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/Cargo.toml",
+      "bytes": 928,
+      "mtime_utc": "2026-02-11T11:45:14Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/Cargo.toml",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "0b65fce14a0a78f467ec51257b8ed157cf815ecd547a4b7f81746d70fc235f3d"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/build.rs",
+      "bytes": 39,
+      "mtime_utc": "2026-02-11T00:57:33Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/build.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "487059eaf8a947b80f20a9aacac038a5047b2ad69d2401b827376c67d6fe847f"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/capabilities/default.json",
+      "bytes": 368,
+      "mtime_utc": "2026-02-11T11:45:20Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/capabilities/default.json",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "b4a6c463a2c8c68d80434b1db09de10fd5289279c02da82d343e3b10f3665f44"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/gen/schemas/acl-manifests.json",
+      "bytes": 69606,
+      "mtime_utc": "2026-02-11T11:45:24Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/gen/schemas/acl-manifests.json",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "db6c79b1c810e3840d0356c34bf7ea7d7d7b4def65c22139368ac78823799df4"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/gen/schemas/capabilities.json",
+      "bytes": 279,
+      "mtime_utc": "2026-02-11T11:45:24Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/gen/schemas/capabilities.json",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "b78468713c3ac38db15c377a9ab5cba24a5ccfe853c6b649b1eea19d909be613"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/gen/schemas/desktop-schema.json",
+      "bytes": 129753,
+      "mtime_utc": "2026-02-11T11:45:24Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/gen/schemas/desktop-schema.json",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "30537d50853f0a1fe2bdd975e28492c752698abd8eac4ae0a2bbca483952f1ba"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/gen/schemas/linux-schema.json",
+      "bytes": 129753,
+      "mtime_utc": "2026-02-11T11:45:24Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/gen/schemas/linux-schema.json",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "30537d50853f0a1fe2bdd975e28492c752698abd8eac4ae0a2bbca483952f1ba"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/icons/128x128.png",
+      "bytes": 3512,
+      "mtime_utc": "2026-02-11T00:57:33Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/icons/128x128.png",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "19b4fec485db7df51a691fcce72a3dd6f983e754fc4262da7154e4a4c688f69e"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/icons/128x128@2x.png",
+      "bytes": 7012,
+      "mtime_utc": "2026-02-11T00:57:33Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/icons/128x128@2x.png",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "6c7660390d65217fe8de0892862254f47aee77e0af7096c75b8bfe168c5403f7"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/icons/32x32.png",
+      "bytes": 974,
+      "mtime_utc": "2026-02-11T00:57:33Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/icons/32x32.png",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "1c6782dc65c8111c12cbc1882a0fea5e71ab8e51b18da2ce9580f5c88860ed02"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/icons/Square107x107Logo.png",
+      "bytes": 2863,
+      "mtime_utc": "2026-02-11T00:57:33Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/icons/Square107x107Logo.png",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "54f7a0f58c96a4b023c1edc4b53fc443e27dace50e345f6936fa29bc20f785ca"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/icons/Square142x142Logo.png",
+      "bytes": 3858,
+      "mtime_utc": "2026-02-11T00:57:33Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/icons/Square142x142Logo.png",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "fec1e2080ca73cd4c4a123b23b1cd364059a8a8efeba3076e21dfefed390693b"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/icons/Square150x150Logo.png",
+      "bytes": 3966,
+      "mtime_utc": "2026-02-11T00:57:33Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/icons/Square150x150Logo.png",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "65fb570cb0e61ffce02ad67784cb200a0bf058400300980a46fa0d0c8f43a77a"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/icons/Square284x284Logo.png",
+      "bytes": 7737,
+      "mtime_utc": "2026-02-11T00:57:33Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/icons/Square284x284Logo.png",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "ea0b7c5d4b1d1ab9c91d2f7c9b069c8dfbf4557b0649a5777d47332cde610262"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/icons/Square30x30Logo.png",
+      "bytes": 903,
+      "mtime_utc": "2026-02-11T00:57:33Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/icons/Square30x30Logo.png",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "cc72279c41b4ed343e8db7e7541ceef7b6b23edaa83d4e7338421dfcb8d63c33"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/icons/Square310x310Logo.png",
+      "bytes": 8591,
+      "mtime_utc": "2026-02-11T00:57:33Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/icons/Square310x310Logo.png",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "9733a89c539115de3c49bd06720bfc99639d9a918f5df48a810e267cf3554119"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/icons/Square44x44Logo.png",
+      "bytes": 1299,
+      "mtime_utc": "2026-02-11T00:57:33Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/icons/Square44x44Logo.png",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "10be9840e58fb018eb9029601d42008e16c0c9cfa66b8f9467fee94f600160d4"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/icons/Square71x71Logo.png",
+      "bytes": 2011,
+      "mtime_utc": "2026-02-11T00:57:33Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/icons/Square71x71Logo.png",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "2937fc83324cd9a1fddcfefd5927c791af31996a6840bfb3e2f1d578ad4129de"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/icons/Square89x89Logo.png",
+      "bytes": 2468,
+      "mtime_utc": "2026-02-11T00:57:33Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/icons/Square89x89Logo.png",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "12aed0e7ee06cb631427dc9da72c0c7ecf03857fbc4884d0c31f78314feb6c7f"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/icons/StoreLogo.png",
+      "bytes": 1523,
+      "mtime_utc": "2026-02-11T00:57:33Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/icons/StoreLogo.png",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "91a54024dd47230991546088f2e75d3e3199b3ccc9fe40f3f6b7d3bf1cbf7776"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/icons/icon.icns",
+      "bytes": 98451,
+      "mtime_utc": "2026-02-11T00:57:33Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/icons/icon.icns",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "3dc10493b7de48a61de58f768f8a5708d3a44a068c148cedf0502b9b9b71ba5d"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/icons/icon.ico",
+      "bytes": 86642,
+      "mtime_utc": "2026-02-11T00:57:33Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/icons/icon.ico",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "392206b573a809997f3ff16fe68f456a52e931c372107eade9572b329bbe3321"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/icons/icon.png",
+      "bytes": 14183,
+      "mtime_utc": "2026-02-11T00:57:33Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/icons/icon.png",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "273cd669e07c455ad1c7c095890a37984652157cee73128a867300067dfb80e7"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/ai/captioner.rs",
+      "bytes": 2796,
+      "mtime_utc": "2026-02-11T12:06:26Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/ai/captioner.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "0cd0bd0f5ce477498b4d8b94a834d7e15d0bd0de48f334dbbae12867c80a808d"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/ai/mod.rs",
+      "bytes": 35,
+      "mtime_utc": "2026-02-11T11:45:20Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/ai/mod.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "02aa9636c13838caef8595bcc96c18ddeb804bb3f34564964f0ba95b8141024c"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/ai/tagger.rs",
+      "bytes": 10130,
+      "mtime_utc": "2026-02-11T12:06:21Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/ai/tagger.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "097f17bbfac0e48674376e4dfb623fae0db4563cf9f80b474cda661f96a3d762"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/ai_batch/downscale.rs",
+      "bytes": 3923,
+      "mtime_utc": "2026-02-12T05:07:58Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/ai_batch/downscale.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "1ede99a42569f12db77b70da1696a2297cd794020e5f909e157203671c6b86da"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/ai_batch/executor.rs",
+      "bytes": 9811,
+      "mtime_utc": "2026-02-12T05:03:23Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/ai_batch/executor.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "5023e7552a459d5ac4f1d4eacd6e8904fb6a77c8ba64b4fecd6a7f541ea11cc4"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/ai_batch/mod.rs",
+      "bytes": 67,
+      "mtime_utc": "2026-02-12T05:01:10Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/ai_batch/mod.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "8a8c914abadb10bff6b898d4f6cb9e6eba8471ab38a903055604e7ddda39b583"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/ai_batch/queue.rs",
+      "bytes": 17537,
+      "mtime_utc": "2026-02-12T05:08:02Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/ai_batch/queue.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "f8a79a5482ae7dcdb0f36009663f2bafcc656c80cba406e72ade320b2c0eaac7"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/ai_batch/types.rs",
+      "bytes": 3659,
+      "mtime_utc": "2026-02-12T05:05:08Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/ai_batch/types.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "a0575c337fadf4852c37cd7acb1cddf9059e45ea85c912c3ff4d9afc6f3830da"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/comfyui/client.rs",
+      "bytes": 13696,
+      "mtime_utc": "2026-02-11T18:02:01Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/comfyui/client.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "80919d6dab20ec4bae193f1c9095f980cbfdbe893625cf09912cf2e23c48c328"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/comfyui/client_test.rs",
+      "bytes": 2483,
+      "mtime_utc": "2026-02-11T11:45:20Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/comfyui/client_test.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "f914a0ad33c90e5a7bb9e700aa761e0dcadcc5de34ddd57d1f07aef8a66d6ffd"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/comfyui/mod.rs",
+      "bytes": 50,
+      "mtime_utc": "2026-02-11T11:45:20Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/comfyui/mod.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "a0cb0b1733f1d0c64ab29aec6434c23edc20eb66b2d6264fd8a6321757adf9aa"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/comfyui/models.rs",
+      "bytes": 6353,
+      "mtime_utc": "2026-02-11T18:03:13Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/comfyui/models.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "892822172a52f7125855d82b87eff310cc93bb094a7d1d9a4d7071a08d113f83"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/comfyui/workflow.rs",
+      "bytes": 6687,
+      "mtime_utc": "2026-02-11T11:45:20Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/comfyui/workflow.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "bbafac6952b93c2760082554e5ea8b4a92e6177b71935850abf45a9eb48a5709"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/commands/ai_batch_cmds.rs",
+      "bytes": 4554,
+      "mtime_utc": "2026-02-12T05:03:47Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/commands/ai_batch_cmds.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "ec863d9f1d027b9010ddb3c41fa6971c3f947892fe9336783384938b78b36b23"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/commands/ai_cmds.rs",
+      "bytes": 2901,
+      "mtime_utc": "2026-02-11T17:56:58Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/commands/ai_cmds.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "1de16b5e7698621dead0ad4f007d0076bf0e4a1ccf2e9e4e58965575e6e16bd9"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/commands/checkpoint_cmds.rs",
+      "bytes": 2853,
+      "mtime_utc": "2026-02-11T02:13:39Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/commands/checkpoint_cmds.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "2764e525326d3ffe661c59e1181c69dbcb3c5b3ccd0bb8bd321a7839dfd8271d"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/commands/comfyui_cmds.rs",
+      "bytes": 5951,
+      "mtime_utc": "2026-02-11T17:56:48Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/commands/comfyui_cmds.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "5ec87c4a67ab39def366a6466724b950d191d82af7e1bece9a39e406cced414c"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/commands/comparison_cmds.rs",
+      "bytes": 2189,
+      "mtime_utc": "2026-02-11T17:55:21Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/commands/comparison_cmds.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "7a47f581111b9c96ef49578f78fd9078d513947c30367cf5c8cb136cc52030af"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/commands/config_cmds.rs",
+      "bytes": 1492,
+      "mtime_utc": "2026-02-11T22:23:04Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/commands/config_cmds.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "99f2cf6b33dd4fb2df41c6f13e4ad7c9feb68253ed43ad139d089e04ed5a44a0"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/commands/export_cmds.rs",
+      "bytes": 2169,
+      "mtime_utc": "2026-02-11T18:38:32Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/commands/export_cmds.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "80fac11b0f6f83a17d95528b2970c2a0b2513cd70c15517cacb68f707282e8cb"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/commands/gallery_cmds.rs",
+      "bytes": 6675,
+      "mtime_utc": "2026-02-11T17:59:18Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/commands/gallery_cmds.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "1505a4b2b40079fbf236e4f2cf65093d6942e335f90cb8ec7d72be30a86a95b2"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/commands/mod.rs",
+      "bytes": 238,
+      "mtime_utc": "2026-02-12T05:03:52Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/commands/mod.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "a9cd704e09b9a54d909005b38b35913a070e4b1f7a1e87c06c657c75c94cc7fd"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/commands/pipeline_cmds.rs",
+      "bytes": 5895,
+      "mtime_utc": "2026-02-12T03:57:53Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/commands/pipeline_cmds.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "3b7b6360885c85effb6f570e8d81308bd18bbcac8ffc0d168edb5d6bdec06cce"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/commands/queue_cmds.rs",
+      "bytes": 1531,
+      "mtime_utc": "2026-02-11T11:45:20Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/commands/queue_cmds.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "e8b8e9b4a14d8c05b38cef2fda448031008beff163622f8ff22fabaaaecf0347"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/commands/seed_cmds.rs",
+      "bytes": 2623,
+      "mtime_utc": "2026-02-11T11:45:20Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/commands/seed_cmds.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "861dcea2e67d77e2b0231c952400c346872ac91ec2d1ba0ceadb354a6f7d48aa"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/config/manager.rs",
+      "bytes": 17598,
+      "mtime_utc": "2026-02-12T05:06:18Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/config/manager.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "648468963f718ad4e0fc17eea6dbd66edaa64c5c179045f23276246ec716bc2e"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/config/mod.rs",
+      "bytes": 17,
+      "mtime_utc": "2026-02-11T01:18:40Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/config/mod.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "93f08a8d53f93567647504663fdb6eb867ff5f837871d381bd3f090a25f07497"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/db/checkpoints.rs",
+      "bytes": 14047,
+      "mtime_utc": "2026-02-11T11:45:20Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/db/checkpoints.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "982c46d71fa77bb81c5ce5bdf018238e5338312bcd7931d1fd6f75dac2643c3f"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/db/comparisons.rs",
+      "bytes": 8477,
+      "mtime_utc": "2026-02-11T11:45:20Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/db/comparisons.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "7448db65f35666225276e66ec428cbe26a41a69e0989aba5a75cfe93c4863537"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/db/images.rs",
+      "bytes": 8627,
+      "mtime_utc": "2026-02-12T05:04:45Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/db/images.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "12b63cec60a847c831391c6639c5c2a0e55f7128ce40f45f671c462f28a42a56"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/db/images_test.rs",
+      "bytes": 6306,
+      "mtime_utc": "2026-02-11T11:45:20Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/db/images_test.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "7fb9d8488dc7f2a5406e5774ced2f44cc721c7256dba7ddcdacd025fc5ed9e66"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/db/migrations.rs",
+      "bytes": 8935,
+      "mtime_utc": "2026-02-11T18:00:37Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/db/migrations.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "5b3b0551c367e92d2082eec6ba130a1e12b66b3d348a79cfa3aa2c735190ddbd"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/db/mod.rs",
+      "bytes": 1023,
+      "mtime_utc": "2026-02-11T11:45:20Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/db/mod.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "d8dbe0214c771b65183dc927b7951037273a69d5db9fb64ef112b5365d0ca3d4"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/db/queue.rs",
+      "bytes": 12462,
+      "mtime_utc": "2026-02-11T11:45:20Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/db/queue.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "07ee1c532c49f0494f991f958027c99a80888bf10aae0305691f36e74e1416ff"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/db/seeds.rs",
+      "bytes": 11705,
+      "mtime_utc": "2026-02-11T17:58:54Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/db/seeds.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "542b993af80b74760ef2dba55ed18d1ff4975fe55b806b3fe291979f01c61aac"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/db/tags.rs",
+      "bytes": 10352,
+      "mtime_utc": "2026-02-11T17:59:09Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/db/tags.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "30058296f925dedb7f9a86d79e600ae428922cca73b236b448cd94606b48d857"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/gallery/export.rs",
+      "bytes": 11482,
+      "mtime_utc": "2026-02-11T18:38:20Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/gallery/export.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "9383e4636f576aaec0feb08f4bbb2ae4750c3922b84709151bdac92371566cda"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/gallery/mod.rs",
+      "bytes": 33,
+      "mtime_utc": "2026-02-11T11:45:20Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/gallery/mod.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "570263fdb24466bcb01cb10f6ef27022c54c4ef8043eb659e3cad0ac1a4a37a2"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/gallery/storage.rs",
+      "bytes": 8805,
+      "mtime_utc": "2026-02-11T17:55:46Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/gallery/storage.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "f87c9725b0a281258382696a3a319e7525a8cf02bcfebbcf3e3475711e0e6434"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/lib.rs",
+      "bytes": 6641,
+      "mtime_utc": "2026-02-12T05:04:11Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/lib.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "f53840b89acf19189da57ea3e1df09e04a428914f7034b1503dcea6d777a84d4"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/main.rs",
+      "bytes": 186,
+      "mtime_utc": "2026-02-11T00:57:33Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/main.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "498fe7cb33ee29dc0041577abfcc9384230c3139cf6d3b60020c935f4e7f5638"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/pipeline/engine.rs",
+      "bytes": 10725,
+      "mtime_utc": "2026-02-12T03:56:35Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/pipeline/engine.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "54bd2002d21e6d051460e79e0e3c09bda5b0cc5da73cd70279717a9880d0148e"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/pipeline/engine_streaming.rs",
+      "bytes": 12145,
+      "mtime_utc": "2026-02-12T03:57:01Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/pipeline/engine_streaming.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "4a6511b09044d08d7e662e63b0736aec2716021acc5b14a3ea12006630b68172"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/pipeline/engine_test.rs",
+      "bytes": 5147,
+      "mtime_utc": "2026-02-11T01:52:19Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/pipeline/engine_test.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "5c021c483f53a68f9fcd771a6bf84da8816c39fb974712ff28b7cc5c7d5245e3"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/pipeline/mod.rs",
+      "bytes": 117,
+      "mtime_utc": "2026-02-11T11:45:20Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/pipeline/mod.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "b47c2ebbd6d3d2a9b4e6bd7604e2ac0d26173ca49b9df2962d0a92fc146d1f1a"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/pipeline/ollama.rs",
+      "bytes": 17006,
+      "mtime_utc": "2026-02-12T03:52:04Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/pipeline/ollama.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "bd83b4e2c71d31cb866298da23e43a5b4241b237b7f1fe61c07bc369ae4593fe"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/pipeline/ollama_test.rs",
+      "bytes": 4777,
+      "mtime_utc": "2026-02-12T03:59:01Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/pipeline/ollama_test.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "4a1364fa9ce82ab936aa78fbe3477f4eb044739cc65fc0cc8280859c1bba9c28"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/pipeline/prompts.rs",
+      "bytes": 9400,
+      "mtime_utc": "2026-02-11T18:03:56Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/pipeline/prompts.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "5d5a698ad3670c294ea93a83b997a6853cc428f4e7a8240dd88312cf10d58b4f"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/pipeline/stages.rs",
+      "bytes": 16221,
+      "mtime_utc": "2026-02-12T03:55:14Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/pipeline/stages.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "e526d95163a3fe945bedf4a656f88f56cedfd118220cfe80b44306337c788029"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/pipeline/stages_streaming.rs",
+      "bytes": 7393,
+      "mtime_utc": "2026-02-12T03:55:51Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/pipeline/stages_streaming.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "3c23f1c028f5c4d3f8b08ac2cec406c06e8c7cd678cb2e048910f3fade131716"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/pipeline/stages_test.rs",
+      "bytes": 8682,
+      "mtime_utc": "2026-02-11T12:07:23Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/pipeline/stages_test.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "06da71647e15e0d8615b4e8578a8d6d65eafdec2863bd22ac079d56d9cd57ee9"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/queue/executor.rs",
+      "bytes": 14103,
+      "mtime_utc": "2026-02-11T18:03:28Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/queue/executor.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "79e7234c68236bae7f03037e4d25b217abaa64c257836c80f0dfb6c343197293"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/queue/executor_test.rs",
+      "bytes": 3448,
+      "mtime_utc": "2026-02-11T17:58:27Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/queue/executor_test.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "6c7528cb45105affda5852e6d05d8447a50031627ddcf160849bf52dfc6199a3"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/queue/manager.rs",
+      "bytes": 7355,
+      "mtime_utc": "2026-02-11T17:57:28Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/queue/manager.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "d132e3747e200094848c1f32b88e9f247f65934d5f7c124f10c5c314d8901a98"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/queue/mod.rs",
+      "bytes": 35,
+      "mtime_utc": "2026-02-11T01:18:38Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/queue/mod.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "3aa586ac8f046ebcb4b853addb1a42bf7ca820f734365ce79cd611b88c9bf3c2"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/state.rs",
+      "bytes": 1388,
+      "mtime_utc": "2026-02-11T18:00:50Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/state.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "799f7d59b17686bdcf4582d450747b903991db086932a78c7b05239e7eda3945"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/types/checkpoints.rs",
+      "bytes": 2758,
+      "mtime_utc": "2026-02-11T01:19:52Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/types/checkpoints.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "08944748fa4cc585e882a5869c45ac4d5f9bd27f1aef45877b974d70f150ae66"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/types/comparison.rs",
+      "bytes": 323,
+      "mtime_utc": "2026-02-11T01:19:54Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/types/comparison.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "87181ac57060ab013a6dfe1169510ef75bef301c76888f6d137c418b01a93ae6"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/types/config.rs",
+      "bytes": 5499,
+      "mtime_utc": "2026-02-12T05:04:30Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/types/config.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "56864a0e576cbf1a2d516aa74cdc035408a628e60d68c34a4f808490d5623fa4"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/types/gallery.rs",
+      "bytes": 2151,
+      "mtime_utc": "2026-02-12T05:04:38Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/types/gallery.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "3e2a32b1592ad34b29e1e736a6563fa102ada63c74e21823d6e5d773492b57fc"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/types/generation.rs",
+      "bytes": 971,
+      "mtime_utc": "2026-02-11T01:19:33Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/types/generation.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "abbd05414d41a676c32785ab51764dac31d59d875e78ab3cd4ad461fa476b092"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/types/mod.rs",
+      "bytes": 142,
+      "mtime_utc": "2026-02-11T11:45:20Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/types/mod.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "0d403d3429cbd4008985572226c366e84451d0651d1e91fd3830904dc205dbb4"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/types/pipeline.rs",
+      "bytes": 4277,
+      "mtime_utc": "2026-02-11T07:13:50Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/types/pipeline.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "61786e58f9b0a1eec6de2070ae88109e8ae46d80ef051c2f33bf96e135b1f67a"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/types/queue.rs",
+      "bytes": 1960,
+      "mtime_utc": "2026-02-11T01:19:59Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/types/queue.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "9174a6f40867b8500dc46f1c98515572596a173c17fb82fb60f01ab83860e861"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/types/seeds.rs",
+      "bytes": 831,
+      "mtime_utc": "2026-02-11T01:43:33Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/types/seeds.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "7b951b2e8399d8656ed3bb3034edb50c1f63921756b9310a2af96342a7ef795d"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/tauri.conf.json",
+      "bytes": 1155,
+      "mtime_utc": "2026-02-11T17:55:30Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/tauri.conf.json",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "20434268008eea16c9bae116bbbd2841255475151177aaefe3ea824ba8a84b19"
+    }
+  ],
+  "repo_root": "/home/sikmindz/Coding/visionforge",
+  "run_id": "unclassified",
+  "skipped_existing": [],
+  "superseded_by": "P30",
+  "tool": "z.py",
+  "tool_version": "2026.05.22-p31",
+  "unclassified": [
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/.gitignore",
+      "bytes": 166,
+      "mtime_utc": "2026-02-11T00:57:33Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/.gitignore",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "88707cda7ba4226eda3ffa91d8284f1a0d12b827f06fb9bc48425cc0d4af04af"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/Cargo.lock",
+      "bytes": 165613,
+      "mtime_utc": "2026-02-11T11:45:16Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/Cargo.lock",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "b620e2a0f172862313894b2fcb52ae48666f33f9ce4d40e99e09745e1f55df93"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/Cargo.toml",
+      "bytes": 928,
+      "mtime_utc": "2026-02-11T11:45:14Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/Cargo.toml",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "0b65fce14a0a78f467ec51257b8ed157cf815ecd547a4b7f81746d70fc235f3d"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/build.rs",
+      "bytes": 39,
+      "mtime_utc": "2026-02-11T00:57:33Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/build.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "487059eaf8a947b80f20a9aacac038a5047b2ad69d2401b827376c67d6fe847f"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/capabilities/default.json",
+      "bytes": 368,
+      "mtime_utc": "2026-02-11T11:45:20Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/capabilities/default.json",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "b4a6c463a2c8c68d80434b1db09de10fd5289279c02da82d343e3b10f3665f44"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/gen/schemas/acl-manifests.json",
+      "bytes": 69606,
+      "mtime_utc": "2026-02-11T11:45:24Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/gen/schemas/acl-manifests.json",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "db6c79b1c810e3840d0356c34bf7ea7d7d7b4def65c22139368ac78823799df4"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/gen/schemas/capabilities.json",
+      "bytes": 279,
+      "mtime_utc": "2026-02-11T11:45:24Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/gen/schemas/capabilities.json",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "b78468713c3ac38db15c377a9ab5cba24a5ccfe853c6b649b1eea19d909be613"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/gen/schemas/desktop-schema.json",
+      "bytes": 129753,
+      "mtime_utc": "2026-02-11T11:45:24Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/gen/schemas/desktop-schema.json",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "30537d50853f0a1fe2bdd975e28492c752698abd8eac4ae0a2bbca483952f1ba"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/gen/schemas/linux-schema.json",
+      "bytes": 129753,
+      "mtime_utc": "2026-02-11T11:45:24Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/gen/schemas/linux-schema.json",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "30537d50853f0a1fe2bdd975e28492c752698abd8eac4ae0a2bbca483952f1ba"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/icons/128x128.png",
+      "bytes": 3512,
+      "mtime_utc": "2026-02-11T00:57:33Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/icons/128x128.png",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "19b4fec485db7df51a691fcce72a3dd6f983e754fc4262da7154e4a4c688f69e"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/icons/128x128@2x.png",
+      "bytes": 7012,
+      "mtime_utc": "2026-02-11T00:57:33Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/icons/128x128@2x.png",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "6c7660390d65217fe8de0892862254f47aee77e0af7096c75b8bfe168c5403f7"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/icons/32x32.png",
+      "bytes": 974,
+      "mtime_utc": "2026-02-11T00:57:33Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/icons/32x32.png",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "1c6782dc65c8111c12cbc1882a0fea5e71ab8e51b18da2ce9580f5c88860ed02"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/icons/Square107x107Logo.png",
+      "bytes": 2863,
+      "mtime_utc": "2026-02-11T00:57:33Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/icons/Square107x107Logo.png",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "54f7a0f58c96a4b023c1edc4b53fc443e27dace50e345f6936fa29bc20f785ca"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/icons/Square142x142Logo.png",
+      "bytes": 3858,
+      "mtime_utc": "2026-02-11T00:57:33Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/icons/Square142x142Logo.png",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "fec1e2080ca73cd4c4a123b23b1cd364059a8a8efeba3076e21dfefed390693b"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/icons/Square150x150Logo.png",
+      "bytes": 3966,
+      "mtime_utc": "2026-02-11T00:57:33Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/icons/Square150x150Logo.png",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "65fb570cb0e61ffce02ad67784cb200a0bf058400300980a46fa0d0c8f43a77a"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/icons/Square284x284Logo.png",
+      "bytes": 7737,
+      "mtime_utc": "2026-02-11T00:57:33Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/icons/Square284x284Logo.png",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "ea0b7c5d4b1d1ab9c91d2f7c9b069c8dfbf4557b0649a5777d47332cde610262"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/icons/Square30x30Logo.png",
+      "bytes": 903,
+      "mtime_utc": "2026-02-11T00:57:33Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/icons/Square30x30Logo.png",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "cc72279c41b4ed343e8db7e7541ceef7b6b23edaa83d4e7338421dfcb8d63c33"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/icons/Square310x310Logo.png",
+      "bytes": 8591,
+      "mtime_utc": "2026-02-11T00:57:33Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/icons/Square310x310Logo.png",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "9733a89c539115de3c49bd06720bfc99639d9a918f5df48a810e267cf3554119"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/icons/Square44x44Logo.png",
+      "bytes": 1299,
+      "mtime_utc": "2026-02-11T00:57:33Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/icons/Square44x44Logo.png",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "10be9840e58fb018eb9029601d42008e16c0c9cfa66b8f9467fee94f600160d4"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/icons/Square71x71Logo.png",
+      "bytes": 2011,
+      "mtime_utc": "2026-02-11T00:57:33Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/icons/Square71x71Logo.png",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "2937fc83324cd9a1fddcfefd5927c791af31996a6840bfb3e2f1d578ad4129de"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/icons/Square89x89Logo.png",
+      "bytes": 2468,
+      "mtime_utc": "2026-02-11T00:57:33Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/icons/Square89x89Logo.png",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "12aed0e7ee06cb631427dc9da72c0c7ecf03857fbc4884d0c31f78314feb6c7f"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/icons/StoreLogo.png",
+      "bytes": 1523,
+      "mtime_utc": "2026-02-11T00:57:33Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/icons/StoreLogo.png",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "91a54024dd47230991546088f2e75d3e3199b3ccc9fe40f3f6b7d3bf1cbf7776"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/icons/icon.icns",
+      "bytes": 98451,
+      "mtime_utc": "2026-02-11T00:57:33Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/icons/icon.icns",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "3dc10493b7de48a61de58f768f8a5708d3a44a068c148cedf0502b9b9b71ba5d"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/icons/icon.ico",
+      "bytes": 86642,
+      "mtime_utc": "2026-02-11T00:57:33Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/icons/icon.ico",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "392206b573a809997f3ff16fe68f456a52e931c372107eade9572b329bbe3321"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/icons/icon.png",
+      "bytes": 14183,
+      "mtime_utc": "2026-02-11T00:57:33Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/icons/icon.png",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "273cd669e07c455ad1c7c095890a37984652157cee73128a867300067dfb80e7"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/ai/captioner.rs",
+      "bytes": 2796,
+      "mtime_utc": "2026-02-11T12:06:26Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/ai/captioner.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "0cd0bd0f5ce477498b4d8b94a834d7e15d0bd0de48f334dbbae12867c80a808d"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/ai/mod.rs",
+      "bytes": 35,
+      "mtime_utc": "2026-02-11T11:45:20Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/ai/mod.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "02aa9636c13838caef8595bcc96c18ddeb804bb3f34564964f0ba95b8141024c"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/ai/tagger.rs",
+      "bytes": 10130,
+      "mtime_utc": "2026-02-11T12:06:21Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/ai/tagger.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "097f17bbfac0e48674376e4dfb623fae0db4563cf9f80b474cda661f96a3d762"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/ai_batch/downscale.rs",
+      "bytes": 3923,
+      "mtime_utc": "2026-02-12T05:07:58Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/ai_batch/downscale.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "1ede99a42569f12db77b70da1696a2297cd794020e5f909e157203671c6b86da"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/ai_batch/executor.rs",
+      "bytes": 9811,
+      "mtime_utc": "2026-02-12T05:03:23Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/ai_batch/executor.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "5023e7552a459d5ac4f1d4eacd6e8904fb6a77c8ba64b4fecd6a7f541ea11cc4"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/ai_batch/mod.rs",
+      "bytes": 67,
+      "mtime_utc": "2026-02-12T05:01:10Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/ai_batch/mod.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "8a8c914abadb10bff6b898d4f6cb9e6eba8471ab38a903055604e7ddda39b583"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/ai_batch/queue.rs",
+      "bytes": 17537,
+      "mtime_utc": "2026-02-12T05:08:02Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/ai_batch/queue.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "f8a79a5482ae7dcdb0f36009663f2bafcc656c80cba406e72ade320b2c0eaac7"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/ai_batch/types.rs",
+      "bytes": 3659,
+      "mtime_utc": "2026-02-12T05:05:08Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/ai_batch/types.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "a0575c337fadf4852c37cd7acb1cddf9059e45ea85c912c3ff4d9afc6f3830da"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/comfyui/client.rs",
+      "bytes": 13696,
+      "mtime_utc": "2026-02-11T18:02:01Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/comfyui/client.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "80919d6dab20ec4bae193f1c9095f980cbfdbe893625cf09912cf2e23c48c328"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/comfyui/client_test.rs",
+      "bytes": 2483,
+      "mtime_utc": "2026-02-11T11:45:20Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/comfyui/client_test.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "f914a0ad33c90e5a7bb9e700aa761e0dcadcc5de34ddd57d1f07aef8a66d6ffd"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/comfyui/mod.rs",
+      "bytes": 50,
+      "mtime_utc": "2026-02-11T11:45:20Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/comfyui/mod.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "a0cb0b1733f1d0c64ab29aec6434c23edc20eb66b2d6264fd8a6321757adf9aa"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/comfyui/models.rs",
+      "bytes": 6353,
+      "mtime_utc": "2026-02-11T18:03:13Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/comfyui/models.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "892822172a52f7125855d82b87eff310cc93bb094a7d1d9a4d7071a08d113f83"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/comfyui/workflow.rs",
+      "bytes": 6687,
+      "mtime_utc": "2026-02-11T11:45:20Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/comfyui/workflow.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "bbafac6952b93c2760082554e5ea8b4a92e6177b71935850abf45a9eb48a5709"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/commands/ai_batch_cmds.rs",
+      "bytes": 4554,
+      "mtime_utc": "2026-02-12T05:03:47Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/commands/ai_batch_cmds.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "ec863d9f1d027b9010ddb3c41fa6971c3f947892fe9336783384938b78b36b23"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/commands/ai_cmds.rs",
+      "bytes": 2901,
+      "mtime_utc": "2026-02-11T17:56:58Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/commands/ai_cmds.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "1de16b5e7698621dead0ad4f007d0076bf0e4a1ccf2e9e4e58965575e6e16bd9"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/commands/checkpoint_cmds.rs",
+      "bytes": 2853,
+      "mtime_utc": "2026-02-11T02:13:39Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/commands/checkpoint_cmds.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "2764e525326d3ffe661c59e1181c69dbcb3c5b3ccd0bb8bd321a7839dfd8271d"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/commands/comfyui_cmds.rs",
+      "bytes": 5951,
+      "mtime_utc": "2026-02-11T17:56:48Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/commands/comfyui_cmds.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "5ec87c4a67ab39def366a6466724b950d191d82af7e1bece9a39e406cced414c"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/commands/comparison_cmds.rs",
+      "bytes": 2189,
+      "mtime_utc": "2026-02-11T17:55:21Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/commands/comparison_cmds.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "7a47f581111b9c96ef49578f78fd9078d513947c30367cf5c8cb136cc52030af"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/commands/config_cmds.rs",
+      "bytes": 1492,
+      "mtime_utc": "2026-02-11T22:23:04Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/commands/config_cmds.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "99f2cf6b33dd4fb2df41c6f13e4ad7c9feb68253ed43ad139d089e04ed5a44a0"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/commands/export_cmds.rs",
+      "bytes": 2169,
+      "mtime_utc": "2026-02-11T18:38:32Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/commands/export_cmds.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "80fac11b0f6f83a17d95528b2970c2a0b2513cd70c15517cacb68f707282e8cb"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/commands/gallery_cmds.rs",
+      "bytes": 6675,
+      "mtime_utc": "2026-02-11T17:59:18Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/commands/gallery_cmds.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "1505a4b2b40079fbf236e4f2cf65093d6942e335f90cb8ec7d72be30a86a95b2"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/commands/mod.rs",
+      "bytes": 238,
+      "mtime_utc": "2026-02-12T05:03:52Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/commands/mod.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "a9cd704e09b9a54d909005b38b35913a070e4b1f7a1e87c06c657c75c94cc7fd"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/commands/pipeline_cmds.rs",
+      "bytes": 5895,
+      "mtime_utc": "2026-02-12T03:57:53Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/commands/pipeline_cmds.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "3b7b6360885c85effb6f570e8d81308bd18bbcac8ffc0d168edb5d6bdec06cce"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/commands/queue_cmds.rs",
+      "bytes": 1531,
+      "mtime_utc": "2026-02-11T11:45:20Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/commands/queue_cmds.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "e8b8e9b4a14d8c05b38cef2fda448031008beff163622f8ff22fabaaaecf0347"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/commands/seed_cmds.rs",
+      "bytes": 2623,
+      "mtime_utc": "2026-02-11T11:45:20Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/commands/seed_cmds.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "861dcea2e67d77e2b0231c952400c346872ac91ec2d1ba0ceadb354a6f7d48aa"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/config/manager.rs",
+      "bytes": 17598,
+      "mtime_utc": "2026-02-12T05:06:18Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/config/manager.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "648468963f718ad4e0fc17eea6dbd66edaa64c5c179045f23276246ec716bc2e"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/config/mod.rs",
+      "bytes": 17,
+      "mtime_utc": "2026-02-11T01:18:40Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/config/mod.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "93f08a8d53f93567647504663fdb6eb867ff5f837871d381bd3f090a25f07497"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/db/checkpoints.rs",
+      "bytes": 14047,
+      "mtime_utc": "2026-02-11T11:45:20Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/db/checkpoints.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "982c46d71fa77bb81c5ce5bdf018238e5338312bcd7931d1fd6f75dac2643c3f"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/db/comparisons.rs",
+      "bytes": 8477,
+      "mtime_utc": "2026-02-11T11:45:20Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/db/comparisons.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "7448db65f35666225276e66ec428cbe26a41a69e0989aba5a75cfe93c4863537"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/db/images.rs",
+      "bytes": 8627,
+      "mtime_utc": "2026-02-12T05:04:45Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/db/images.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "12b63cec60a847c831391c6639c5c2a0e55f7128ce40f45f671c462f28a42a56"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/db/images_test.rs",
+      "bytes": 6306,
+      "mtime_utc": "2026-02-11T11:45:20Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/db/images_test.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "7fb9d8488dc7f2a5406e5774ced2f44cc721c7256dba7ddcdacd025fc5ed9e66"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/db/migrations.rs",
+      "bytes": 8935,
+      "mtime_utc": "2026-02-11T18:00:37Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/db/migrations.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "5b3b0551c367e92d2082eec6ba130a1e12b66b3d348a79cfa3aa2c735190ddbd"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/db/mod.rs",
+      "bytes": 1023,
+      "mtime_utc": "2026-02-11T11:45:20Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/db/mod.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "d8dbe0214c771b65183dc927b7951037273a69d5db9fb64ef112b5365d0ca3d4"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/db/queue.rs",
+      "bytes": 12462,
+      "mtime_utc": "2026-02-11T11:45:20Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/db/queue.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "07ee1c532c49f0494f991f958027c99a80888bf10aae0305691f36e74e1416ff"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/db/seeds.rs",
+      "bytes": 11705,
+      "mtime_utc": "2026-02-11T17:58:54Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/db/seeds.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "542b993af80b74760ef2dba55ed18d1ff4975fe55b806b3fe291979f01c61aac"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/db/tags.rs",
+      "bytes": 10352,
+      "mtime_utc": "2026-02-11T17:59:09Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/db/tags.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "30058296f925dedb7f9a86d79e600ae428922cca73b236b448cd94606b48d857"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/gallery/export.rs",
+      "bytes": 11482,
+      "mtime_utc": "2026-02-11T18:38:20Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/gallery/export.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "9383e4636f576aaec0feb08f4bbb2ae4750c3922b84709151bdac92371566cda"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/gallery/mod.rs",
+      "bytes": 33,
+      "mtime_utc": "2026-02-11T11:45:20Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/gallery/mod.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "570263fdb24466bcb01cb10f6ef27022c54c4ef8043eb659e3cad0ac1a4a37a2"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/gallery/storage.rs",
+      "bytes": 8805,
+      "mtime_utc": "2026-02-11T17:55:46Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/gallery/storage.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "f87c9725b0a281258382696a3a319e7525a8cf02bcfebbcf3e3475711e0e6434"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/lib.rs",
+      "bytes": 6641,
+      "mtime_utc": "2026-02-12T05:04:11Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/lib.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "f53840b89acf19189da57ea3e1df09e04a428914f7034b1503dcea6d777a84d4"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/main.rs",
+      "bytes": 186,
+      "mtime_utc": "2026-02-11T00:57:33Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/main.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "498fe7cb33ee29dc0041577abfcc9384230c3139cf6d3b60020c935f4e7f5638"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/pipeline/engine.rs",
+      "bytes": 10725,
+      "mtime_utc": "2026-02-12T03:56:35Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/pipeline/engine.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "54bd2002d21e6d051460e79e0e3c09bda5b0cc5da73cd70279717a9880d0148e"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/pipeline/engine_streaming.rs",
+      "bytes": 12145,
+      "mtime_utc": "2026-02-12T03:57:01Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/pipeline/engine_streaming.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "4a6511b09044d08d7e662e63b0736aec2716021acc5b14a3ea12006630b68172"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/pipeline/engine_test.rs",
+      "bytes": 5147,
+      "mtime_utc": "2026-02-11T01:52:19Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/pipeline/engine_test.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "5c021c483f53a68f9fcd771a6bf84da8816c39fb974712ff28b7cc5c7d5245e3"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/pipeline/mod.rs",
+      "bytes": 117,
+      "mtime_utc": "2026-02-11T11:45:20Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/pipeline/mod.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "b47c2ebbd6d3d2a9b4e6bd7604e2ac0d26173ca49b9df2962d0a92fc146d1f1a"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/pipeline/ollama.rs",
+      "bytes": 17006,
+      "mtime_utc": "2026-02-12T03:52:04Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/pipeline/ollama.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "bd83b4e2c71d31cb866298da23e43a5b4241b237b7f1fe61c07bc369ae4593fe"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/pipeline/ollama_test.rs",
+      "bytes": 4777,
+      "mtime_utc": "2026-02-12T03:59:01Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/pipeline/ollama_test.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "4a1364fa9ce82ab936aa78fbe3477f4eb044739cc65fc0cc8280859c1bba9c28"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/pipeline/prompts.rs",
+      "bytes": 9400,
+      "mtime_utc": "2026-02-11T18:03:56Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/pipeline/prompts.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "5d5a698ad3670c294ea93a83b997a6853cc428f4e7a8240dd88312cf10d58b4f"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/pipeline/stages.rs",
+      "bytes": 16221,
+      "mtime_utc": "2026-02-12T03:55:14Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/pipeline/stages.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "e526d95163a3fe945bedf4a656f88f56cedfd118220cfe80b44306337c788029"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/pipeline/stages_streaming.rs",
+      "bytes": 7393,
+      "mtime_utc": "2026-02-12T03:55:51Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/pipeline/stages_streaming.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "3c23f1c028f5c4d3f8b08ac2cec406c06e8c7cd678cb2e048910f3fade131716"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/pipeline/stages_test.rs",
+      "bytes": 8682,
+      "mtime_utc": "2026-02-11T12:07:23Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/pipeline/stages_test.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "06da71647e15e0d8615b4e8578a8d6d65eafdec2863bd22ac079d56d9cd57ee9"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/queue/executor.rs",
+      "bytes": 14103,
+      "mtime_utc": "2026-02-11T18:03:28Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/queue/executor.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "79e7234c68236bae7f03037e4d25b217abaa64c257836c80f0dfb6c343197293"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/queue/executor_test.rs",
+      "bytes": 3448,
+      "mtime_utc": "2026-02-11T17:58:27Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/queue/executor_test.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "6c7528cb45105affda5852e6d05d8447a50031627ddcf160849bf52dfc6199a3"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/queue/manager.rs",
+      "bytes": 7355,
+      "mtime_utc": "2026-02-11T17:57:28Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/queue/manager.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "d132e3747e200094848c1f32b88e9f247f65934d5f7c124f10c5c314d8901a98"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/queue/mod.rs",
+      "bytes": 35,
+      "mtime_utc": "2026-02-11T01:18:38Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/queue/mod.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "3aa586ac8f046ebcb4b853addb1a42bf7ca820f734365ce79cd611b88c9bf3c2"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/state.rs",
+      "bytes": 1388,
+      "mtime_utc": "2026-02-11T18:00:50Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/state.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "799f7d59b17686bdcf4582d450747b903991db086932a78c7b05239e7eda3945"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/types/checkpoints.rs",
+      "bytes": 2758,
+      "mtime_utc": "2026-02-11T01:19:52Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/types/checkpoints.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "08944748fa4cc585e882a5869c45ac4d5f9bd27f1aef45877b974d70f150ae66"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/types/comparison.rs",
+      "bytes": 323,
+      "mtime_utc": "2026-02-11T01:19:54Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/types/comparison.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "87181ac57060ab013a6dfe1169510ef75bef301c76888f6d137c418b01a93ae6"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/types/config.rs",
+      "bytes": 5499,
+      "mtime_utc": "2026-02-12T05:04:30Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/types/config.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "56864a0e576cbf1a2d516aa74cdc035408a628e60d68c34a4f808490d5623fa4"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/types/gallery.rs",
+      "bytes": 2151,
+      "mtime_utc": "2026-02-12T05:04:38Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/types/gallery.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "3e2a32b1592ad34b29e1e736a6563fa102ada63c74e21823d6e5d773492b57fc"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/types/generation.rs",
+      "bytes": 971,
+      "mtime_utc": "2026-02-11T01:19:33Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/types/generation.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "abbd05414d41a676c32785ab51764dac31d59d875e78ab3cd4ad461fa476b092"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/types/mod.rs",
+      "bytes": 142,
+      "mtime_utc": "2026-02-11T11:45:20Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/types/mod.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "0d403d3429cbd4008985572226c366e84451d0651d1e91fd3830904dc205dbb4"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/types/pipeline.rs",
+      "bytes": 4277,
+      "mtime_utc": "2026-02-11T07:13:50Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/types/pipeline.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "61786e58f9b0a1eec6de2070ae88109e8ae46d80ef051c2f33bf96e135b1f67a"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/types/queue.rs",
+      "bytes": 1960,
+      "mtime_utc": "2026-02-11T01:19:59Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/types/queue.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "9174a6f40867b8500dc46f1c98515572596a173c17fb82fb60f01ab83860e861"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/src/types/seeds.rs",
+      "bytes": 831,
+      "mtime_utc": "2026-02-11T01:43:33Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/src/types/seeds.rs",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "7b951b2e8399d8656ed3bb3034edb50c1f63921756b9310a2af96342a7ef795d"
+    },
+    {
+      "archived_path": "docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/tauri.conf.json",
+      "bytes": 1155,
+      "mtime_utc": "2026-02-11T17:55:30Z",
+      "original_path": "docs/source-quarantine/P31_duplicate_backend/s/tauri.conf.json",
+      "reason": "stale-run-marked-artifact",
+      "run_id": "unclassified",
+      "sha256": "20434268008eea16c9bae116bbbd2841255475151177aaefe3ea824ba8a84b19"
+    }
+  ]
+}

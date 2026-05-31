@@ -136,6 +136,56 @@ pub fn get_image_tags(conn: &Connection, image_id: &str) -> Result<Vec<TagEntry>
     Ok(tags)
 }
 
+/// Load tags for multiple images in a single query.
+pub fn get_tags_for_images(
+    conn: &Connection,
+    image_ids: &[String],
+) -> Result<std::collections::HashMap<String, Vec<TagEntry>>> {
+    if image_ids.is_empty() {
+        return Ok(std::collections::HashMap::new());
+    }
+
+    let placeholders: Vec<String> = (1..=image_ids.len()).map(|i| format!("?{}", i)).collect();
+    let sql = format!(
+        "SELECT it.image_id, t.id, t.name, it.source, it.confidence
+         FROM image_tags it
+         JOIN tags t ON it.tag_id = t.id
+         WHERE it.image_id IN ({})
+         ORDER BY t.name",
+        placeholders.join(", ")
+    );
+
+    let params: Vec<&dyn rusqlite::types::ToSql> = image_ids
+        .iter()
+        .map(|id| id as &dyn rusqlite::types::ToSql)
+        .collect();
+
+    let mut stmt = conn
+        .prepare(&sql)
+        .context("Failed to prepare batch tag query")?;
+    let rows = stmt
+        .query_map(params.as_slice(), |row| {
+            Ok((
+                row.get::<_, String>(0)?,
+                TagEntry {
+                    id: row.get(1)?,
+                    name: row.get(2)?,
+                    source: row.get(3)?,
+                    confidence: row.get(4)?,
+                },
+            ))
+        })
+        .context("Failed to execute batch tag query")?;
+
+    let mut map: std::collections::HashMap<String, Vec<TagEntry>> =
+        std::collections::HashMap::new();
+    for row in rows {
+        let (image_id, tag) = row.context("Failed to read tag row")?;
+        map.entry(image_id).or_default().push(tag);
+    }
+    Ok(map)
+}
+
 pub fn search_tags(conn: &Connection, query: &str) -> Result<Vec<TagEntry>> {
     let pattern = format!("%{}%", query.trim().to_lowercase());
     let mut stmt = conn

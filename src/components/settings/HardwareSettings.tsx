@@ -94,6 +94,39 @@ export function HardwareSettings({ config, onChange }: HardwareSettingsProps) {
             </div>
           )}
         </div>
+
+        <div className="pt-2 border-t border-zinc-700">
+          <label className="flex items-center gap-3 cursor-pointer mb-3">
+            <input
+              type="checkbox"
+              checked={hw.aiBatchDownscale ?? true}
+              onChange={() =>
+                updateHw({
+                  aiBatchDownscale: !(hw.aiBatchDownscale ?? true),
+                })
+              }
+              className="w-4 h-4 rounded bg-zinc-700 border-zinc-600 text-blue-500 focus:ring-blue-500 focus:ring-offset-zinc-800"
+            />
+            <span className="text-sm text-zinc-300">
+              Auto-downscale images for AI tagging/captioning
+            </span>
+          </label>
+          {(hw.aiBatchDownscale ?? true) && (
+            <label className="block pl-7">
+              <span className="text-xs text-zinc-500">Max dimension (px)</span>
+              <input
+                type="number"
+                value={hw.aiBatchMaxDimension ?? 1024}
+                onChange={(e) =>
+                  updateHw({
+                    aiBatchMaxDimension: parseInt(e.target.value) || 1024,
+                  })
+                }
+                className="mt-1 block w-24 bg-zinc-700 border border-zinc-600 rounded px-2 py-1 text-sm text-zinc-100 focus:border-blue-500 focus:outline-none"
+              />
+            </label>
+          )}
+        </div>
       </div>
     </section>
   );

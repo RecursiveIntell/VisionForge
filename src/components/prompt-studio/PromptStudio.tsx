@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { IdeaInput } from "./IdeaInput";
 import { StreamingStepper } from "./StreamingStepper";
 import { ApprovalGate } from "./ApprovalGate";
@@ -7,7 +7,7 @@ import { usePipelineStream } from "../../hooks/usePipelineStream";
 import { useConfig } from "../../hooks/useConfig";
 import { addToQueue } from "../../api/queue";
 import { useToast } from "../shared/Toast";
-import type { PipelineConfig, QueueJob, GenSettings } from "../../types";
+import type { PipelineConfig, PipelineResult, QueueJob, GenSettings } from "../../types";
 
 export function PromptStudio() {
   const { config, update: updateConfig } = useConfig();
@@ -18,6 +18,7 @@ export function PromptStudio() {
   const [editedPositive, setEditedPositive] = useState("");
   const [editedNegative, setEditedNegative] = useState("");
   const [genSettings, setGenSettings] = useState<GenSettings>(() => getDefaultSettings(config));
+  const autoQueuedResultRef = useRef<PipelineResult | null>(null);
 
   // Re-initialize genSettings when config first loads
   useEffect(() => {
@@ -41,6 +42,13 @@ export function PromptStudio() {
     }
   }, [result]);
 
+  useEffect(() => {
+    const topConcept = result?.stages?.judge?.output?.[0]?.conceptIndex;
+    if (topConcept !== undefined) {
+      setSelectedConcept(topConcept);
+    }
+  }, [result]);
+
   const handleSubmit = async (idea: string, numConcepts: number) => {
     setSelectedConcept(0);
     setEditedPositive("");
@@ -53,7 +61,7 @@ export function PromptStudio() {
     });
   };
 
-  const handleGenerate = async () => {
+  const handleGenerate = async (autoApproved = false) => {
     if (!editedPositive.trim()) return;
 
     const count = Math.max(1, genSettings.batchCount);
@@ -83,6 +91,8 @@ export function PromptStudio() {
         }),
         pipelineLog: result ? JSON.stringify(result) : undefined,
         originalIdea: result?.originalIdea,
+        selectedConcept,
+        autoApproved,
       };
 
       try {
@@ -94,13 +104,27 @@ export function PromptStudio() {
       }
     }
 
+    const prefix = autoApproved ? "Auto-approved and added" : "Added";
     addToast(
       "success",
       count > 1
-        ? `Added ${count} jobs to generation queue`
-        : "Added to generation queue",
+        ? `${prefix} ${count} jobs to generation queue`
+        : `${prefix} to generation queue`,
     );
   };
+
+  useEffect(() => {
+    if (
+      phase === "completed" &&
+      config?.pipeline.autoApprove &&
+      result &&
+      editedPositive.trim() &&
+      autoQueuedResultRef.current !== result
+    ) {
+      autoQueuedResultRef.current = result;
+      void handleGenerate(true);
+    }
+  }, [phase, config?.pipeline.autoApprove, result, editedPositive]);
 
   const handleRegenerate = () => {
     reset();
@@ -108,10 +132,11 @@ export function PromptStudio() {
 
   const handleAutoApproveChange = (value: boolean) => {
     if (config) {
-      updateConfig({
+      const updated = {
         ...config,
         pipeline: { ...config.pipeline, autoApprove: value },
-      });
+      };
+      updateConfig(updated);
     }
   };
 

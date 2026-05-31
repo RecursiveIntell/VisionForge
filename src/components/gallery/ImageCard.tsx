@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Heart, Star, Trash2, Maximize2 } from "lucide-react";
+import { Heart, Star, Trash2, Maximize2, ImageOff, Check } from "lucide-react";
 import { getThumbnailFilePath } from "../../api/gallery";
 import { convertFileSrc } from "@tauri-apps/api/core";
 import type { ImageEntry } from "../../types";
@@ -7,8 +7,10 @@ import type { ImageEntry } from "../../types";
 interface ImageCardProps {
   image: ImageEntry;
   selected?: boolean;
+  multiSelected?: boolean;
   compareSelected?: boolean;
   onClick: () => void;
+  onMouseDown?: (e: React.MouseEvent) => void;
   onEnlarge?: () => void;
   onFavoriteToggle?: () => void;
 }
@@ -16,37 +18,55 @@ interface ImageCardProps {
 export function ImageCard({
   image,
   selected,
+  multiSelected,
   compareSelected,
   onClick,
+  onMouseDown,
   onEnlarge,
   onFavoriteToggle,
 }: ImageCardProps) {
   const [thumbnailSrc, setThumbnailSrc] = useState<string | null>(null);
+  const [loadError, setLoadError] = useState(false);
 
   useEffect(() => {
+    setLoadError(false);
     getThumbnailFilePath(image.filename)
       .then((path) => setThumbnailSrc(convertFileSrc(path)))
-      .catch(() => setThumbnailSrc(null));
+      .catch(() => setLoadError(true));
   }, [image.filename]);
 
   return (
     <div
       onClick={onClick}
+      onMouseDown={onMouseDown}
       className={`group relative bg-zinc-800 rounded-lg overflow-hidden cursor-pointer border-2 transition-colors ${
-        compareSelected
-          ? "border-green-500 ring-2 ring-green-500/30"
-          : selected
-            ? "border-blue-500"
-            : "border-transparent hover:border-zinc-600"
+        multiSelected
+          ? "border-blue-500 ring-2 ring-blue-500/30"
+          : compareSelected
+            ? "border-green-500 ring-2 ring-green-500/30"
+            : selected
+              ? "border-blue-500"
+              : "border-transparent hover:border-zinc-600"
       } ${image.deleted ? "opacity-50" : ""}`}
     >
+      {multiSelected && (
+        <div className="absolute top-1.5 right-1.5 w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center z-10">
+          <Check size={12} className="text-white" />
+        </div>
+      )}
       <div className="aspect-square bg-zinc-700">
-        {thumbnailSrc ? (
+        {thumbnailSrc && !loadError ? (
           <img
             src={thumbnailSrc}
             alt={image.caption ?? "Generated image"}
             className="w-full h-full object-cover"
+            onError={() => setLoadError(true)}
           />
+        ) : loadError ? (
+          <div className="w-full h-full flex flex-col items-center justify-center text-zinc-500 gap-1">
+            <ImageOff size={24} />
+            <span className="text-[10px]">Failed to load</span>
+          </div>
         ) : (
           <div className="w-full h-full flex items-center justify-center text-zinc-600 text-xs">
             Loading...

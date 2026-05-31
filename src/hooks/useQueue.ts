@@ -25,6 +25,7 @@ export interface JobProgress {
   currentStep: number;
   totalSteps: number;
   progress: number;
+  lastUpdate?: number;
 }
 
 export function useQueue() {
@@ -55,8 +56,33 @@ export function useQueue() {
     refresh();
   }, [refresh]);
 
+  // Periodic cleanup of stale progress entries
+  useEffect(() => {
+    const cleanupInterval = setInterval(() => {
+      setProgressMap((prev) => {
+        const now = Date.now();
+        const staleThreshold = 5 * 60 * 1000; // 5 minutes
+        const filtered: Record<string, JobProgress> = {};
+        let changed = false;
+
+        Object.entries(prev).forEach(([jobId, progress]) => {
+          if (!progress.lastUpdate || (now - progress.lastUpdate) < staleThreshold) {
+            filtered[jobId] = progress;
+          } else {
+            changed = true;
+          }
+        });
+
+        return changed ? filtered : prev;
+      });
+    }, 5 * 60 * 1000);
+
+    return () => clearInterval(cleanupInterval);
+  }, []);
+
   // Subscribe to Tauri events for live updates
   useEffect(() => {
+    let cancelled = false;
     const unlisteners: (() => void)[] = [];
 
     const setup = async () => {
@@ -92,14 +118,24 @@ export function useQueue() {
             currentStep: e.payload.currentStep,
             totalSteps: e.payload.totalSteps,
             progress: e.payload.progress,
+            lastUpdate: Date.now(),
           },
         }));
       });
-      unlisteners.push(u1, u2, u3, u4, u5);
+
+      if (cancelled) {
+        // Effect was cleaned up before setup finished — tear down immediately
+        [u1, u2, u3, u4, u5].forEach((u) => u());
+      } else {
+        unlisteners.push(u1, u2, u3, u4, u5);
+      }
     };
 
     setup();
-    return () => unlisteners.forEach((u) => u());
+    return () => {
+      cancelled = true;
+      unlisteners.forEach((u) => u());
+    };
   }, [refresh]);
 
   const togglePause = useCallback(async () => {

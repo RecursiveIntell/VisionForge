@@ -1,3 +1,4 @@
+use crate::db;
 use crate::queue::manager;
 use crate::state::AppState;
 use crate::types::queue::{QueueJob, QueuePriority};
@@ -50,4 +51,13 @@ pub async fn resume_queue(state: tauri::State<'_, AppState>) -> Result<(), Strin
 #[tauri::command]
 pub async fn is_queue_paused(state: tauri::State<'_, AppState>) -> Result<bool, String> {
     Ok(manager::is_paused(&state))
+}
+
+#[tauri::command]
+pub async fn prune_old_queue_jobs(
+    state: tauri::State<'_, AppState>,
+    days: u32,
+) -> Result<u32, String> {
+    let conn = state.db.lock().map_err(|e| e.to_string())?;
+    db::queue::prune_old_jobs(&conn, days).map_err(|e| format!("Failed to prune jobs: {:#}", e))
 }

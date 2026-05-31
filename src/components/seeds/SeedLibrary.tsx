@@ -10,15 +10,22 @@ export function SeedLibrary() {
   const [seeds, setSeeds] = useState<SeedEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [search, setSearch] = useState("");
+  const [searchInput, setSearchInput] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
   const [showAddForm, setShowAddForm] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<SeedEntry | null>(null);
+
+  // Debounce search input — wait 300ms after last keystroke before querying
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedSearch(searchInput), 300);
+    return () => clearTimeout(timer);
+  }, [searchInput]);
 
   const refresh = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
-      const filter: SeedFilter = search ? { search } : {};
+      const filter: SeedFilter = debouncedSearch ? { search: debouncedSearch } : {};
       const result = await listSeeds(filter);
       setSeeds(result);
     } catch (e) {
@@ -26,7 +33,7 @@ export function SeedLibrary() {
     } finally {
       setLoading(false);
     }
-  }, [search]);
+  }, [debouncedSearch]);
 
   useEffect(() => {
     refresh();
@@ -73,8 +80,8 @@ export function SeedLibrary() {
         />
         <input
           type="text"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
+          value={searchInput}
+          onChange={(e) => setSearchInput(e.target.value)}
           placeholder="Search seeds..."
           className="w-full bg-zinc-800 border border-zinc-700 rounded-lg pl-8 pr-3 py-2 text-sm text-zinc-100 placeholder-zinc-500 focus:border-blue-500 focus:outline-none"
         />

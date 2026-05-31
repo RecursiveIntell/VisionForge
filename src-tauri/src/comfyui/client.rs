@@ -6,6 +6,20 @@ use std::time::Duration;
 
 use crate::types::generation::{GenerationStatus, GenerationStatusKind};
 
+fn normalize_endpoint(endpoint: &str) -> &str {
+    endpoint.trim_end_matches('/')
+}
+
+async fn ensure_success(resp: reqwest::Response, action: &str) -> Result<reqwest::Response> {
+    if resp.status().is_success() {
+        return Ok(resp);
+    }
+
+    let status = resp.status();
+    let body = resp.text().await.unwrap_or_default();
+    anyhow::bail!("ComfyUI returned {} for {}: {}", status, action, body);
+}
+
 #[derive(Debug, Clone)]
 pub struct ProgressUpdate {
     pub current_step: u32,
@@ -13,6 +27,7 @@ pub struct ProgressUpdate {
 }
 
 pub async fn check_health(client: &Client, endpoint: &str) -> Result<bool> {
+    let endpoint = normalize_endpoint(endpoint);
     let url = format!("{}/system_stats", endpoint);
     let resp = client
         .get(&url)
@@ -34,6 +49,7 @@ pub async fn queue_prompt(
     workflow: &Value,
     client_id: &str,
 ) -> Result<String> {
+    let endpoint = normalize_endpoint(endpoint);
     let url = format!("{}/prompt", endpoint);
 
     let body = serde_json::json!({
@@ -95,6 +111,7 @@ pub async fn get_history(
     endpoint: &str,
     prompt_id: &str,
 ) -> Result<Option<PromptHistory>> {
+    let endpoint = normalize_endpoint(endpoint);
     let url = format!("{}/history/{}", endpoint, prompt_id);
 
     let resp = client
@@ -104,9 +121,7 @@ pub async fn get_history(
         .await
         .context("Failed to fetch ComfyUI history")?;
 
-    if !resp.status().is_success() {
-        return Ok(None);
-    }
+    let resp = ensure_success(resp, "history lookup").await?;
 
     let json: Value = resp
         .json()
@@ -161,6 +176,7 @@ pub async fn get_image(
     subfolder: &str,
     img_type: &str,
 ) -> Result<Vec<u8>> {
+    let endpoint = normalize_endpoint(endpoint);
     let url = reqwest::Url::parse_with_params(
         &format!("{}/view", endpoint),
         &[
@@ -195,6 +211,7 @@ pub async fn get_image(
 }
 
 pub async fn get_queue_status(client: &Client, endpoint: &str) -> Result<QueueStatus> {
+    let endpoint = normalize_endpoint(endpoint);
     let url = format!("{}/queue", endpoint);
 
     let resp = client
@@ -203,6 +220,8 @@ pub async fn get_queue_status(client: &Client, endpoint: &str) -> Result<QueueSt
         .send()
         .await
         .context("Failed to fetch ComfyUI queue status")?;
+
+    let resp = ensure_success(resp, "queue status").await?;
 
     let json: Value = resp
         .json()
@@ -225,6 +244,7 @@ pub async fn get_queue_status(client: &Client, endpoint: &str) -> Result<QueueSt
 }
 
 pub async fn free_memory(client: &Client, endpoint: &str, unload_models: bool) -> Result<()> {
+    let endpoint = normalize_endpoint(endpoint);
     let url = format!("{}/free", endpoint);
 
     let body = if unload_models {
@@ -233,25 +253,28 @@ pub async fn free_memory(client: &Client, endpoint: &str, unload_models: bool) -
         serde_json::json!({"free_memory": true})
     };
 
-    client
+    let resp = client
         .post(&url)
         .timeout(Duration::from_secs(30))
         .json(&body)
         .send()
         .await
         .context("Failed to send free memory request to ComfyUI")?;
+    ensure_success(resp, "free memory").await?;
 
     Ok(())
 }
 
 pub async fn interrupt(client: &Client, endpoint: &str) -> Result<()> {
+    let endpoint = normalize_endpoint(endpoint);
     let url = format!("{}/interrupt", endpoint);
-    client
+    let resp = client
         .post(&url)
         .timeout(Duration::from_secs(5))
         .send()
         .await
         .context("Failed to send interrupt to ComfyUI")?;
+    ensure_success(resp, "interrupt").await?;
     Ok(())
 }
 
@@ -315,6 +338,7 @@ pub async fn wait_for_completion(
     poll_interval: Duration,
     timeout: Duration,
 ) -> Result<GenerationStatus> {
+    let endpoint = normalize_endpoint(endpoint);
     let start = std::time::Instant::now();
     loop {
         if start.elapsed() > timeout {
@@ -344,6 +368,7 @@ pub async fn wait_for_completion_ws<F>(
 where
     F: FnMut(ProgressUpdate),
 {
+    let endpoint = normalize_endpoint(endpoint);
     let ws_url = format!(
         "{}/ws?clientId={}",
         endpoint
@@ -367,7 +392,20 @@ where
     };
 
     let start = std::time::Instant::now();
+    let mut our_msg_count: usize = 0;
+    const MAX_OUR_MESSAGES: usize = 10_000;
+    let mut total_msg_count: usize = 0;
+    const MAX_TOTAL_MESSAGES: usize = 50_000;
+
     while let Ok(Some(msg)) = tokio::time::timeout(Duration::from_secs(30), ws.next()).await {
+        total_msg_count += 1;
+        if total_msg_count > MAX_TOTAL_MESSAGES {
+            eprintln!(
+                "[comfyui] WS exceeded {} total message limit (busy shared instance?), falling back to polling",
+                MAX_TOTAL_MESSAGES
+            );
+            break;
+        }
         if start.elapsed() > timeout {
             return Ok(gen_status_failed(prompt_id, "Generation timed out"));
         }
@@ -387,6 +425,17 @@ where
             .and_then(|v| v.as_str());
         if pid.is_some() && pid != Some(prompt_id) {
             continue;
+        }
+        // Only count messages for our prompt toward the per-prompt limit
+        if pid == Some(prompt_id) {
+            our_msg_count += 1;
+            if our_msg_count > MAX_OUR_MESSAGES {
+                eprintln!(
+                    "[comfyui] Prompt {} exceeded {} message limit, falling back to polling",
+                    prompt_id, MAX_OUR_MESSAGES
+                );
+                break;
+            }
         }
         match msg_type {
             "progress" => {

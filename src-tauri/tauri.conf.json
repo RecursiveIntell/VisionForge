@@ -20,11 +20,11 @@
       }
     ],
     "security": {
-      "csp": "default-src 'self' 'unsafe-inline' 'unsafe-eval' ipc: http://ipc.localhost; img-src 'self' asset: http://asset.localhost blob: data:; connect-src 'self' ipc: http://ipc.localhost ws: wss: http: https:",
+      "csp": "default-src 'self' ipc: http://ipc.localhost; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' asset: http://asset.localhost blob: data:; connect-src 'self' ipc: http://ipc.localhost http://localhost:* http://127.0.0.1:* ws://localhost:* ws://127.0.0.1:* wss://localhost:* wss://127.0.0.1:* http://192.168.*:* ws://192.168.*:* http://10.*:* ws://10.*:*",
       "assetProtocol": {
         "enable": true,
         "scope": {
-          "allow": ["$HOME/.visionforge/**", "$HOME/**", "/**"],
+          "allow": ["$HOME/.visionforge/**"],
           "requireLiteralLeadingDot": false
         }
       }

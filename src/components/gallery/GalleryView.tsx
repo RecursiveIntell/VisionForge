@@ -1,9 +1,12 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
+import { save } from "@tauri-apps/plugin-dialog";
 import { FilterBar } from "./FilterBar";
 import { ImageGrid } from "./ImageGrid";
 import { MetadataPanel } from "./MetadataPanel";
 import { Lightbox } from "./Lightbox";
 import { LineageViewer } from "./LineageViewer";
+import { SelectionToolbar } from "./SelectionToolbar";
+import { BatchConfirmDialog } from "./BatchConfirmDialog";
 import { useGallery } from "../../hooks/useGallery";
 import {
   updateImageRating,
@@ -15,11 +18,18 @@ import {
   deleteImage,
   restoreImage,
 } from "../../api/gallery";
+import { submitBatchJob } from "../../api/aiBatch";
 import { createComparison } from "../../api/comparison";
 import { exportImages } from "../../api/export";
 import { LoadingSpinner } from "../shared/LoadingSpinner";
 import { useToast } from "../shared/Toast";
-import type { ImageEntry, GalleryFilter, Comparison } from "../../types";
+import type {
+  ImageEntry,
+  GalleryFilter,
+  Comparison,
+  BatchOpKind,
+  OverwritePolicy,
+} from "../../types";
 
 export function GalleryView() {
   const { images, loading, error, filter, updateFilter, refresh } =
@@ -29,6 +39,13 @@ export function GalleryView() {
   const [compareMode, setCompareMode] = useState(false);
   const [compareSelection, setCompareSelection] = useState<string[]>([]);
   const { addToast } = useToast();
+
+  // Multi-select state
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const lastClickedRef = useRef<string | null>(null);
+
+  // Batch dialog state
+  const [batchOp, setBatchOp] = useState<BatchOpKind | null>(null);
 
   // Keep selectedImage in sync with refreshed data
   useEffect(() => {
@@ -40,8 +57,82 @@ export function GalleryView() {
     }
   }, [images]);
 
+  // Keyboard shortcuts for multi-select
+  useEffect(() => {
+    const handleKey = (e: KeyboardEvent) => {
+      // Ctrl+A to select all (only when not in an input)
+      if (
+        (e.ctrlKey || e.metaKey) &&
+        e.key === "a" &&
+        !compareMode &&
+        !(e.target instanceof HTMLInputElement) &&
+        !(e.target instanceof HTMLTextAreaElement)
+      ) {
+        e.preventDefault();
+        setSelectedIds(new Set(images.map((i) => i.id)));
+      }
+      // Escape to deselect
+      if (e.key === "Escape" && selectedIds.size > 0) {
+        e.preventDefault();
+        setSelectedIds(new Set());
+        lastClickedRef.current = null;
+      }
+    };
+    window.addEventListener("keydown", handleKey);
+    return () => window.removeEventListener("keydown", handleKey);
+  }, [images, selectedIds.size, compareMode]);
+
   const handleSelect = useCallback((image: ImageEntry) => {
     setSelectedImage(image);
+  }, []);
+
+  const handleMultiSelect = useCallback(
+    (image: ImageEntry, event: React.MouseEvent) => {
+      // Only handle shift/ctrl clicks for multi-select
+      if (!event.shiftKey && !event.ctrlKey && !event.metaKey) {
+        return; // Let normal onClick handle it
+      }
+      event.preventDefault();
+      event.stopPropagation();
+
+      if (event.shiftKey && lastClickedRef.current) {
+        const lastIdx = images.findIndex(
+          (i) => i.id === lastClickedRef.current
+        );
+        const currentIdx = images.findIndex((i) => i.id === image.id);
+        if (lastIdx >= 0 && currentIdx >= 0) {
+          const start = Math.min(lastIdx, currentIdx);
+          const end = Math.max(lastIdx, currentIdx);
+          const rangeIds = images.slice(start, end + 1).map((i) => i.id);
+          setSelectedIds((prev) => {
+            const next = new Set(prev);
+            rangeIds.forEach((id) => next.add(id));
+            return next;
+          });
+        }
+      } else if (event.ctrlKey || event.metaKey) {
+        setSelectedIds((prev) => {
+          const next = new Set(prev);
+          if (next.has(image.id)) {
+            next.delete(image.id);
+          } else {
+            next.add(image.id);
+          }
+          return next;
+        });
+      }
+      lastClickedRef.current = image.id;
+    },
+    [images]
+  );
+
+  const selectAll = useCallback(() => {
+    setSelectedIds(new Set(images.map((i) => i.id)));
+  }, [images]);
+
+  const deselectAll = useCallback(() => {
+    setSelectedIds(new Set());
+    lastClickedRef.current = null;
   }, []);
 
   const handleFavoriteToggle = useCallback(
@@ -53,7 +144,7 @@ export function GalleryView() {
         console.error("Failed to toggle favorite:", e);
       }
     },
-    [refresh],
+    [refresh]
   );
 
   const handleRatingChange = useCallback(
@@ -66,7 +157,7 @@ export function GalleryView() {
         console.error("Failed to update rating:", e);
       }
     },
-    [selectedImage, refresh],
+    [selectedImage, refresh]
   );
 
   const handleCaptionSave = useCallback(
@@ -79,7 +170,7 @@ export function GalleryView() {
         console.error("Failed to update caption:", e);
       }
     },
-    [selectedImage, refresh],
+    [selectedImage, refresh]
   );
 
   const handleNoteSave = useCallback(
@@ -92,7 +183,7 @@ export function GalleryView() {
         console.error("Failed to update note:", e);
       }
     },
-    [selectedImage, refresh],
+    [selectedImage, refresh]
   );
 
   const handleAddTag = useCallback(
@@ -105,7 +196,7 @@ export function GalleryView() {
         console.error("Failed to add tag:", e);
       }
     },
-    [selectedImage, refresh],
+    [selectedImage, refresh]
   );
 
   const handleRemoveTag = useCallback(
@@ -118,7 +209,7 @@ export function GalleryView() {
         console.error("Failed to remove tag:", e);
       }
     },
-    [selectedImage, refresh],
+    [selectedImage, refresh]
   );
 
   const handleDelete = useCallback(async () => {
@@ -149,7 +240,7 @@ export function GalleryView() {
     const variable = prompt("What variable changed between these images?");
     if (!variable) return;
     const comparison: Comparison = {
-      id: "",
+      id: crypto.randomUUID(),
       imageAId: compareSelection[0],
       imageBId: compareSelection[1],
       variableChanged: variable,
@@ -169,7 +260,12 @@ export function GalleryView() {
     const ids = images.map((i) => i.id);
     if (ids.length === 0) return;
     try {
-      await exportImages(ids, "");
+      const outputPath = await save({
+        defaultPath: `visionforge-export-${Date.now()}.zip`,
+        filters: [{ name: "ZIP Archive", extensions: ["zip"] }],
+      });
+      if (!outputPath) return;
+      await exportImages(ids, outputPath);
       addToast("success", `Exported ${ids.length} images`);
     } catch (e) {
       const msg = e instanceof Error ? e.message : String(e);
@@ -182,7 +278,28 @@ export function GalleryView() {
       const idx = images.findIndex((i) => i.id === image.id);
       if (idx >= 0) setLightboxIndex(idx);
     },
-    [images],
+    [images]
+  );
+
+  const handleBatchConfirm = useCallback(
+    async (overwritePolicy: OverwritePolicy) => {
+      if (!batchOp || selectedIds.size === 0) return;
+      try {
+        await submitBatchJob({
+          op: batchOp,
+          imageIds: Array.from(selectedIds),
+          overwritePolicy,
+        });
+        const opLabel = batchOp === "tag" ? "tagging" : "captioning";
+        addToast("success", `Batch ${opLabel} job submitted for ${selectedIds.size} images`);
+        setBatchOp(null);
+        deselectAll();
+      } catch (e) {
+        const msg = e instanceof Error ? e.message : String(e);
+        addToast("error", `Failed to submit batch job: ${msg}`);
+      }
+    },
+    [batchOp, selectedIds, addToast, deselectAll]
   );
 
   return (
@@ -233,6 +350,17 @@ export function GalleryView() {
           </div>
         )}
 
+        {!compareMode && (
+          <SelectionToolbar
+            selectedCount={selectedIds.size}
+            totalCount={images.length}
+            onSelectAll={selectAll}
+            onDeselectAll={deselectAll}
+            onBatchTag={() => setBatchOp("tag")}
+            onBatchCaption={() => setBatchOp("caption")}
+          />
+        )}
+
         {error && (
           <div className="bg-red-400/10 border border-red-400/20 rounded p-2 text-sm text-red-400">
             {error}
@@ -248,6 +376,7 @@ export function GalleryView() {
             <ImageGrid
               images={images}
               selectedId={compareMode ? undefined : selectedImage?.id}
+              selectedIds={!compareMode ? selectedIds : undefined}
               compareSelection={compareMode ? compareSelection : undefined}
               onSelect={(img) => {
                 if (compareMode) {
@@ -256,6 +385,7 @@ export function GalleryView() {
                   handleSelect(img);
                 }
               }}
+              onMultiSelect={!compareMode ? handleMultiSelect : undefined}
               onEnlarge={openLightbox}
               onFavoriteToggle={handleFavoriteToggle}
             />
@@ -290,6 +420,16 @@ export function GalleryView() {
           currentIndex={lightboxIndex}
           onClose={() => setLightboxIndex(null)}
           onNavigate={setLightboxIndex}
+        />
+      )}
+
+      {batchOp && (
+        <BatchConfirmDialog
+          open={!!batchOp}
+          op={batchOp}
+          imageIds={Array.from(selectedIds)}
+          onConfirm={handleBatchConfirm}
+          onCancel={() => setBatchOp(null)}
         />
       )}
     </div>

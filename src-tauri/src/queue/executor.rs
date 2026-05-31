@@ -60,8 +60,23 @@ pub fn spawn(app_handle: AppHandle) {
 async fn run_loop(app_handle: AppHandle) {
     let mut consecutive_count: u32 = 0;
 
-    loop {
+    // Wait for AppState to become available and get shutdown receiver
+    let state = loop {
+        if let Some(s) = app_handle.try_state::<AppState>() {
+            break s;
+        }
         tokio::time::sleep(POLL_INTERVAL).await;
+    };
+    let mut shutdown_rx = state.shutdown_tx.subscribe();
+
+    loop {
+        tokio::select! {
+            _ = shutdown_rx.recv() => {
+                eprintln!("[queue] Shutdown signal received, stopping executor");
+                return;
+            }
+            _ = tokio::time::sleep(POLL_INTERVAL) => {}
+        }
 
         let state = match app_handle.try_state::<AppState>() {
             Some(s) => s,
@@ -78,7 +93,7 @@ async fn run_loop(app_handle: AppHandle) {
 
         // Read hardware config
         let (cooldown_secs, max_consecutive) = {
-            match state.config.lock() {
+            match state.config_snapshot() {
                 Ok(c) => (
                     c.hardware.cooldown_seconds,
                     c.hardware.max_consecutive_generations,
@@ -139,10 +154,15 @@ async fn run_loop(app_handle: AppHandle) {
                 let err_msg = format!("{:#}", e);
                 // Check if this was a cancellation — don't re-mark as failed
                 let was_cancelled = {
-                    if let Ok(conn) = state.db.lock() {
-                        db::queue::is_job_cancelled(&conn, &job.id).unwrap_or(false)
-                    } else {
-                        false
+                    match state.db.lock() {
+                        Ok(conn) => db::queue::is_job_cancelled(&conn, &job.id).unwrap_or(false),
+                        Err(e) => {
+                            eprintln!(
+                                "[queue] WARNING: DB mutex poisoned while checking cancellation for job {}: {}",
+                                job.id, e
+                            );
+                            false
+                        }
                     }
                 };
 
@@ -177,10 +197,7 @@ async fn process_job(
     state: &AppState,
     job: &crate::types::queue::QueueJob,
 ) -> Result<()> {
-    let (endpoint, _) = {
-        let config = state.config.lock().map_err(|e| anyhow::anyhow!("{}", e))?;
-        (config.comfyui.endpoint.clone(), ())
-    };
+    let endpoint = state.config_snapshot()?.comfyui.endpoint;
 
     // Mark as generating
     {
@@ -273,8 +290,11 @@ async fn process_job(
         anyhow::bail!("ComfyUI returned no image filenames");
     }
 
-    // Download and save the first image (batch_size=1 typical)
-    let img_ref = &history.image_filenames[0];
+    // Prefer the last image (most likely to be the final output, not a preview)
+    let img_ref = history
+        .image_filenames
+        .last()
+        .context("ComfyUI returned no image filenames")?;
     let image_bytes = client::get_image(
         &state.http_client,
         &endpoint,
@@ -286,10 +306,41 @@ async fn process_job(
     .context("Failed to download image from ComfyUI")?;
 
     let local_filename = storage::generate_filename();
+    let config_clone = state.config_snapshot()?;
     {
-        let config = state.config.lock().map_err(|e| anyhow::anyhow!("{}", e))?;
-        storage::save_image_from_bytes_with_config(&config, &image_bytes, &local_filename)
-            .context("Failed to save image to gallery")?;
+        let filename_clone = local_filename.clone();
+        let bytes_clone = image_bytes.clone();
+        let config_for_save = config_clone.clone();
+        tokio::task::spawn_blocking(move || {
+            storage::save_image_from_bytes_with_config(
+                &config_for_save,
+                &bytes_clone,
+                &filename_clone,
+            )
+        })
+        .await
+        .context("Image save task panicked")?
+        .context("Failed to save image to gallery")?;
+    }
+
+    // === POST-GENERATION CANCELLATION CHECK ===
+    // If the job was cancelled while we were downloading, don't persist to gallery.
+    {
+        let conn = state.db.lock().map_err(|e| anyhow::anyhow!("{}", e))?;
+        let was_cancelled = db::queue::is_job_cancelled(&conn, &job.id).unwrap_or(false);
+        drop(conn);
+        if was_cancelled {
+            // Clean up the file we just saved
+            if let Err(cleanup_err) =
+                storage::delete_image_files_for(&config_clone, &local_filename)
+            {
+                eprintln!(
+                    "[queue] ERROR: Failed to clean up cancelled job image {}: {}",
+                    local_filename, cleanup_err
+                );
+            }
+            anyhow::bail!("Job cancelled by user");
+        }
     }
 
     // Insert into gallery DB
@@ -311,8 +362,8 @@ async fn process_job(
         scheduler: Some(gen_request.scheduler.clone()),
         seed: Some(actual_seed),
         pipeline_log: job.pipeline_log.clone(),
-        selected_concept: None,
-        auto_approved: false,
+        selected_concept: job.selected_concept,
+        auto_approved: job.auto_approved,
         caption: None,
         caption_edited: false,
         rating: None,
@@ -341,47 +392,25 @@ async fn process_job(
 
 /// Parse the settings_json stored in a QueueJob into a GenerationRequest.
 fn build_generation_request(job: &crate::types::queue::QueueJob) -> Result<GenerationRequest> {
-    let settings: serde_json::Value =
+    use crate::types::generation::GenerationSettings;
+
+    let settings: GenerationSettings =
         serde_json::from_str(&job.settings_json).context("Failed to parse job settings_json")?;
+
+    settings.validate().context("Invalid generation settings")?;
 
     Ok(GenerationRequest {
         positive_prompt: job.positive_prompt.clone(),
         negative_prompt: job.negative_prompt.clone(),
-        checkpoint: settings
-            .get("checkpoint")
-            .and_then(|v| v.as_str())
-            .unwrap_or("dreamshaper_8.safetensors")
-            .to_string(),
-        width: settings
-            .get("width")
-            .and_then(|v| v.as_u64())
-            .unwrap_or(512) as u32,
-        height: settings
-            .get("height")
-            .and_then(|v| v.as_u64())
-            .unwrap_or(768) as u32,
-        steps: settings.get("steps").and_then(|v| v.as_u64()).unwrap_or(25) as u32,
-        cfg_scale: settings
-            .get("cfgScale")
-            .or_else(|| settings.get("cfg_scale"))
-            .and_then(|v| v.as_f64())
-            .unwrap_or(7.5),
-        sampler: settings
-            .get("sampler")
-            .and_then(|v| v.as_str())
-            .unwrap_or("dpmpp_2m")
-            .to_string(),
-        scheduler: settings
-            .get("scheduler")
-            .and_then(|v| v.as_str())
-            .unwrap_or("karras")
-            .to_string(),
-        seed: settings.get("seed").and_then(|v| v.as_i64()).unwrap_or(-1),
-        batch_size: settings
-            .get("batchSize")
-            .or_else(|| settings.get("batch_size"))
-            .and_then(|v| v.as_u64())
-            .unwrap_or(1) as u32,
+        checkpoint: settings.checkpoint,
+        width: settings.width,
+        height: settings.height,
+        steps: settings.steps,
+        cfg_scale: settings.cfg_scale,
+        sampler: settings.sampler,
+        scheduler: settings.scheduler,
+        seed: settings.seed,
+        batch_size: settings.batch_size,
     })
 }
 

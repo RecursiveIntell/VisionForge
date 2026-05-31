@@ -1,0 +1,134 @@
+{
+  "created_utc": "2026-05-27T21:25:02Z",
+  "excluded": [
+    {
+      "path": "Archive.tar.gz",
+      "reason": "archive-file"
+    },
+    {
+      "path": "public/tauri.svg",
+      "reason": "image-disabled"
+    },
+    {
+      "path": "public/vite.svg",
+      "reason": "image-disabled"
+    },
+    {
+      "path": "src-tauri/icons/128x128.png",
+      "reason": "image-disabled"
+    },
+    {
+      "path": "src-tauri/icons/128x128@2x.png",
+      "reason": "image-disabled"
+    },
+    {
+      "path": "src-tauri/icons/32x32.png",
+      "reason": "image-disabled"
+    },
+    {
+      "path": "src-tauri/icons/Square107x107Logo.png",
+      "reason": "image-disabled"
+    },
+    {
+      "path": "src-tauri/icons/Square142x142Logo.png",
+      "reason": "image-disabled"
+    },
+    {
+      "path": "src-tauri/icons/Square150x150Logo.png",
+      "reason": "image-disabled"
+    },
+    {
+      "path": "src-tauri/icons/Square284x284Logo.png",
+      "reason": "image-disabled"
+    },
+    {
+      "path": "src-tauri/icons/Square30x30Logo.png",
+      "reason": "image-disabled"
+    },
+    {
+      "path": "src-tauri/icons/Square310x310Logo.png",
+      "reason": "image-disabled"
+    },
+    {
+      "path": "src-tauri/icons/Square44x44Logo.png",
+      "reason": "image-disabled"
+    },
+    {
+      "path": "src-tauri/icons/Square71x71Logo.png",
+      "reason": "image-disabled"
+    },
+    {
+      "path": "src-tauri/icons/Square89x89Logo.png",
+      "reason": "image-disabled"
+    },
+    {
+      "path": "src-tauri/icons/StoreLogo.png",
+      "reason": "image-disabled"
+    },
+    {
+      "path": "src-tauri/icons/icon.icns",
+      "reason": "unsupported-extension-or-basename"
+    },
+    {
+      "path": "src-tauri/icons/icon.ico",
+      "reason": "image-disabled"
+    },
+    {
+      "path": "src-tauri/icons/icon.png",
+      "reason": "image-disabled"
+    },
+    {
+      "path": "src/assets/react.svg",
+      "reason": "image-disabled"
+    },
+    {
+      "path": "visionforge-generic-next-codex-context-20260527T212459Z.codex-archive.json",
+      "reason": "generated-output"
+    }
+  ],
+  "pruned_dirs": [
+    {
+      "path": ".claude",
+      "reason": "excluded-directory"
+    },
+    {
+      "path": ".git",
+      "reason": "excluded-directory"
+    },
+    {
+      "path": ".vscode",
+      "reason": "editor-config-disabled"
+    },
+    {
+      "path": "codex",
+      "reason": "codex-artifacts-disabled"
+    },
+    {
+      "path": "dist",
+      "reason": "excluded-directory"
+    },
+    {
+      "path": "docs/codex-runs/archive",
+      "reason": "codex-archive-disabled"
+    },
+    {
+      "path": "docs/source-packages/archive",
+      "reason": "root-package-archive-disabled"
+    },
+    {
+      "path": "node_modules",
+      "reason": "excluded-directory"
+    },
+    {
+      "path": "src-tauri/target",
+      "reason": "excluded-directory"
+    }
+  ],
+  "root": "/home/sikmindz/Coding/visionforge",
+  "summary": {
+    "archive-file": 1,
+    "generated-output": 1,
+    "image-disabled": 18,
+    "unsupported-extension-or-basename": 1
+  }
+}

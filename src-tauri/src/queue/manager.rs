@@ -44,22 +44,24 @@ pub fn reorder_job(state: &AppState, job_id: &str, new_priority: QueuePriority) 
 
 /// Cancel a pending or generating job. If generating, also interrupt ComfyUI.
 pub async fn cancel_job(state: &AppState, job_id: &str) -> Result<()> {
-    let (prev_status, endpoint) = {
+    let endpoint = state
+        .config
+        .read()
+        .map_err(|e| anyhow::anyhow!("{}", e))?
+        .comfyui
+        .endpoint
+        .clone();
+
+    let prev_status = {
         let conn = state.db.lock().map_err(|e| anyhow::anyhow!("{}", e))?;
-        let prev = db::queue::cancel_job(&conn, job_id)?;
-        let ep = state
-            .config
-            .lock()
-            .map_err(|e| anyhow::anyhow!("{}", e))?
-            .comfyui
-            .endpoint
-            .clone();
-        (prev, ep)
+        db::queue::cancel_job(&conn, job_id)?
     };
 
     // If job was actively generating, interrupt ComfyUI (best-effort)
     if prev_status == "generating" {
-        let _ = crate::comfyui::client::interrupt(&state.http_client, &endpoint).await;
+        crate::comfyui::client::interrupt(&state.http_client, &endpoint)
+            .await
+            .context("Job was cancelled, but ComfyUI interrupt failed")?;
     }
 
     Ok(())
@@ -128,6 +130,8 @@ mod tests {
             settings_json: r#"{"steps":20}"#.to_string(),
             pipeline_log: None,
             original_idea: None,
+            selected_concept: None,
+            auto_approved: false,
             linked_comparison_id: None,
             created_at: None,
             started_at: None,

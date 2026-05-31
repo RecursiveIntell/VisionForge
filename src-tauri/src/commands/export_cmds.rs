@@ -9,6 +9,11 @@ pub async fn export_images(
     image_ids: Vec<String>,
     output_path: String,
 ) -> Result<(), String> {
+    // Validate export path BEFORE doing any work
+    let validated_path = export::validate_export_path(&output_path)
+        .map_err(|e| format!("Invalid export path: {:#}", e))?;
+
+    let config = state.config_snapshot().map_err(|e| e.to_string())?;
     let images = {
         let conn = state.db.lock().map_err(|e| e.to_string())?;
         let mut images = Vec::new();
@@ -24,9 +29,7 @@ pub async fn export_images(
         return Err("No images found to export".to_string());
     }
 
-    let config = state.config.lock().map_err(|e| e.to_string())?;
-    let path = std::path::Path::new(&output_path);
-    export::create_export_bundle_with_config(&images, path, Some(&config))
+    export::create_export_bundle_with_config(&images, &validated_path, Some(&config))
         .map_err(|e| format!("Failed to create export: {:#}", e))
 }
 
@@ -36,12 +39,15 @@ pub async fn export_gallery(
     filter: GalleryFilter,
     output_path: String,
 ) -> Result<u32, String> {
-    let (images, config) = {
+    // Validate export path BEFORE doing any work
+    let validated_path = export::validate_export_path(&output_path)
+        .map_err(|e| format!("Invalid export path: {:#}", e))?;
+
+    let config = state.config_snapshot().map_err(|e| e.to_string())?;
+    let images = {
         let conn = state.db.lock().map_err(|e| e.to_string())?;
-        let imgs = db::images::list_images(&conn, &filter)
-            .map_err(|e| format!("Failed to query images: {:#}", e))?;
-        let cfg = state.config.lock().map_err(|e| e.to_string())?.clone();
-        (imgs, cfg)
+        db::images::list_images(&conn, &filter)
+            .map_err(|e| format!("Failed to query images: {:#}", e))?
     };
 
     if images.is_empty() {
@@ -49,8 +55,7 @@ pub async fn export_gallery(
     }
 
     let count = images.len() as u32;
-    let path = std::path::Path::new(&output_path);
-    export::create_export_bundle_with_config(&images, path, Some(&config))
+    export::create_export_bundle_with_config(&images, &validated_path, Some(&config))
         .map_err(|e| format!("Failed to create export: {:#}", e))?;
 
     Ok(count)

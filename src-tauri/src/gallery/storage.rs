@@ -6,6 +6,20 @@ use crate::types::config::AppConfig;
 
 const THUMBNAIL_SIZE: u32 = 256;
 
+/// Validate that a filename is a safe basename (no path separators, no `..`).
+pub fn validate_filename(filename: &str) -> Result<()> {
+    if filename.is_empty() {
+        anyhow::bail!("Filename is empty");
+    }
+    if filename.contains('/') || filename.contains('\\') || filename.contains("..") {
+        anyhow::bail!("Invalid filename: contains path separators or '..'");
+    }
+    if filename.starts_with('.') {
+        anyhow::bail!("Invalid filename: starts with '.'");
+    }
+    Ok(())
+}
+
 /// Generate a filename for a new image: YYYY-MM-DD_HH-MM-SS_<short_uuid>.png
 pub fn generate_filename() -> String {
     let now = chrono::Utc::now();
@@ -93,7 +107,14 @@ fn save_image_from_bytes_for(
     std::fs::write(&orig_path, bytes)
         .with_context(|| format!("Failed to write image to {}", orig_path.display()))?;
 
-    create_thumbnail_to(&orig_path, filename, thumb_dir)?;
+    // Thumbnail creation is best-effort — don't fail the image save
+    if let Err(e) = create_thumbnail_to(&orig_path, filename, thumb_dir) {
+        eprintln!(
+            "[gallery] WARNING: Failed to create thumbnail for {}: {}. \
+             Original image saved successfully.",
+            filename, e
+        );
+    }
     Ok(())
 }
 

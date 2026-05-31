@@ -33,7 +33,12 @@ pub async fn run_ideator(
     ];
 
     let resp = ollama::chat_with_options(
-        client, endpoint, model, &messages, false, &ollama::stage_options_with_thinking(1024, think),
+        client,
+        endpoint,
+        model,
+        &messages,
+        false,
+        &ollama::stage_options_with_thinking(1024, think),
     )
     .await
     .context("Ideator stage failed")?;
@@ -79,7 +84,12 @@ pub async fn run_composer(
     ];
 
     let resp = ollama::chat_with_options(
-        client, endpoint, model, &messages, false, &ollama::stage_options_with_thinking(2048, think),
+        client,
+        endpoint,
+        model,
+        &messages,
+        false,
+        &ollama::stage_options_with_thinking(2048, think),
     )
     .await
     .context("Composer stage failed")?;
@@ -123,7 +133,12 @@ pub async fn run_judge(
     ];
 
     let resp = ollama::chat_with_options(
-        client, endpoint, model, &messages, true, &ollama::stage_options_with_thinking(1024, think),
+        client,
+        endpoint,
+        model,
+        &messages,
+        true,
+        &ollama::stage_options_with_thinking(1024, think),
     )
     .await
     .context("Judge stage failed")?;
@@ -177,7 +192,12 @@ pub async fn run_prompt_engineer(
     ];
 
     let resp = ollama::chat_with_options(
-        client, endpoint, model, &messages, true, &ollama::stage_options_with_thinking(1024, think),
+        client,
+        endpoint,
+        model,
+        &messages,
+        true,
+        &ollama::stage_options_with_thinking(1024, think),
     )
     .await
     .context("Prompt Engineer stage failed")?;
@@ -220,7 +240,12 @@ pub async fn run_reviewer(
     ];
 
     let resp = ollama::chat_with_options(
-        client, endpoint, model, &messages, true, &ollama::stage_options_with_thinking(1024, think),
+        client,
+        endpoint,
+        model,
+        &messages,
+        true,
+        &ollama::stage_options_with_thinking(1024, think),
     )
     .await
     .context("Reviewer stage failed")?;
@@ -320,10 +345,7 @@ pub(super) fn parse_judge_rankings(text: &str) -> Result<Vec<JudgeRanking>> {
             .and_then(|v| v.as_u64())
             .unwrap_or(0) as usize;
 
-        let score = item
-            .get("score")
-            .and_then(|v| v.as_u64())
-            .unwrap_or(0) as u32;
+        let score = item.get("score").and_then(|v| v.as_u64()).unwrap_or(0) as u32;
 
         let reasoning = item
             .get("reasoning")
@@ -347,8 +369,12 @@ pub(super) fn parse_judge_rankings(text: &str) -> Result<Vec<JudgeRanking>> {
 
 /// Backfill any missing concept indices so the judge output has one entry per concept.
 /// Missing concepts get appended with a low score and placeholder reasoning.
-pub(super) fn backfill_rankings(mut rankings: Vec<JudgeRanking>, num_concepts: usize) -> Vec<JudgeRanking> {
-    let present: std::collections::HashSet<usize> = rankings.iter().map(|r| r.concept_index).collect();
+pub(super) fn backfill_rankings(
+    mut rankings: Vec<JudgeRanking>,
+    num_concepts: usize,
+) -> Vec<JudgeRanking> {
+    let present: std::collections::HashSet<usize> =
+        rankings.iter().map(|r| r.concept_index).collect();
     let max_rank = rankings.iter().map(|r| r.rank).max().unwrap_or(0);
 
     for i in 0..num_concepts {

@@ -48,7 +48,7 @@ export function SettingsPanel() {
       )}
 
       <StorageSection config={config} onChange={update as (c: typeof config) => void} />
-      <ConnectionSettings config={config} onChange={update as (c: typeof config) => void} onSave={() => save(config)} />
+      <ConnectionSettings config={config} onChange={update as (c: typeof config) => void} onSave={async () => { await save(config); }} />
       <ModelAssignments config={config} onChange={update as (c: typeof config) => void} />
       <PipelinePrompts config={config} onChange={update as (c: typeof config) => void} />
       <QualityPresets config={config} onChange={update as (c: typeof config) => void} />

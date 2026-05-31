@@ -1,4 +1,5 @@
-import { Search, SortAsc, SortDesc, Heart, Trash2 } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
+import { Search, SortAsc, SortDesc, Heart, Trash2, Tag, Type } from "lucide-react";
 import type { GalleryFilter, GallerySortField, SortOrder } from "../../types";
 
 interface FilterBarProps {
@@ -7,6 +8,23 @@ interface FilterBarProps {
 }
 
 export function FilterBar({ filter, onFilterChange }: FilterBarProps) {
+  const [searchInput, setSearchInput] = useState(filter.search ?? "");
+  const onFilterChangeRef = useRef(onFilterChange);
+  onFilterChangeRef.current = onFilterChange;
+
+  // Debounce search input — wait 300ms after last keystroke before propagating
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      onFilterChangeRef.current({ search: searchInput || undefined });
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [searchInput]);
+
+  // Sync local state if the filter is changed externally (e.g., reset)
+  useEffect(() => {
+    setSearchInput(filter.search ?? "");
+  }, [filter.search]);
+
   return (
     <div className="flex flex-wrap items-center gap-3 bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-3">
       {/* Search */}
@@ -17,10 +35,8 @@ export function FilterBar({ filter, onFilterChange }: FilterBarProps) {
         />
         <input
           type="text"
-          value={filter.search ?? ""}
-          onChange={(e) =>
-            onFilterChange({ search: e.target.value || undefined })
-          }
+          value={searchInput}
+          onChange={(e) => setSearchInput(e.target.value)}
           placeholder="Search prompts, captions..."
           className="w-full bg-zinc-700 border border-zinc-600 rounded pl-8 pr-3 py-1.5 text-sm text-zinc-100 placeholder-zinc-500 focus:border-blue-500 focus:outline-none"
         />
@@ -103,6 +119,36 @@ export function FilterBar({ filter, onFilterChange }: FilterBarProps) {
         title="Show deleted"
       >
         <Trash2 size={14} />
+      </button>
+
+      <button
+        onClick={() =>
+          onFilterChange({ untaggedOnly: !filter.untaggedOnly })
+        }
+        className={`px-2 py-1.5 rounded border text-xs flex items-center gap-1 ${
+          filter.untaggedOnly
+            ? "text-orange-400 border-orange-400/30 bg-orange-400/10"
+            : "text-zinc-400 border-zinc-600 bg-zinc-700 hover:text-zinc-200"
+        }`}
+        title="Show only untagged images"
+      >
+        <Tag size={12} />
+        Untagged
+      </button>
+
+      <button
+        onClick={() =>
+          onFilterChange({ uncaptionedOnly: !filter.uncaptionedOnly })
+        }
+        className={`px-2 py-1.5 rounded border text-xs flex items-center gap-1 ${
+          filter.uncaptionedOnly
+            ? "text-orange-400 border-orange-400/30 bg-orange-400/10"
+            : "text-zinc-400 border-zinc-600 bg-zinc-700 hover:text-zinc-200"
+        }`}
+        title="Show only uncaptioned images"
+      >
+        <Type size={12} />
+        Uncaptioned
       </button>
     </div>
   );

@@ -215,6 +215,8 @@ export interface GalleryFilter {
   sortOrder?: SortOrder;
   limit?: number;
   offset?: number;
+  untaggedOnly?: boolean;
+  uncaptionedOnly?: boolean;
 }
 
 // ============================================
@@ -327,6 +329,8 @@ export interface QueueJob {
   settingsJson: string;
   pipelineLog?: string;
   originalIdea?: string;
+  selectedConcept?: number;
+  autoApproved?: boolean;
   linkedComparisonId?: string;
   createdAt?: string;
   startedAt?: string;
@@ -391,6 +395,8 @@ export interface HardwareSettings {
   enableHaPowerMonitoring: boolean;
   haEntityId: string;
   haMaxWatts: number;
+  aiBatchDownscale?: boolean;
+  aiBatchMaxDimension?: number;
 }
 
 export interface QualityPreset {
@@ -400,4 +406,76 @@ export interface QualityPreset {
   height: number;
   sampler: string;
   scheduler: string;
+}
+
+// ============================================
+// AI Batch Queue Types
+// ============================================
+
+export type BatchOpKind = "tag" | "caption";
+
+export type BatchItemStatus =
+  | "pending"
+  | "running"
+  | "completed"
+  | "failed"
+  | "cancelled";
+
+export type BatchJobStatus =
+  | "queued"
+  | "running"
+  | "completed"
+  | "completedWithErrors"
+  | "cancelled";
+
+export type OverwritePolicy = "skip" | "overwrite";
+
+export interface BatchItem {
+  imageId: string;
+  filename: string;
+  status: BatchItemStatus;
+  error?: string;
+  durationMs?: number;
+  width?: number;
+  height?: number;
+}
+
+export interface BatchJob {
+  id: string;
+  op: BatchOpKind;
+  model: string;
+  overwritePolicy: OverwritePolicy;
+  items: BatchItem[];
+  status: BatchJobStatus;
+  createdAt: string;
+  startedAt?: string;
+  completedAt?: string;
+  reordered: boolean;
+  reorderNote?: string;
+}
+
+export interface BatchCompletionSummary {
+  jobId: string;
+  op: BatchOpKind;
+  model: string;
+  total: number;
+  succeeded: number;
+  failed: number;
+  skipped: number;
+  totalDurationMs: number;
+  avgDurationMs: number;
+}
+
+export interface BatchRequest {
+  op: BatchOpKind;
+  imageIds: string[];
+  overwritePolicy: OverwritePolicy;
+}
+
+export interface BatchPreview {
+  model: string;
+  total: number;
+  wouldProcess: number;
+  wouldSkip: number;
+  op: BatchOpKind;
 }

@@ -11,6 +11,8 @@ fn make_job_with_settings(settings_json: &str) -> QueueJob {
         settings_json: settings_json.to_string(),
         pipeline_log: None,
         original_idea: Some("cat".to_string()),
+        selected_concept: Some(0),
+        auto_approved: false,
         linked_comparison_id: None,
         created_at: None,
         started_at: None,
@@ -39,10 +41,23 @@ fn test_build_generation_request_full() {
 }
 
 #[test]
-fn test_build_generation_request_defaults() {
+fn test_build_generation_request_missing_checkpoint_errors() {
     let job = make_job_with_settings(r#"{}"#);
+    let result = build_generation_request(&job);
+    assert!(result.is_err());
+    let err_msg = format!("{:#}", result.unwrap_err());
+    assert!(
+        err_msg.contains("checkpoint") || err_msg.contains("settings_json"),
+        "Error should mention checkpoint or settings_json, got: {}",
+        err_msg
+    );
+}
+
+#[test]
+fn test_build_generation_request_defaults_with_checkpoint() {
+    let job = make_job_with_settings(r#"{"checkpoint":"test.safetensors"}"#);
     let req = build_generation_request(&job).unwrap();
-    assert_eq!(req.checkpoint, "dreamshaper_8.safetensors");
+    assert_eq!(req.checkpoint, "test.safetensors");
     assert_eq!(req.width, 512);
     assert_eq!(req.height, 768);
     assert_eq!(req.steps, 25);

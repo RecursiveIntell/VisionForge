@@ -1,6 +1,6 @@
 use crate::types::config::AppConfig;
 use anyhow::{Context, Result};
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 
 pub fn data_dir() -> PathBuf {
     let home = dirs_home();
@@ -13,7 +13,7 @@ pub fn config_path() -> PathBuf {
 
 /// Validate that a resolved image directory is safe.
 /// Must be an absolute path and must not contain `..` components.
-fn validate_image_dir(path: &PathBuf) -> Result<PathBuf> {
+fn validate_image_dir(path: &Path) -> Result<PathBuf> {
     let path_str = path.to_string_lossy();
     if path_str.contains("..") {
         anyhow::bail!(
@@ -27,7 +27,7 @@ fn validate_image_dir(path: &PathBuf) -> Result<PathBuf> {
             path.display()
         );
     }
-    Ok(path.clone())
+    Ok(path.to_path_buf())
 }
 
 /// Returns the image base directory. Uses the custom directory from config
@@ -42,7 +42,10 @@ pub fn image_dir(config: &AppConfig) -> PathBuf {
         match validate_image_dir(&expanded) {
             Ok(p) => p,
             Err(e) => {
-                eprintln!("[config] Invalid image directory: {}. Falling back to default.", e);
+                eprintln!(
+                    "[config] Invalid image directory: {}. Falling back to default.",
+                    e
+                );
                 data_dir().join("images")
             }
         }
@@ -289,6 +292,18 @@ struct TomlHardware {
     ha_entity_id: String,
     #[serde(default = "default_ha_watts")]
     ha_max_watts: u32,
+    #[serde(default = "default_batch_downscale")]
+    ai_batch_downscale: Option<bool>,
+    #[serde(default = "default_batch_max_dim")]
+    ai_batch_max_dimension: Option<u32>,
+}
+
+fn default_batch_downscale() -> Option<bool> {
+    Some(true)
+}
+
+fn default_batch_max_dim() -> Option<u32> {
+    Some(1024)
 }
 
 impl Default for TomlHardware {
@@ -299,6 +314,8 @@ impl Default for TomlHardware {
             enable_ha_power_monitoring: false,
             ha_entity_id: default_ha_entity(),
             ha_max_watts: default_ha_watts(),
+            ai_batch_downscale: default_batch_downscale(),
+            ai_batch_max_dimension: default_batch_max_dim(),
         }
     }
 }
@@ -383,6 +400,8 @@ impl TomlConfig {
                 enable_ha_power_monitoring: self.hardware.enable_ha_power_monitoring,
                 ha_entity_id: self.hardware.ha_entity_id,
                 ha_max_watts: self.hardware.ha_max_watts,
+                ai_batch_downscale: self.hardware.ai_batch_downscale,
+                ai_batch_max_dimension: self.hardware.ai_batch_max_dimension,
             },
             storage: crate::types::config::StorageSettings {
                 image_directory: self.storage.image_directory,
@@ -439,6 +458,8 @@ impl TomlConfig {
                 enable_ha_power_monitoring: config.hardware.enable_ha_power_monitoring,
                 ha_entity_id: config.hardware.ha_entity_id.clone(),
                 ha_max_watts: config.hardware.ha_max_watts,
+                ai_batch_downscale: config.hardware.ai_batch_downscale,
+                ai_batch_max_dimension: config.hardware.ai_batch_max_dimension,
             },
             storage: TomlStorage {
                 image_directory: config.storage.image_directory.clone(),

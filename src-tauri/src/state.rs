@@ -4,13 +4,20 @@ use rusqlite::Connection;
 use std::sync::atomic::AtomicBool;
 use std::sync::Arc;
 use std::sync::Mutex;
+use std::sync::RwLock;
+use tokio::sync::broadcast;
 
+/// Global app state shared across Tauri commands.
+///
+/// **Lock ordering convention:** When both locks are needed in the same scope,
+/// always acquire `config` (read or write) BEFORE `db`. This prevents deadlocks.
 pub struct AppState {
     pub db: Mutex<Connection>,
-    pub config: Mutex<AppConfig>,
+    pub config: RwLock<AppConfig>,
     pub http_client: Client,
     pub queue_paused: AtomicBool,
     pub pipeline_cancelled: Arc<AtomicBool>,
+    pub shutdown_tx: broadcast::Sender<()>,
 }
 
 impl AppState {
@@ -22,12 +29,22 @@ impl AppState {
             .build()
             .expect("Failed to build HTTP client");
 
+        let (shutdown_tx, _) = broadcast::channel(1);
+
         Self {
             db: Mutex::new(conn),
-            config: Mutex::new(config),
+            config: RwLock::new(config),
             http_client,
             queue_paused: AtomicBool::new(false),
             pipeline_cancelled: Arc::new(AtomicBool::new(false)),
+            shutdown_tx,
         }
+    }
+
+    pub fn config_snapshot(&self) -> anyhow::Result<AppConfig> {
+        self.config
+            .read()
+            .map_err(|e| anyhow::anyhow!("{}", e))
+            .map(|config| config.clone())
     }
 }

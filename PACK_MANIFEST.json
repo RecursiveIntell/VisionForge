@@ -1,0 +1,241 @@
+{
+  "bundle": "visionforge-p31-superpass",
+  "created_by": "ChatGPT",
+  "files": [
+    {
+      "path": "AGENTS.md",
+      "sha256": "0cb6cc4225dd06e559d0f6b36f4df524d6a92bcab95ea9cc834bb33639f22333",
+      "bytes": 2281
+    },
+    {
+      "path": "README.md",
+      "sha256": "0742b57d83e0e0b2f92f5cfba114458b4e4042694dc353ef623083964a6e965a",
+      "bytes": 3038
+    },
+    {
+      "path": "codex/manual-injections/INJECTION_AFTER_PHASE_00.md",
+      "sha256": "57ed3e5fcb88238927b2352a561b13417903b2ab3d984dc3bc1440e977b10a89",
+      "bytes": 629
+    },
+    {
+      "path": "codex/manual-injections/INJECTION_AFTER_PHASE_01.md",
+      "sha256": "611b4a0c0bd5cadf5478eb1a64b8ace177ed98dbb6e267badf5966f76478afe6",
+      "bytes": 637
+    },
+    {
+      "path": "codex/manual-injections/INJECTION_AFTER_PHASE_02.md",
+      "sha256": "c38828191b67d7e5d34f7e901492be8e1a990707d6602e2e5a416f231911cb40",
+      "bytes": 634
+    },
+    {
+      "path": "codex/manual-injections/INJECTION_AFTER_PHASE_03.md",
+      "sha256": "420ed73e9e844059f8d44c357e005756e0f2b4d2e2b83a8bcc4c748a008c0161",
+      "bytes": 635
+    },
+    {
+      "path": "codex/manual-injections/INJECTION_AFTER_PHASE_04.md",
+      "sha256": "edbf18b21a8eb9667f1c01dbd53f84ccdb4dfd8e64c12222816497017b7f5c79",
+      "bytes": 632
+    },
+    {
+      "path": "codex/manual-injections/INJECTION_AFTER_PHASE_05.md",
+      "sha256": "1ebd7d768d8acbbea1780ae2083e7fdad4a1e10e819e0a726c8e22b1739e6ae4",
+      "bytes": 636
+    },
+    {
+      "path": "codex/manual-injections/INJECTION_AFTER_PHASE_06.md",
+      "sha256": "89cc94b0a7b6874d821b02a56b3ea8cf34f65aa84309e7a3d2e8e2a99171de5e",
+      "bytes": 636
+    },
+    {
+      "path": "codex/manual-injections/INJECTION_AFTER_PHASE_07.md",
+      "sha256": "c20e0695f7b527b30aee061e6835037568c168ab37003ac3a1823575808082ba",
+      "bytes": 633
+    },
+    {
+      "path": "codex/manual-injections/INJECTION_AFTER_PHASE_08.md",
+      "sha256": "96a38f6652b9488df0c05f3b6bfcb6cb84efbb9a40878e7ac3044b6d59729dc5",
+      "bytes": 634
+    },
+    {
+      "path": "codex/manual-injections/INJECTION_AFTER_PHASE_09.md",
+      "sha256": "a84ebecd54e3b768530f22e255047efa3caf3a697f4e820405385a06fc21a901",
+      "bytes": 632
+    },
+    {
+      "path": "codex/manual-injections/INJECTION_AFTER_PHASE_10.md",
+      "sha256": "26e7d339e82121c097fc78aabafce28b74de59f8057b41d19fd004b6ce04bbb4",
+      "bytes": 630
+    },
+    {
+      "path": "codex/manual-injections/INJECTION_AFTER_PHASE_11.md",
+      "sha256": "3b901c761715be897011e15b1a013102c394dc5b89ce046a9053e8f16249f817",
+      "bytes": 631
+    },
+    {
+      "path": "codex/prompts/MASTER_PROMPT.md",
+      "sha256": "a6cee28d846c19a6e28ba4356b08d194e4411bdff44ce9fb453780c8b93f26b7",
+      "bytes": 2187
+    },
+    {
+      "path": "codex/prompts/PHASE_00_PREFLIGHT.md",
+      "sha256": "c2a23a2d91cd4370c8860a9ba2552eaaca0fd2609ec764ddd795bae27cab8d39",
+      "bytes": 803
+    },
+    {
+      "path": "codex/prompts/PHASE_01_DUPLICATE_BACKEND.md",
+      "sha256": "5a4635a6d70bcc30c8610437a5ac8ead603d9d2496e991874e041c4cddd32b1a",
+      "bytes": 868
+    },
+    {
+      "path": "codex/prompts/PHASE_02_BUILD_BASELINE.md",
+      "sha256": "2994d579ebe4f66e8c256abc3099e636c4d482ba229b9263bda707bfa8060de9",
+      "bytes": 763
+    },
+    {
+      "path": "codex/prompts/PHASE_03_CONFIG_PROVIDER.md",
+      "sha256": "3e1290c87b6293de839dcbddb951fcd21e049d8a2d77cfc0317c4b3bfe1f67e9",
+      "bytes": 916
+    },
+    {
+      "path": "codex/prompts/PHASE_04_AUTO_APPROVE.md",
+      "sha256": "22943c41e93f83978004ab1fb34565c10b631542428e5e2ede084cbeddb54554",
+      "bytes": 1056
+    },
+    {
+      "path": "codex/prompts/PHASE_05_SELECTED_CONCEPT.md",
+      "sha256": "4504227c87ed4bd945c550b6054a13f0e4981edf98e5b93c158f8e6a65aeb09b",
+      "bytes": 870
+    },
+    {
+      "path": "codex/prompts/PHASE_06_LOCK_ORDER_AND_CANCELLATION.md",
+      "sha256": "0fa8609ec3942fecb92e3765dd3372e304b3ce9b0877f1ed01937811957f8efa",
+      "bytes": 782
+    },
+    {
+      "path": "codex/prompts/PHASE_07_EXTERNAL_API_HONESTY.md",
+      "sha256": "378a09850c1f1fc19a84f83c19194903b73c9ba8e9e5564614237c37ed54d649",
+      "bytes": 770
+    },
+    {
+      "path": "codex/prompts/PHASE_08_FILE_DB_EXPORT_INTEGRITY.md",
+      "sha256": "f488ec700663deff3dd711f984280768c3539e22f3290d9f58b718b35bd145e6",
+      "bytes": 871
+    },
+    {
+      "path": "codex/prompts/PHASE_09_DEPENDENCY_TOOLING.md",
+      "sha256": "3051277eb99935c6595003797f9528a79bac5cb8d7dd378c6067a184eab1ee46",
+      "bytes": 753
+    },
+    {
+      "path": "codex/prompts/PHASE_10_DOCS_PROOF_PACKET.md",
+      "sha256": "613df0dcb62c58674f32a1768ff5b276ee258fea0eb24bb4ac2a0ea9a3f706cc",
+      "bytes": 651
+    },
+    {
+      "path": "codex/prompts/PHASE_11_FINAL_AUDIT.md",
+      "sha256": "25130d766d1ac0cd0f9fe61d3eb19315150fd7b1a99358627c7f37a87861e255",
+      "bytes": 777
+    },
+    {
+      "path": "codex/reports/templates/FINAL_AUDIT_REPORT_TEMPLATE.md",
+      "sha256": "1548da1eb39fd06f2de5faf57a75e2cb8045f3fbb1c501ef9249d8f47d32424d",
+      "bytes": 637
+    },
+    {
+      "path": "codex/validation/run_all_validations.py",
+      "sha256": "aff29d283775a83b2705bbfb2be683865c1a37c675ad9a50cb1464a3dbbb0c0d",
+      "bytes": 926
+    },
+    {
+      "path": "codex/validation/run_all_validations.sh",
+      "sha256": "583b0bccebdacdaa747923923aae38b91031bf45d22d15ce25e6d81dd33bf402",
+      "bytes": 117
+    },
+    {
+      "path": "codex/validation/vf_assert_autoapprove_contract.py",
+      "sha256": "4e0fc9abbae520ecdda45360bfda23ca8b9d07477ad45624c81408cf60512041",
+      "bytes": 1607
+    },
+    {
+      "path": "codex/validation/vf_assert_command_parity.py",
+      "sha256": "997db1770ba145f4b3af7a1784a7d39fc5377b5cff9d751ba56f88bf115e5d9f",
+      "bytes": 1171
+    },
+    {
+      "path": "codex/validation/vf_assert_export_filename_validation.py",
+      "sha256": "5d9e577827f9ca6e9fa8969096ba490e08faf0c6747c3e6ee9375bb5855ab992",
+      "bytes": 1014
+    },
+    {
+      "path": "codex/validation/vf_assert_external_service_status_checks.py",
+      "sha256": "8a71a0a10bf395e9ab43e5d6d7e3574e1a2d9c0b16635ff91fbb63944a784f2f",
+      "bytes": 1615
+    },
+    {
+      "path": "codex/validation/vf_assert_frontend_config_provider.py",
+      "sha256": "83eddc66d1a29f1185dee0746ddd5ecde872c4005c35d98ade3ee309f7a53a5b",
+      "bytes": 1537
+    },
+    {
+      "path": "codex/validation/vf_assert_no_duplicate_tauri_root.py",
+      "sha256": "410498ff0fbca5b62cc80972fb97577ff31fbb1170243dfd7c8c4f1ccf58b48a",
+      "bytes": 1005
+    },
+    {
+      "path": "codex/validation/vf_assert_no_lock_order_inversions.py",
+      "sha256": "0b8ecee7c85ebf702f202b3ee4a4770c190a358887dd29f6eaf7139f383ff8ca",
+      "bytes": 891
+    },
+    {
+      "path": "codex/validation/vf_assert_release_proof_packet.py",
+      "sha256": "d9e6adb6b7f64263d96c64bc347de19b3cbdf753b44ac9073d898c91293b99f0",
+      "bytes": 730
+    },
+    {
+      "path": "codex/validation/vf_preflight.py",
+      "sha256": "d2ba53a86991401dd66955da6e5c9f453f686ab746b7b800852664a542d19318",
+      "bytes": 1761
+    },
+    {
+      "path": "docs/ACCEPTANCE_GATES.md",
+      "sha256": "0edaa7a4ff990b5fa25e5304bd0e278197f91bf6c3aa98329db2ff5640acd8e3",
+      "bytes": 2865
+    },
+    {
+      "path": "docs/EVIDENCE_BASELINE.md",
+      "sha256": "a0cc6c2d80bc479a6a042c422332a55addfcb0b468e3345c35e8e21ef2f70548",
+      "bytes": 1226
+    },
+    {
+      "path": "docs/ISSUE_MATRIX.csv",
+      "sha256": "9e219f09d26df44c4885662c293da6ae56ee6c034e893295bdfc90bc49bc07e4",
+      "bytes": 4203
+    },
+    {
+      "path": "docs/PROOF_PACKET_TEMPLATE.md",
+      "sha256": "9577536fcd606687136e2068445e97ebc673f9f676064357a51f5a1830774a2d",
+      "bytes": 788
+    },
+    {
+      "path": "docs/PUBLIC_CLAIM_BOUNDARY.md",
+      "sha256": "232ddd02175d723be6bb3e349f08d15c46b8b3cb3a13c2720fb953cc8e2ca24f",
+      "bytes": 994
+    },
+    {
+      "path": "docs/RESEARCH_NOTES.md",
+      "sha256": "4ce25adf7be996f98331f433000f53091e495c90dea206bd51082fec0ae11e5c",
+      "bytes": 1855
+    },
+    {
+      "path": "docs/ROLLBACK_AND_QUARANTINE_PLAN.md",
+      "sha256": "ed67d4031e6c1f8f6d5f964209cc168faf90941fb7037093cd646965f7880128",
+      "bytes": 1633
+    },
+    {
+      "path": "docs/SOURCE_OF_TRUTH_MAP.md",
+      "sha256": "e8305200873e5e71d841856c87a5ce5866c960345737659ab13b408369d2e4f2",
+      "bytes": 1560
+    }
+  ]
+}

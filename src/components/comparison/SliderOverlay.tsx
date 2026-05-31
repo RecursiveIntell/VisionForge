@@ -16,6 +16,7 @@ export function SliderOverlay({
   const containerRef = useRef<HTMLDivElement>(null);
   const [position, setPosition] = useState(50);
   const [dragging, setDragging] = useState(false);
+  const [containerWidth, setContainerWidth] = useState(0);
 
   const updatePosition = useCallback(
     (clientX: number) => {
@@ -27,6 +28,22 @@ export function SliderOverlay({
     },
     [],
   );
+
+  // Track container width reactively via ResizeObserver.
+  // This replaces the broken inline containerRef.current?.offsetWidth read.
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    // Set initial width (covers the first render where the ref was null)
+    setContainerWidth(el.offsetWidth);
+    const observer = new ResizeObserver(([entry]) => {
+      if (entry) {
+        setContainerWidth(entry.contentRect.width);
+      }
+    });
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(() => {
     if (!dragging) return;
@@ -54,12 +71,19 @@ export function SliderOverlay({
       {/* Image B (full) */}
       <img src={imageBSrc} alt={labelB} className="w-full block" />
 
-      {/* Image A (clipped) */}
+      {/* Image A (clipped) — minWidth ensures it renders at full container width
+          even though the parent div is clipped to position%. Without this, the
+          image would shrink to fit the clip width. */}
       <div
         className="absolute inset-0 overflow-hidden"
         style={{ width: `${position}%` }}
       >
-        <img src={imageASrc} alt={labelA} className="w-full block" style={{ minWidth: containerRef.current?.offsetWidth }} />
+        <img
+          src={imageASrc}
+          alt={labelA}
+          className="w-full block"
+          style={{ minWidth: containerWidth || undefined }}
+        />
       </div>
 
       {/* Slider line */}

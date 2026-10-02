@@ -51,7 +51,7 @@ npm run tauri dev
 - `src-tauri/`: canonical Rust/Tauri backend.
 - `docs/SPEC.md`: product intent, not implementation proof.
 - `VISIONFORGE_PROOF_PACKET.md`: dated build/test and claim evidence from May 27, 2026.
-- `docs/source-quarantine/P31_duplicate_backend/s/`: quarantined stale duplicate backend root from the P31 pass.
+- `docs/codex-runs/archive/unclassified/20260527T212459Z/files/docs/source-quarantine/P31_duplicate_backend/s/`: archived copy of the quarantined P31 duplicate backend tree.
 
 ## Feature Status
 

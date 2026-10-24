@@ -1,6 +1,8 @@
 # VisionForge
 
-VisionForge is a local-first Tauri 2 desktop app for prompt-engineering and image-generation workflow orchestration using a React/TypeScript frontend and a Rust/Tauri backend. It is designed to work with local Ollama and ComfyUI services.
+<!-- last-verified: 2026-10-24; README wording review only, not product verification -->
+
+VisionForge is a local-first Tauri 2 desktop prototype for exploring prompt-engineering and image-generation workflows. Its React/TypeScript frontend and Rust/Tauri backend are intended to connect to local Ollama and ComfyUI services.
 
 ## Current Status
 
